@@ -3,6 +3,8 @@ import * as bodyParser from "body-parser"
 import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
+import dotenv from "dotenv"
+dotenv.config()
 
 AppDataSource.initialize().then(async () => {
 
@@ -24,7 +26,7 @@ AppDataSource.initialize().then(async () => {
     })
 
     // start express server
-    app.listen(3001)
-    console.log('Express server has started on port 30001')
+    app.listen(process.env.PORT)
+    console.log(`Express server has started on port ${process.env.PORT}. Open http://localhost:${process.env.PORT}/users to see results`)
 
 }).catch(error => console.log(error))
