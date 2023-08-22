@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn} from "typeorm"
+import { User } from "./User"
 
 @Entity()
 export class Group {
@@ -16,5 +17,9 @@ export class Group {
 
     @Column()
     limited_at: Date
+
+    @OneToOne(() => User)
+    @JoinColumn()
+    creator: User
 
 }
