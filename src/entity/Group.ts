@@ -18,8 +18,4 @@ export class Group {
     @Column()
     limited_at: Date
 
-    @ManyToMany( () => User)
-    @JoinTable()
-    users : User[]
-
 }
