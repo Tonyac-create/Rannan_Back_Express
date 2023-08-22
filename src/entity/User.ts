@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Data } from "./Data"
 import { Contact } from "./Contact"
 import { Group } from "./Group"
+import { Validation } from "./Validation"
 
 @Entity()
 export class User {
@@ -14,7 +15,7 @@ export class User {
     @Column()
     password: string
 
-    @Column()
+    @Column({unique: true})
     email: string
 
     @Column()
@@ -29,12 +30,13 @@ export class User {
     @OneToMany(() => Contact, (contact) => contact.user)
     contacts: Contact[]
 
-
     @OneToMany ( () => Data, (data) => data.user)
     datas: Data[]
 
     @ManyToMany( () => Group)
-    @JoinTable()
+    @JoinTable({ name: 'user_group' })
     groups : Group[]
 
+    @OneToMany(() => Validation, (validation) => validation.user)
+    validations: Validation[]
 }

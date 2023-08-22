@@ -17,8 +17,4 @@ export class Authorisation {
 
     @UpdateDateColumn({ name: 'updated_at' })
     updatedAt: Date;
-
-    @ManyToMany ( () => Data)
-    @JoinTable()
-    datas : Data[]
 }

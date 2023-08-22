@@ -26,7 +26,7 @@ export class Data {
     user: User
 
     @ManyToMany( () => Authorisation)
-    @JoinTable()
+    @JoinTable({ name: 'data_authorisation' })
     authorisations : Authorisation[]
 
 }
