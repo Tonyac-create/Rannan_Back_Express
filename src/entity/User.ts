@@ -14,7 +14,7 @@ export class User {
     @Column()
     password: string
 
-    @Column(unique: true)
+    @Column()
     email: string
 
     @Column()
