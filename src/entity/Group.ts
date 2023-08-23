@@ -12,14 +12,10 @@ export class Group {
     @CreateDateColumn()
     created_at: Date
 
-    @UpdateDateColumn()
-    updated_at: Date
+    @UpdateDateColumn({ name: 'updated_at' })
+    updatedAt: Date;
 
     @Column({ nullable: true, default: null }) // Setting nullable and default to null
     limited_at: Date | null;
-
-    @OneToOne(() => User)
-    @JoinColumn()
-    creator: User
 
 }

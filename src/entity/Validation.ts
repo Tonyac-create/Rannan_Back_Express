@@ -10,16 +10,4 @@ export class Validation {
     @ManyToOne(() => User, (user) => user.id)
     user: User
 
-    @ManyToOne(() => User, (user) => user.id)
-    contact: User
-
-    @Column({type: "tinyint", default: 0})
-    validation: number
-
-    @CreateDateColumn()
-    created_at: Date
-
-    @UpdateDateColumn()
-    updated_at: Date
-
 }
