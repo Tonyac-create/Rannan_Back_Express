@@ -7,34 +7,47 @@ export class GroupController {
     private groupRepository = AppDataSource.getRepository(Group)
 
 //Get all groups
+//////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.groupRepository.find()
+        const groups = await this.groupRepository.find({
+            relations: ['creator'] // Specify the name of the relation to include
+        });
+
+        return response.json(groups);
     }
 
-//Get group by id
-    async one(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id)
+//Get group by creator id
+    async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
+        const creatorId = parseInt(request.params.id);
 
-        const group = await this.groupRepository.findOne({
-            where: { id }
-        })
+        const groups = await this.groupRepository.find({
+            where: { creator: { id: creatorId } },
+            relations: ['creator'] // Optionally include creator details
+        });
 
-        if (!group) {
-            return "unregistered group"
+        if (!groups || groups.length === 0) {
+            return response.status(404).json({ error: "No groups found for the specified creator" });
         }
-        return group
+
+        return response.json(groups);
     }
+
+
 
 //Post new group
     async save(request: Request, response: Response, next: NextFunction) {
-        const { name } = request.body;
+        const { name, creatorId } = request.body;
 
-        const group = Object.assign(new Group(), {
-            name
-        })
+        const group = this.groupRepository.create({
+            name,
+            creator: { id: creatorId } // Crée une instance User avec seulement l'ID du créateur
+        });
 
-        return this.groupRepository.save(group)
+        const savedGroup = await this.groupRepository.save(group);
+
+        return response.status(201).json(savedGroup);
     }
+
 
 //Update group
     async update(request: Request, response: Response, next: NextFunction) {
