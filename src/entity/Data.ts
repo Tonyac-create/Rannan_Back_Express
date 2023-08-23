@@ -7,26 +7,26 @@ export class Data {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
-    type: number
+    @Column({type: "enum", enum: ["text", "number", "url", "mail", "file"]})
+    type: string
 
-    @Column()
+    @Column({type: "varchar", length: 45})
     name: string
 
-    @Column()
+    @Column({type: "varchar", length: 250})
     value: string
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    @CreateDateColumn()
+    created_at: Date
 
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
+    @UpdateDateColumn()
+    updated_at: Date
 
     @ManyToOne(() => User, (user) => user.datas)
     user: User
 
     @ManyToMany( () => Authorisation)
-    @JoinTable({ name: 'data_authorisation' })
+    @JoinTable()
     authorisations : Authorisation[]
 
 }

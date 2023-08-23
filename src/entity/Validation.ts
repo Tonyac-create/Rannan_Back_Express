@@ -1,21 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
 import { User } from "./User"
 
 @Entity()
 export class Validation {
-   @PrimaryGeneratedColumn()
-   id: number
 
-   @Column()
-   validation : Boolean
+    @PrimaryGeneratedColumn()
+    id: number
 
-   @CreateDateColumn({ name: 'created_at' })
-   createdAt: Date;
-
-   @UpdateDateColumn({ name: 'updated_at' })
-   updatedAt: Date;
-
-   @ManyToOne(() => User, (user) => user.validations)
+    @ManyToOne(() => User, (user) => user.id)
     user: User
+
+    @ManyToOne(() => User, (user) => user.id)
+    contact: User
+
+    @Column({type: "tinyint", default: 0})
+    validation: number
+
+    @CreateDateColumn()
+    created_at: Date
+
+    @UpdateDateColumn()
+    updated_at: Date
 
 }
