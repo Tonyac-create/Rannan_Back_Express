@@ -1,17 +1,21 @@
 import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { Group } from "../entity/Group"
+import { GroupService } from "../service/groupService"
 
 export class GroupController {
 
     private groupRepository = AppDataSource.getRepository(Group)
+    private groupService = new GroupService()
 
 //Get all groups
 //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
     async all(request: Request, response: Response, next: NextFunction) {
-        const groups = await this.groupRepository.find({
-            relations: ['creator'] // Specify the name of the relation to include
-        });
+
+        const groups = await this.groupService.allWithCreator()
+        // const groups = await this.groupRepository.find({
+        //     relations: ['creator'] // Specify the name of the relation to include
+        // });
 
         return response.json(groups);
     }
@@ -19,7 +23,8 @@ export class GroupController {
 //Get group by creator id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
         const creatorId = parseInt(request.params.id);
-
+        //user = get user from CreatorId
+        //if(!user ){//je sors de la fonction}
         const groups = await this.groupRepository.find({
             where: { creator: { id: creatorId } },
             relations: ['creator'] // Optionally include creator details
