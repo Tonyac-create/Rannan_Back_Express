@@ -42,7 +42,7 @@ export const Routes = [
         method: "get",
         route: "/groups/:id",
         controller: GroupController,
-        action: "one"
+        action: "groupsByCreatorId"
     }, {
         method: "post",
         route: "/groups",
