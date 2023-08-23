@@ -15,8 +15,8 @@ export class Group {
     @UpdateDateColumn()
     updated_at: Date
 
-    @Column()
-    limited_at: Date
+    @Column({ nullable: true, default: null }) // Setting nullable and default to null
+    limited_at: Date | null;
 
     @OneToOne(() => User)
     @JoinColumn()
