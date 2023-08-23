@@ -30,7 +30,7 @@ export class GroupController {
     }
 
 
-// Add user to a group( A terminer)
+// Add user to a group( A terminer )
     async addUserInGroup(request: Request, response: Response, next: NextFunction) {
         const userId = parseInt(request.params.id);
         const groupId = parseInt(request.body.groupId);
