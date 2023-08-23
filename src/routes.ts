@@ -49,6 +49,11 @@ export const Routes = [
         controller: GroupController,
         action: "save"
     }, {
+        method: "post",
+        route: "/groups/user/:id",//:id = user_id
+        controller: GroupController,
+        action: "addUserInGroup"
+    },{
         method: "delete",
         route: "/groups/:id",
         controller: GroupController,

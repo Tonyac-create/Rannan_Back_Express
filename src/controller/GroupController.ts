@@ -2,7 +2,6 @@ import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { Group } from "../entity/Group"
 import { GroupService } from "../service/groupService"
-
 export class GroupController {
 
     private groupRepository = AppDataSource.getRepository(Group)
@@ -31,6 +30,22 @@ export class GroupController {
     }
 
 
+// Add user to a group( A terminer)
+    async addUserInGroup(request: Request, response: Response, next: NextFunction) {
+        const userId = parseInt(request.params.id);
+        const groupId = parseInt(request.body.groupId);
+
+        if (isNaN(userId) || isNaN(groupId)) {
+            return response.status(400).json({ error: "Invalid userId or groupId" });
+        }
+        console.log("coucou ici express  "+ groupId)
+        try {
+            const addedUser = await this.groupService.addUserToGroup(userId, groupId);
+            return response.status(201).json(addedUser);
+        } catch (error) {
+            return response.status(500).json({ error: "An error occurred while adding user to group" });
+        }
+    }
 
 //Post new group
 
