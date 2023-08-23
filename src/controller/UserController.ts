@@ -25,15 +25,41 @@ export class UserController {
     }
 
     async save(request: Request, response: Response, next: NextFunction) {
-        const { firstName, lastName, age } = request.body;
+        const { nickname, password, email, avatar_id } = request.body;
+    
+        const user = this.userRepository.create({
+            nickname,
+            password,
+            email,
+            avatar_id
+        });
+    
+        const savedUser = await this.userRepository.save(user);
+    
+        return response.status(201).json(savedUser);
+    }
 
-        const user = Object.assign(new User(), {
-            firstName,
-            lastName,
-            age
-        })
+    async update(request: Request, response: Response, next: NextFunction) {
+        const id = parseInt(request.params.id);
+        const { nickname, password, email, avatar_id } = request.body;
 
-        return this.userRepository.save(user)
+        // Trouver l'utilisateur à mettre à jour
+        const userToUpdate = await this.userRepository.findOneBy({ id })
+
+        if (!userToUpdate) {
+            return response.status(404).json({ error: "User not found" });
+        }
+
+        // Mettre à jour les champs
+        userToUpdate.nickname = nickname;
+        userToUpdate.password = password;
+        userToUpdate.email = email;
+        userToUpdate.avatar_id = avatar_id;
+
+        // Enregistrer les modifications
+        const updatedUser = await this.userRepository.save(userToUpdate);
+
+        return response.json(updatedUser);
     }
 
     async remove(request: Request, response: Response, next: NextFunction) {
