@@ -70,14 +70,18 @@ export class UserController {
 
     async update(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = +request.params.id;
-            const updatedUser = await this.userService.update(id); // Appel avec un seul argument
-            return updatedUser;
+            const user = await this.userService.one(+request.params.id)
+            if (user) {
+                return this.userService.update(user, request.body); // Appel avec un seul argument
+            }
+            return {
+                success: 'ko',
+                message: 'user not found'
+            }
         } catch (error) {
             console.log("🐼UserController ~ update ~ error:", error);
             response.status(500).json({ error: "An error occurred while updating user" });
         }
     }
-
 
 }
