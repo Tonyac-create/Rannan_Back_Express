@@ -1,10 +1,10 @@
 import { AppDataSource } from "../data-source"
 import { Group } from "../entity/Group"
-// import { User } from "../entity/User"
+import { User } from "../entity/User"
 export class GroupService {
 
     private groupRepository = AppDataSource.getRepository(Group)
-    // private userRepository = AppDataSource.getRepository(User)
+    private userRepository = AppDataSource.getRepository(User)
 
 
     //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
@@ -24,36 +24,35 @@ export class GroupService {
         });
         return groups;
     }
-    // //A finir en cours erreur reference ciruclaire JSON 
-    // async addUserToGroup(userId: number, groupId: number): Promise<Group | User> {
-    //     console.log("on est iciIIIIIIIIIIIIIIIIIiiiiiiiiiii  userId: "+userId+"  groupId: "+groupId)
-    //     const user = await this.userRepository.findOne({
-    //         where: { id: userId }
-    //     })
-    //     if (!user) {
-    //         throw new Error("User not found");
-    //     }
-    //     console.log("on est laaaaaaaaaaaaaaa  user: "+user)
 
-    //     const group = await this.groupRepository.findOne({
-    //         where: { id: groupId }
-    //     })
-    //     console.log("on est presqueeeee  group: "+group)
-
-    //     if (!group) {
-    //         throw new Error("Group not found");
-    //     }
+    async addUserToGroup(userId: number, groupId: number): Promise<Group | User> {
+        try {
+            const users = await this.userRepository.find({
+                where: { id: userId },
+                relations: ['groups'] // Load the 'groups' relation for the user
+            });
     
-    //     user.groups = [...user.groups, group]; // Add the new group to the existing groups
-
-    //     const updatedUser = await this.userRepository.save(user);
-
-    //     return updatedUser.groups.find(g => g.id === groupId);
-    // }
+            if (!users || users.length === 0) {
+                throw new Error("User not found");
+            }
     
+            const userToUpdate = users[0];
     
+            const group = await this.groupRepository.findOneBy({ id:groupId });
+            if (!group) {
+                throw new Error("Group not found");
+            }
     
+            userToUpdate.groups = [...userToUpdate.groups, group]; // Add user to the existing groups
     
+            await this.userRepository.save(userToUpdate);
+    
+            return userToUpdate.groups.find(g => g.id === groupId);
+        } catch (error) {
+            console.error("Error while adding user to group:", error);
+            throw new Error("An error occurred while adding user to group");
+        }
+    } 
     
     
     
