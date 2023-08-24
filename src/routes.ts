@@ -42,9 +42,14 @@ export const Routes = [
         route: "/groups",
         controller: GroupController,
         action: "all"
-    }, {
+    },{
         method: "get",
         route: "/groups/:id",
+        controller: GroupController,
+        action: "one"
+    }, {
+        method: "get",
+        route: "/groups/user/:id",
         controller: GroupController,
         action: "groupsByCreatorId"
     }, {
@@ -57,6 +62,11 @@ export const Routes = [
         route: "/groups/user/:id",//:id = user_id
         controller: GroupController,
         action: "addUserInGroup"
+    }, {
+        method: "delete",
+        route: "/groups/user/:id",//:id = user_id
+        controller: GroupController,
+        action: "deleteUserInGroup"
     },{
         method: "delete",
         route: "/groups/:id",

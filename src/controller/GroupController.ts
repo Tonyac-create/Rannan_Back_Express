@@ -9,6 +9,17 @@ export class GroupController {
 
         return this.groupService.allWithCreator()
     }
+//Get one group by id
+
+    async one(request: Request, response: Response, next: NextFunction) {
+        const groupId = parseInt(request.params.id);
+        try {
+            const group = await this.groupService.findOne(groupId);
+            return group;
+        } catch (error) {
+            return error;
+        }
+    }
 
 //Get group by creator id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
@@ -40,6 +51,18 @@ export class GroupController {
             return addedUser;
         } catch (error) {
             return error
+        }
+    }
+// Delete user to a group
+
+    async deleteUserInGroup(request: Request, response: Response, next: NextFunction) {
+        const userId = parseInt(request.params.id);
+        const groupId = parseInt(request.body.groupId);
+        try {
+            const removedUser = await this.groupService.deleteUserToGroup(userId, groupId);
+            return removedUser;
+        } catch (error) {
+            return error;
         }
     }
 
