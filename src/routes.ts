@@ -6,7 +6,7 @@ import { ContactController } from "./controller/ContactController"
 
 export const Routes = [
 
-//ROUTES FOR USER
+    // ------------------//ROUTES FOR USER------------------------------
     {
         method: "get",
         route: "/users",
@@ -35,7 +35,7 @@ export const Routes = [
     },
     
 
-//ROUTES FOR GROUP
+    // ------------------//ROUTES FOR GROUPS------------------------------
 
     {
         method: "get",
@@ -69,7 +69,7 @@ export const Routes = [
         action: "update" // Nom de la méthode dans le UserController
     },
 
-    //Routes for DATA
+    // ------------------//ROUTES FOR DATA------------------------------
     , {
         method: "get",
         route: "/datas",
@@ -91,7 +91,8 @@ export const Routes = [
         controller: DataController, 
         action: "remove"
     },
-    //Routes for Contact 
+
+    // ------------------//ROUTES FOR CONTACT------------------------------
     {
         method: "get",
         route: "/contacts",
