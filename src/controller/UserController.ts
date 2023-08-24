@@ -1,10 +1,12 @@
 // import { AppDataSource } from "../data-source"
 // import { NextFunction, Request, Response } from "express"
 // import { User } from "../entity/User"
+// import { UserService } from "../service/UserService"
 
 // export class UserController {
 
 //     private userRepository = AppDataSource.getRepository(User)
+//     private userService = new UserService()
 
 //     async all(request: Request, response: Response, next: NextFunction) {
 //         return this.userRepository.find()
@@ -25,41 +27,14 @@
 //     }
 
 //     async save(request: Request, response: Response, next: NextFunction) {
-//         const { nickname, password, email, avatar_id } = request.body;
-    
-//         const user = this.userRepository.create({
-//             nickname,
-//             password,
-//             email,
-//             avatar_id
-//         });
-    
-//         const savedUser = await this.userRepository.save(user);
-    
-//         return response.status(201).json(savedUser);
-//     }
-
-//     async update(request: Request, response: Response, next: NextFunction) {
-//         const id = parseInt(request.params.id);
-//         const { nickname, password, email, avatar_id } = request.body;
-
-//         // Trouver l'utilisateur à mettre à jour
-//         const userToUpdate = await this.userRepository.findOneBy({ id })
-
-//         if (!userToUpdate) {
-//             return response.status(404).json({ error: "User not found" });
+//         try {
+//             const { nickname, password, email, avatar_id } = request.body;
+//             const user = await this.userService.create({ nickname, password, email, avatar_id })
+//             return user;
+            
+//         } catch (error) {
+//             console.log("error", error)
 //         }
-
-//         // Mettre à jour les champs
-//         userToUpdate.nickname = nickname;
-//         userToUpdate.password = password;
-//         userToUpdate.email = email;
-//         userToUpdate.avatar_id = avatar_id;
-
-//         // Enregistrer les modifications
-//         const updatedUser = await this.userRepository.save(userToUpdate);
-
-//         return response.json(updatedUser);
 //     }
 
 //     async remove(request: Request, response: Response, next: NextFunction) {
@@ -76,70 +51,68 @@
 //         return "user has been removed"
 //     }
 
-// }
+//     async update(request: Request, response: Response, next: NextFunction) {
+        
+//         const id = +request.params.id
 
-import { AppDataSource } from "../data-source"
+//         const updateUser = await this.userRepository.findOne({ where: { id } })
+
+//         this.userRepository.merge(updateUser, request.body);
+//         await this.userRepository.save(updateUser);
+//         return updateUser
+//       };
+
+// }
 import { NextFunction, Request, Response } from "express"
-import { User } from "../entity/User"
 import { UserService } from "../service/UserService"
 
 export class UserController {
 
-    private userRepository = AppDataSource.getRepository(User)
+    
     private userService = new UserService()
 
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.userRepository.find()
+        try {
+            return await this.userService.all()
+        } 
+        catch (error) {
+            console.log("🐼UserController ~ all ~ error:", error)
+        }
     }
 
     async one(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id)
-
-
-        const user = await this.userRepository.findOne({
-            where: { id }
-        })
-
-        if (!user) {
-            return "unregistered user"
+        try {
+            return await this.userService.one(+request.params.id)
+        } catch (error) {
+            console.log("🐼UserController ~ one ~ error:", error)
         }
-        return user
     }
 
     async save(request: Request, response: Response, next: NextFunction) {
         try {
-            const { nickname, password, email, avatar_id } = request.body;
-            const user = await this.userService.create({ nickname, password, email, avatar_id })
-            return user;
-            
+            return await this.userService.create(request.body)
         } catch (error) {
-            console.log("error", error)
+            console.log("🐼UserController ~ save ~ error:", error)
         }
     }
 
     async remove(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id)
-
-        let userToRemove = await this.userRepository.findOneBy({ id })
-
-        if (!userToRemove) {
-            return "this user not exist"
+        try {
+            return await this.userService.remove(+request.params.id)
+        } catch (error) {
+            console.log("🐼UserController ~ remove ~ error:", error)
         }
-
-        await this.userRepository.remove(userToRemove)
-
-        return "user has been removed"
+    }
+    async update(request: Request, response: Response, next: NextFunction) {
+        try {
+            const id = +request.params.id;
+            const updatedUser = await this.userService.update(id); // Appel avec un seul argument
+            return updatedUser;
+        } catch (error) {
+            console.log("🐼UserController ~ update ~ error:", error);
+            response.status(500).json({ error: "An error occurred while updating user" });
+        }
     }
 
-    async update(request: Request, response: Response, next: NextFunction) {
-        
-        const id = +request.params.id
-
-        const updateUser = await this.userRepository.findOne({ where: { id } })
-
-        this.userRepository.merge(updateUser, request.body);
-        await this.userRepository.save(updateUser);
-        return updateUser
-      };
 
 }
