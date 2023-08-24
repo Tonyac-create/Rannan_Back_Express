@@ -109,6 +109,11 @@ export const Routes = [
         controller: ContactController,
         action: "one"
     },  {
+        method: "get",
+        route: "/contacts/:id",
+        controller: ContactController,
+        action: "oneByRelation"
+    },{
         method: "post",
         route: "/contacts",
         controller: ContactController,
