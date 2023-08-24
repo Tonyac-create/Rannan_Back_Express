@@ -2,31 +2,42 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { User } from "./User"
 import { Authorisation } from "./Authorisation"
 
+export enum DataFormat {
+    TEXT = "text",
+    NUMBER = "number",
+    URL = "url",
+    MAIL = "mail",
+    FILE = "file"
+}
+
 @Entity()
 export class Data {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
-    type: number
+    @Column({
+        type: "enum",
+        enum: DataFormat
+        })
+    format: DataFormat
 
-    @Column()
+    @Column({type: "varchar", length: 45})
     name: string
 
-    @Column()
+    @Column({type: "varchar", length: 250})
     value: string
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    @CreateDateColumn()
+    created_at: Date
 
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
+    @UpdateDateColumn()
+    updated_at: Date
 
     @ManyToOne(() => User, (user) => user.datas)
     user: User
 
     @ManyToMany( () => Authorisation)
-    @JoinTable({ name: 'data_authorisation' })
+    @JoinTable()
     authorisations : Authorisation[]
 
 }

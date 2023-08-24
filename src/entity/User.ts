@@ -1,42 +1,49 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Data } from "./Data"
+import { Validation } from "./Validation"
 import { Contact } from "./Contact"
 import { Group } from "./Group"
-import { Validation } from "./Validation"
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({type: "varchar", length: 45, default: ""})
     nickname: string
 
-    @Column()
+    @Column({type: "varchar", length: 70, default: ""})
     password: string
 
-    @Column({unique: true})
+    @Column({type: "varchar", length: 45,default: "", unique: true})
     email: string
 
-    @Column()
+    @Column({default: 0})
     avatar_id: number
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    @CreateDateColumn()
+    created_at: Date
 
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
+    @UpdateDateColumn()
+    updated_at: Date
 
-    @OneToMany(() => Contact, (contact) => contact.user)
-    contacts: Contact[]
+    @OneToMany(() => Validation, (validation) => validation.user)
+    user: User[]
+
+    @OneToMany(() => Validation, (validation) => validation.contact)
+    contact: User[]
+
+    @OneToMany(() => Contact, (contact) => contact.user1)
+    users1: Contact[]
+
+    @OneToMany(() => Contact, (contact) => contact.user2)
+    users2: Contact[]
 
     @OneToMany ( () => Data, (data) => data.user)
     datas: Data[]
 
     @ManyToMany( () => Group)
-    @JoinTable({ name: 'user_group' })
+    @JoinTable()
     groups : Group[]
 
-    @OneToMany(() => Validation, (validation) => validation.user)
-    validations: Validation[]
 }

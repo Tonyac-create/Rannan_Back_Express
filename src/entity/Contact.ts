@@ -1,18 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne} from "typeorm"
+import { Entity, PrimaryGeneratedColumn, ManyToOne, CreateDateColumn} from "typeorm"
 import { User } from "./User"
 
 @Entity()
 export class Contact {
-   @PrimaryGeneratedColumn()
-   id: number
+    @PrimaryGeneratedColumn()
+    id: number
 
-   @Column()
-   validation : Boolean
+    @ManyToOne(() => User, (user) => user.id)
+    user1: User
 
-   @Column()
-   contact_id: number
+    @ManyToOne(() => User, (user) => user.id)
+    user2: User
 
-   @ManyToOne(() => User, (user) => user.contacts)
-    user: User
-   
+    @CreateDateColumn()
+    created_at: Date
+
 }
