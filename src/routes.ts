@@ -89,7 +89,7 @@ export const Routes = [
         method: "put",
         route: "/datas/:id",
         controller: DataController,
-        action: "save"
+        action: "update"
     }, {
         method: "delete",
         route: "/datas/:id",

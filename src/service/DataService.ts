@@ -75,24 +75,44 @@ export class DataService {
         }
     }
 
-    async update(id: number) {
-        try {
-            const updateData = await this.dataRepository.findOne({
-                where: {
-                    id: id
-                }
-            })
+    // async update(id: number) {
+    //     try {
+    //         const updateData = await this.dataRepository.findOne({
+    //             where: {
+    //                 id: id
+    //             }
+    //         })
 
-            this.dataRepository.merge(updateData)
 
-            if (updateData) return this.dataRepository.save(updateData)
+    //         if (updateData) return this.dataRepository.merge(updateData)
 
-        }
-        catch (error) {
-            console.log("error", error);
+    //     }
+    //     catch (error) {
+    //         console.log("error", error);
             
-        }
+    //     }
 
        
-      };
+    //   };
+
+      async update(id: number) {
+        try {
+            const updateData = await this.dataRepository.findOne(
+                {
+                    where: {
+                        id: id,
+                    }
+                }
+            )
+
+            if (updateData) return this.dataRepository.merge(updateData)
+
+            
+        }
+        catch (error) {
+            console.log("error:", error)
+        }
+        
+    }
+
 }
