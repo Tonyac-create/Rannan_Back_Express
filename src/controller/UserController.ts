@@ -25,6 +25,10 @@ export class UserController {
 
     async save(request: Request, response: Response, next: NextFunction) {
         try {
+            
+            // appel d'une fonction qui cherche un user selon son email 
+            //si on obiten un résultat on sort de la fonction
+
             return await this.userService.create(request.body)
         } catch (error) {
             console.log("🐼UserController ~ save ~ error:", error)
@@ -33,6 +37,10 @@ export class UserController {
 
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
+            // get by id l'user 
+            // const user = await this.userService.one(id)
+
+            // si ! user je sors
             return await this.userService.remove(+request.params.id)
         } catch (error) {
             console.log("🐼UserController ~ remove ~ error:", error)
