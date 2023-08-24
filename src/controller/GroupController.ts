@@ -4,7 +4,6 @@ import { Group } from "../entity/Group"
 import { GroupService } from "../service/groupService"
 export class GroupController {
 
-    private groupRepository = AppDataSource.getRepository(Group)
     private groupService = new GroupService()
 
 //Get all groups

@@ -1,5 +1,7 @@
 import { UserController } from "./controller/UserController"
 import { GroupController } from "./controller/GroupController"
+import { DataController } from "./controller/DataController"
+
 
 export const Routes = [
 //ROUTES FOR USER
@@ -64,4 +66,27 @@ export const Routes = [
         controller: GroupController,
         action: "update" // Nom de la méthode dans le UserController
     },
+    //Routes for DATA
+    , {
+        method: "get",
+        route: "/datas",
+        controller: DataController,
+        action: "all"
+    }, {
+        method: "get",
+        route: "/datas/:id",
+        controller: DataController,
+        action: "getOne"
+    }, {
+        method: "post",
+        route: "/datas",
+        controller: DataController,
+        action: "save"
+    }, {
+        method: "delete",
+        route: "/datas/:id",
+        controller: DataController, 
+        action: "remove"
+    }
+    
 ]
