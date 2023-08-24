@@ -2,13 +2,24 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { User } from "./User"
 import { Authorisation } from "./Authorisation"
 
+export enum DataFormat {
+    TEXT = "text",
+    NUMBER = "number",
+    URL = "url",
+    MAIL = "mail",
+    FILE = "file"
+}
+
 @Entity()
 export class Data {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({type: "enum", enum: ["text", "number", "url", "mail", "file"]})
-    type: string
+    @Column({
+        type: "enum",
+        enum: DataFormat
+        })
+    format: DataFormat
 
     @Column({type: "varchar", length: 45})
     name: string

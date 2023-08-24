@@ -1,20 +1,20 @@
-import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column, ManyToMany, JoinTable } from "typeorm"
-import { Data } from "./Data"
+import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column} from "typeorm"
 
 @Entity()
 export class Authorisation {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({type: "enum", enum: ["group", "user"]})
     target: number
 
     @Column()
     target_id: number
 
-    @CreateDateColumn({ name: 'created_at' })
-    createdAt: Date;
+    @CreateDateColumn()
+    created_at: Date
 
-    @UpdateDateColumn({ name: 'updated_at' })
-    updatedAt: Date;
+    @UpdateDateColumn()
+    updated_at: Date
+
 }
