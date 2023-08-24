@@ -9,7 +9,7 @@ export class ContactService{
         try{
             const newContact = this.ContactRepository.create({
                 user1 :{id: user1Id},
-                user2: {id:user2Id}
+                user2: {id: user2Id}
             });
             return await this.ContactRepository.save(newContact);
         }

@@ -91,12 +91,12 @@ export class ContactController{
             const user1Ok = await this.userRepository.findOneBy({id: user1Id});
             const user2Ok = await this.userRepository.findOneBy({id: user2Id});
             if(!user1Ok || !user2Ok || !user1Ok && !user2Ok){
-                response.status(404).send("One of the users, or the two don't exist")   
+                response.status(404).send("One of the users, or the two don't exist") 
             }
             else{
                 //User1 n'est pas le même que User2
                 if(user1Ok === user2Ok){
-                response.status(400).sen("User1 and User2 are the same user")
+                response.status(400).send("User1 and User2 are the same user")
                 }
 
                 else{ //Execution de la fonction
@@ -119,6 +119,7 @@ export class ContactController{
         catch(error){
             console.error("Error in the contact creation:", error);
             response.status(500).send("An error ocurred while fetching contacts");
+            console.log("erreur l123");
         }  
     }
 
