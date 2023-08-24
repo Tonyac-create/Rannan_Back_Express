@@ -1,9 +1,11 @@
 import { UserController } from "./controller/UserController"
 import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
+import { ContactController } from "./controller/ContactController"
 
 
 export const Routes = [
+
 //ROUTES FOR USER
     {
         method: "get",
@@ -66,6 +68,7 @@ export const Routes = [
         controller: GroupController,
         action: "update" // Nom de la méthode dans le UserController
     },
+
     //Routes for DATA
     , {
         method: "get",
@@ -77,7 +80,7 @@ export const Routes = [
         route: "/datas/:id",
         controller: DataController,
         action: "getOne"
-    }, {
+    }, { 
         method: "post",
         route: "/datas",
         controller: DataController,
@@ -87,6 +90,29 @@ export const Routes = [
         route: "/datas/:id",
         controller: DataController, 
         action: "remove"
+    },
+    //Routes for Contact 
+    {
+        method: "get",
+        route: "/contacts",
+        controller: ContactController,
+        action: "all"
+    },  {
+        method: "get",
+        route: "/contacts/:id",
+        controller: ContactController,
+        action: "one"
+    },  {
+        method: "post",
+        route: "/contacts",
+        controller: ContactController,
+        action: "save"
+    },  {
+        method: "delete",
+        route: "/contacts/:id",
+        controller: ContactController,
+        action: "remove"
     }
+    
     
 ]
