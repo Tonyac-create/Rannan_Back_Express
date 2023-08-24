@@ -29,13 +29,11 @@ export class GroupController {
             const groups = await this.groupService.allByCreatorId(creatorId);
 
             if (!groups || groups.length === 0) {
-                response.status(404).send("No groups found for the specified creator");
-            } else {
-                response.send(groups);
-            }
+                throw new Error("No groups found for the specified creator");
+            } 
+            response.send(groups);
         } catch (error) {
-            console.error("Error while fetching groups by creator id:", error);
-            response.status(500).send("An error occurred while fetching groups by creator id");
+            throw new Error("An error occurred while fetching groups by creator id");
         }
     }
 
@@ -75,8 +73,7 @@ export class GroupController {
             return savedGroup; // Return the saved group with a success status
         } catch (error) {
             // Gérer les erreurs, par exemple en renvoyant une réponse d'erreur appropriée
-            console.error("Error while saving the group:", error); // Log the actual error
-            return response.status(500).json({ error: "An error occurred while saving the group" });
+            throw new Error("Error while saving the group"); 
         }
     }
 
@@ -92,8 +89,7 @@ export class GroupController {
             const updatedGroup = await this.groupService.updateGroup(id, name, limited_at);
             return updatedGroup;
         } catch (error) {
-            console.error("Error while updating the group:", error); // Log the actual error
-            return response.status(500).json({ error: "An error occurred while updating the group" });
+            throw new Error("Error while updating the group:"); 
         }
     }
 
@@ -106,8 +102,7 @@ export class GroupController {
             const removalResult = await this.groupService.removeGroup(id);
             return removalResult;
         } catch (error) {
-            console.error("Error while removing the group:", error); // Log the actual error
-            return response.status(500).json({ error: "An error occurred while removing the group" });
+            throw new Error("Error while removing the group"); 
         }
     }
 
