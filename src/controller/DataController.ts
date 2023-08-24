@@ -60,4 +60,17 @@ export class DataController {
         
     }
 
+    async update(request: Request, response: Response, next: NextFunction) {
+        try {
+            const id = +request.params.id
+
+            const updateData = await this.dataService.update(id)
+
+            return updateData;
+
+        } catch (error) {
+            console.log("error", error)
+        }
+    }
+
 }

@@ -74,4 +74,25 @@ export class DataService {
             
         }
     }
+
+    async update(id: number) {
+        try {
+            const updateData = await this.dataRepository.findOne({
+                where: {
+                    id: id
+                }
+            })
+
+            this.dataRepository.merge(updateData)
+
+            if (updateData) return this.dataRepository.save(updateData)
+
+        }
+        catch (error) {
+            console.log("error", error);
+            
+        }
+
+       
+      };
 }
