@@ -33,13 +33,11 @@ export class DataController {
 
 
             const data = await this.dataService.create({ format, name, value })
-            
-            // console.log("data", data);
             return data
         }
         catch (error) {
             console.log(error);
-            
+              
         }
     }
 
