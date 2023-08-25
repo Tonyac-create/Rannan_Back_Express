@@ -105,7 +105,7 @@ export const Routes = [
         action: "all"
     },  {
         method: "get",
-        route: "/contacts/:id",
+        route: "/contact/:id",
         controller: ContactController,
         action: "one"
     },  {

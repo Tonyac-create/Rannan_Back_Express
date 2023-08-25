@@ -59,7 +59,7 @@ export class ContactController{
             const contact = await this.contactService.oneByRelation(id);
 
             //Verification que la relation existe
-            if(!contact){
+            if(!contact || contact.length === 0){
                 response.status(404).send("Contact not found");
             }
 
@@ -73,7 +73,7 @@ export class ContactController{
         }
     }
 
-    
+
 
     //Mettre 2 users en contact
     async save(request: Request, response: Response, next: NextFunction){
