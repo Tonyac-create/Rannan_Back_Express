@@ -9,9 +9,11 @@ export class ContactController{
 
     //Récupérer la liste de contacts d'un utilisateur
     async all(request: Request, response: Response, next: NextFunction){
+        //Récupérer le userId grace au token (à faire)
         const userId = parseInt(request.params.id);
+        console.log(userId);
         try{
-            const contacts =  this.contactService.allByUserId(userId)
+            const contacts =  await this.contactService.allByUserId(userId)
             if (!contacts){
                 response.status(404).send("No contacts found for this user");
             }
@@ -25,7 +27,7 @@ export class ContactController{
         }  
     }
     
-    //Récupérer un contact spécifique de l'user
+    //Récupérer un contact spécifique de l'user à partir de l'id de l'autre user
     async one(request: Request, response: Response, next: NextFunction){
         const userId = parseInt (request.body.user2Id);
         try{
@@ -35,25 +37,14 @@ export class ContactController{
             if (!user){
                 response.status(400).send("The user id is not valid")
             }
+            const contact = await this.contactService.one(userId);
 
-            else{
-                try{
-                    const contact = await this.contactService.one(userId);
-
-                    //Verification que les users sont en contact
-                    if(!contact){
-                        response.status(404).send("Contact not found");
-                    }
-
-                    else{
-                        response.status(200).send(contact);
-                    }
-                }
-                catch(error){
-                    console.error("Cannot fetch contact by userId:", error);
-                    response.status(500).send("An error ocurred while fetching contacts by userId");
-                }
+            //Verification que les users sont en contact
+            if(!contact){
+                response.status(404).send("Contact not found");
             }
+            response.status(200).send(contact);
+                
         }
         catch(error){
             console.error("Cannot fetch contact by userId:", error);
@@ -61,7 +52,7 @@ export class ContactController{
         }
     }  
 
-    //Récupérer un contact spécifique entre 2 users
+    //Récupérer un contact spécifique entre 2 users par id de contact
     async oneByRelation(request: Request, response: Response, next: NextFunction){
         const id = parseInt(request.params.id);
         try{
@@ -82,44 +73,58 @@ export class ContactController{
         }
     }
 
+    
+
     //Mettre 2 users en contact
     async save(request: Request, response: Response, next: NextFunction){
+        //Récupération user1 dans le token (à faire)
         const user1Id = parseInt(request.body.user1Id);
         const user2Id = parseInt(request.body.user2Id);
         try{
-            //Verifications que les userid existent (1 et 2)
+            //Verifications que les user existent (1 et 2)
             const user1Ok = await this.userRepository.findOneBy({id: user1Id});
             const user2Ok = await this.userRepository.findOneBy({id: user2Id});
             if(!user1Ok || !user2Ok || !user1Ok && !user2Ok){
-                response.status(404).send("One of the users, or the two don't exist") 
+                response.status(404).send("One of the users, or the two don't exist")
             }
             else{
                 //User1 n'est pas le même que User2
-                if(user1Ok === user2Ok){
-                response.status(400).send("User1 and User2 are the same user")
+                if(user1Ok.id === user2Ok.id){
+                    response.status(400).send("User1 and User2 are the same user")
                 }
-
-                else{ //Execution de la fonction
-                    try{
+                else{
+                    //Verifier que ces users ne sont pas deja en contact
+                    let usersAreInContact;
+                    const contact = await this.contactService.oneByUsers(user1Id, user2Id);
+                    if (!contact || contact.length === 0){
+                        const contact = await this.contactService.oneByUsers(user2Id, user1Id);
+                        if (!contact || contact.length === 0){
+                            usersAreInContact = false;  
+                        }
+                        else{
+                            usersAreInContact = true;
+                        } 
+                    }
+                    else{
+                        usersAreInContact = true;
+                    }
+                    console.log(usersAreInContact);
+                    if(usersAreInContact === true){
+                        response.status(400).send("Users are already in contact");
+                    }
+                    else{ //Execution de la fonction
                         const contact = await this.contactService.create(user1Id, user2Id);
                         if (!contact){
                             response.status(400).send("Bad request")
-                        }
-                        else{
-                            response.status(201).send(contact).send("users are now contacts")  
-                        }   
-                    }
-                    catch(error){
-                        console.error("Error in the contact creation:", error);
-                        response.status(500).send("An error ocurred while fetching contacts");
-                    }
+                        }                    
+                        response.status(201).send(contact).send("users are now contacts")
+                    }                                         
                 }
             }
         }
         catch(error){
             console.error("Error in the contact creation:", error);
             response.status(500).send("An error ocurred while fetching contacts");
-            console.log("erreur l123");
         }  
     }
 
