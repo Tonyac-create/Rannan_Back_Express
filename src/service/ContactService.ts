@@ -38,7 +38,7 @@ export class ContactService{
     }
 
     //Récupérer un contact spécifique de l'user (à partir de l'id de l'autre user)
-    async one(userId: number): Promise<Contact[]>{
+    async oneByUser(userId: number): Promise<Contact[]>{
         const contact = await this.ContactRepository.find({
             where: {user2: {id: userId}}
         });

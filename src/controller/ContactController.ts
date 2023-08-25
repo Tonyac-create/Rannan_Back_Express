@@ -28,20 +28,25 @@ export class ContactController{
     }
     
     //Récupérer un contact spécifique de l'user à partir de l'id de l'autre user
-    async one(request: Request, response: Response, next: NextFunction){
-        const userId = parseInt (request.body.user2Id);
+    async oneByUser(request: Request, response: Response, next: NextFunction){
+        //Récupérer le userId du token 
+        const user1Id = parseInt(request.params.id);
+        const user2Id = parseInt (request.body.user2Id);
         try{
            
-            //Vérifier que le user de la requette existe
-            const user = await this.userRepository.findOneBy({id: userId});
+            //Vérifier que le user de la requette existe pas de verification de user1 parce que techniquement il vient du token
+            const user = await this.userRepository.findOneBy({id: user2Id});
             if (!user){
                 response.status(400).send("The user id is not valid")
             }
-            const contact = await this.contactService.one(userId);
-
-            //Verification que les users sont en contact
-            if(!contact){
-                response.status(404).send("Contact not found");
+            //execution de la fonction
+            const contact = await this.contactService.oneByUsers(user1Id, user2Id);
+            if(!contact || contact.length === 0){ 
+                const contact = await this.contactService.oneByUsers(user2Id, user1Id);
+                if(!contact || contact.length === 0){
+                    response.status(404).send("Contact not found");
+                }
+                response.status(200).send(contact);
             }
             response.status(200).send(contact);
                 
@@ -72,8 +77,6 @@ export class ContactController{
             response.status(500).send("An error ocurred while fetching contact by its id");
         }
     }
-
-
 
     //Mettre 2 users en contact
     async save(request: Request, response: Response, next: NextFunction){

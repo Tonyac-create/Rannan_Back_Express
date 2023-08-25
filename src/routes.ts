@@ -105,9 +105,9 @@ export const Routes = [
         action: "all"
     },  {
         method: "get",
-        route: "/contact/:id",
+        route: "/contact/:id", //Adapter routes quand token disponible
         controller: ContactController,
-        action: "one"
+        action: "oneByUser"
     },  {
         method: "get",
         route: "/contacts/:id",
