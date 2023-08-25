@@ -19,12 +19,7 @@ export class UserService {
     async oneById(id: number) {
         try {
             // Search a User by ID
-            const one = await this.userRepository.findOne({
-                where: {
-                    id: id
-                },
-            })
-            return one
+            return await this.userRepository.findOne({ where: { id } })
         } catch (error) {
         console.log("🐼 ~ file: UserService.ts:29 ~ oneById ~ error:", error)
         }
