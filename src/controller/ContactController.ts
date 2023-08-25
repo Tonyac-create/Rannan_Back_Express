@@ -7,19 +7,16 @@ export class ContactController{
     private contactService = new ContactService();
     private userRepository = AppDataSource.getRepository(User);
 
-    //Récupérer la liste de contacts d'un utilisateur
+    //Récupérer la liste de contacts d'un utilisateur 
     async all(request: Request, response: Response, next: NextFunction){
         //Récupérer le userId grace au token (à faire)
         const userId = parseInt(request.params.id);
-        console.log(userId);
         try{
             const contacts =  await this.contactService.allByUserId(userId)
-            if (!contacts){
+            if (!contacts || contacts.length === 0){
                 response.status(404).send("No contacts found for this user");
             }
-            else{
                 response.status(200).send(contacts);
-            }
         }
         catch (error){
             console.error("Error while fetching contacts by user id:", error);
@@ -46,10 +43,8 @@ export class ContactController{
                 if(!contact || contact.length === 0){
                     response.status(404).send("Contact not found");
                 }
-                response.status(200).send(contact);
             }
-            response.status(200).send(contact);
-                
+            response.status(200).send(contact);             
         }
         catch(error){
             console.error("Cannot fetch contact by userId:", error);
