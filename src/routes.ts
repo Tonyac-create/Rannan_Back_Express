@@ -100,7 +100,7 @@ export const Routes = [
     // ------------------//ROUTES FOR CONTACT------------------------------
     {
         method: "get",
-        route: "/contacts",
+        route: "/allContacts/:id",
         controller: ContactController,
         action: "all"
     },  {

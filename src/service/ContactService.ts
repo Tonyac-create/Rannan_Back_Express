@@ -24,7 +24,15 @@ export class ContactService{
     //Récupérer tous les contacts d'un user
     async allByUserId(userId: number): Promise<Contact[]>{
         const contacts = await this.ContactRepository.find({
-            where: {user1: {id: userId}}
+            // where: {user1: {id: userId}} //user2 aussi
+            where: [
+                {user1: { id: userId}}, //ou
+                {user2: { id: userId}}
+            ],
+            relations: {
+                user1: true,
+                user2: true,
+            }
         });
         return contacts;
     }
@@ -33,6 +41,17 @@ export class ContactService{
     async one(userId: number): Promise<Contact[]>{
         const contact = await this.ContactRepository.find({
             where: {user2: {id: userId}}
+        });
+        return contact;
+    }
+
+    //Récupérer un contact spécifique entre 2 users
+    async oneByUsers(user1Id: number, user2Id: number): Promise<Contact[]>{
+        const contact = await this.ContactRepository.find({
+            where:{
+                user1: { id: user1Id},
+                user2: { id: user2Id}
+            }
         });
         return contact;
     }
