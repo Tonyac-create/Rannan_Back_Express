@@ -100,15 +100,20 @@ export const Routes = [
     // ------------------//ROUTES FOR CONTACT------------------------------
     {
         method: "get",
-        route: "/contacts",
+        route: "/allContacts/:id",
         controller: ContactController,
         action: "all"
     },  {
         method: "get",
+        route: "/contact/:id", //Adapter routes quand token disponible
+        controller: ContactController,
+        action: "oneByUser"
+    },  {
+        method: "get",
         route: "/contacts/:id",
         controller: ContactController,
-        action: "one"
-    },  {
+        action: "oneByRelation"
+    },{
         method: "post",
         route: "/contacts",
         controller: ContactController,
