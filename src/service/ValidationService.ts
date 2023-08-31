@@ -58,7 +58,7 @@ export class ValidationService{
     //Éliminer une demande de mise en contact
     async remove(id: number): Promise<string>{
         const validationToRemove = await this.ValidationRepostiory.findBy({id});
-        if (!validationToRemove){
+        if (!validationToRemove || validationToRemove.length === 0){
             throw new Error("Validation not found.")
         }
         await this.ValidationRepostiory.remove(validationToRemove);
