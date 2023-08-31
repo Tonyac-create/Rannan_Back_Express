@@ -2,6 +2,7 @@ import { UserController } from "./controller/UserController"
 import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
+import { ValidationController } from "./controller/ValidationController"
 
 
 export const Routes = [
@@ -123,7 +124,14 @@ export const Routes = [
         route: "/contacts/:id",
         controller: ContactController,
         action: "remove"
-    }
+    },
     
+    // ------------------//ROUTES FOR VALIDATION------------------------------
+    {
+        method: "post",
+        route: "/validations",
+        controller: ValidationController,
+        action: "save"
+    }
     
 ]
