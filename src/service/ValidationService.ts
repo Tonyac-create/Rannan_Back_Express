@@ -32,4 +32,32 @@ export class ValidationService{
         });
         return validation;
     }
+
+    //Récupérer une validation spécifique entre 2 users par id de la validation
+    async oneById(id: number): Promise<Validation[]>{
+        const validation = await this.ValidationRepostiory.findBy({id});
+        return validation;
+    }
+
+    //Récupérer toutes les demandes envoyées par un user
+    async allByUserId(userId: number): Promise<Validation[]>{
+        const validations = await this.ValidationRepostiory.find({
+            where: {user: {id: userId}}
+        });
+        return validations;
+    }
+
+    //MaJ d'une validation (répondre à celle-ci)
+    /* async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
+        try{
+            const validation = await this.ValidationRepostiory.update(id, {status: status});
+            return validation;
+        }
+        catch(error){
+            return{
+                success:'ko',
+                message: error.message
+            };
+        }
+    } */
 }

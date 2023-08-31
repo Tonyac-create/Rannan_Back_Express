@@ -132,6 +132,16 @@ export const Routes = [
         route: "/validations",
         controller: ValidationController,
         action: "save"
+    }/* ,{
+        method: "update",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "update"
+    } */,{
+        method: "get",
+        route: "/validations/:userId",
+        controller: ValidationController,
+        action: "allByUser"
     }
     
 ]
