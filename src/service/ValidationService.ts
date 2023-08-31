@@ -55,6 +55,16 @@ export class ValidationService{
         return validations;
     }
 
+    //Éliminer une demande de mise en contact
+    async remove(id: number): Promise<string>{
+        const validationToRemove = await this.ValidationRepostiory.findBy({id});
+        if (!validationToRemove){
+            throw new Error("Validation not found.")
+        }
+        await this.ValidationRepostiory.remove(validationToRemove);
+        return "Validation has been removed";
+    }
+
     //MaJ d'une validation (répondre à celle-ci)
     /* async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
         try{

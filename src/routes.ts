@@ -147,6 +147,11 @@ export const Routes = [
         route: "/validations/:contactId",
         controller: ValidationController,
         action: "allByContact"
+    },{
+        method: "delete",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "remove"
     }
     
 ]

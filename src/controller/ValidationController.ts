@@ -97,6 +97,21 @@ export class ValidationController{
         }
     }
 
+    //Supprimer une validation
+    async remove(request: Request, response: Response, next: NextFunction){
+        const id = parseInt(request.params.id);
+        //Récupérer l'id de l'user depuis le token et verifier qu'il correspond à celui de contact (Attendre token auth)
+        //401 pour non authorisé
+        try{
+            const removeValidation = await this.validationService.remove(id);
+            return removeValidation;
+        }
+        catch(error){
+            console.error("Error in the validation deletion:", error);
+            response.status(500).send("An error ocurred while deletiing the validation");
+        } 
+    }
+
     //Maj de la validation
     /* async update(request: Request, response: Response, next: NextFunction){
         //Récupération de l'id de l'user qui a reçu la requête et de sa réponse
