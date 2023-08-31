@@ -13,6 +13,7 @@ export class DataController {
     }
 
     async getOne(request: Request, response: Response, next: NextFunction) {
+        // Récupération via l'id de la data
         const id = +request.params.id
 
         const data = await this.dataRepository.findOne(
@@ -60,18 +61,6 @@ export class DataController {
         
     }
 
-    // async update(request: Request, response: Response, next: NextFunction) {
-    //     try {
-    //         const id = +request.params.id
-
-    //         const updateData = await this.dataService.update(id)
-
-    //         return updateData;
-
-    //     } catch (error) {
-    //         console.log("error", error)
-    //     }
-    // }
 
     async update(request: Request, response: Response, next: NextFunction) {
         
