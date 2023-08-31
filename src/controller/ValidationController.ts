@@ -80,6 +80,23 @@ export class ValidationController{
         }
     }
 
+    //Récupérer toutes les demandes envoyées reçues par un user
+    async allByContact(request: Request, response: Response, next: NextFunction){
+        //Récupérer l'id de l'user à partir du token (attendre)
+        const contactId = parseInt(request.params.contactId);
+        try{
+            const validations = await this.validationService.allByContactId(contactId);
+            if(!validations || validations.length === 0){
+                response.status(404).send("no validations found");
+            }
+            response.status(200).send(validations);
+        }
+        catch(error){
+            console.error("Error while fetching validations by contact id:", error);
+            response.status(500).send("An error ocurred while fetching validations by contact Id");
+        }
+    }
+
     //Maj de la validation
     /* async update(request: Request, response: Response, next: NextFunction){
         //Récupération de l'id de l'user qui a reçu la requête et de sa réponse

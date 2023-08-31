@@ -47,6 +47,14 @@ export class ValidationService{
         return validations;
     }
 
+    //Récupérer toutes les demandes reçues 
+    async allByContactId(contactId: number): Promise<Validation[]>{
+        const validations = await this.ValidationRepostiory.find({
+            where: {contact: {id: contactId}}
+        });
+        return validations;
+    }
+
     //MaJ d'une validation (répondre à celle-ci)
     /* async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
         try{
