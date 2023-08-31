@@ -66,10 +66,11 @@ export class ValidationService{
     }
 
     //MaJ d'une validation (répondre à celle-ci)
-    /* async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
+    async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
         try{
-            const validation = await this.ValidationRepostiory.update(id, {status: status});
-            return validation;
+            await this.ValidationRepostiory.update(id, {status: status});
+            const validation = await this.oneById(id);
+            return validation;           
         }
         catch(error){
             return{
@@ -77,5 +78,5 @@ export class ValidationService{
                 message: error.message
             };
         }
-    } */
+    }
 }

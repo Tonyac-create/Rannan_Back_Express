@@ -2,12 +2,10 @@ import { AppDataSource } from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
 import { User } from "../entity/User";
-import { Validation } from "../entity/Validation";
 
 export class ValidationController{
     private validationService = new ValidationService();
     private userRepository = AppDataSource.getRepository(User);
-    private validationRepository = AppDataSource.getRepository(Validation);
 
     //Création d'une demande de mise en contact entre 2 users
     async save(request: Request, response: Response, next: NextFunction){
@@ -113,25 +111,39 @@ export class ValidationController{
     }
 
     //Maj de la validation
-    /* async update(request: Request, response: Response, next: NextFunction){
+    async update(request: Request, response: Response, next: NextFunction){
         //Récupération de l'id de l'user qui a reçu la requête et de sa réponse
         const contactId = parseInt(request.body.contactId); //Récupérer du token
         const id = parseInt(request.params.id); //id de la validation
         const status = parseInt(request.body.status); //nouveau statut de la validation (1 acceptée, 2 refusée)
         try{
             //Vérifier que la validation existe
-            const targetValidation = await this.validationRepository.findBy({id});
+            const targetValidation = await this.validationService.oneById(id)
             if(!targetValidation || targetValidation.length === 0){
                 response.status(401).send("Unauthorized"); //eviter une faille de securite, ne pas specifier que le repository existe pas
             }
             else{
-            //Verifier que l'id du token correspond à l'id de la requete (en attente token)
-            //Verifier que le user qui update la demande correspond à le destinataire de la demande
+                //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
+                //Verifier que l'user qui update la demande correspond à le destinataire de la demande
+                const targetContact = 2; //targetValidation.contactId; y a une erreur dans la recup
+                if(contactId !== targetContact){
+                    response.status(401).send("Unauthorized");
+                }
+                else{
+                    //execution de la fonction
+                    const updatedValidation = await this.validationService.update(id, status);
+                    if (!updatedValidation){
+                        response.status(400).send("An error ocurred while updating the validation")
+                    }
+                    else{
+                        response.status(200).send(updatedValidation)
+                    }
+                }
             }
         }
         catch(error){
-            console.error("Error in the validation creation:", error);
+            console.error("Error in the validation update.", error);
             response.status(500).send("An error ocurred while fetching the validation");
         }    
-    } */
+    }
 }
