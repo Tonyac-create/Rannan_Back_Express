@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm"
 import { User } from "./User"
-import { Authorisation } from "./Authorisation"
+import { Authorization } from "./Authorization"
 
 export enum DataFormat {
     TEXT = "text",
@@ -36,8 +36,8 @@ export class Data {
     @ManyToOne(() => User, (user) => user.datas)
     user: User
 
-    @ManyToMany( () => Authorisation)
+    @ManyToMany( () => Authorization)
     @JoinTable()
-    authorisations : Authorisation[]
+    authorisations : Authorization[]
 
 }
