@@ -92,13 +92,13 @@ export const Routes = [
         controller: DataController,
         action: "getOne"
     }, {
-        method: "get", // Récupération de toutes les datas d'un user
-        route: "users/:id/datas",
+        method: "get",
+        route: "/datas/user/:id",  // :id = user_id
         controller: DataController,
-        action: "getAllDatasByUserId"
+        action: "getDatasInUser"
     }, { 
         method: "post", // Création d'une data
-        route: "/datas",
+        route: "/datas/user/:id",
         controller: DataController,
         action: "save"
     }, { 
