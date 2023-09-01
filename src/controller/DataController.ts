@@ -1,11 +1,14 @@
 import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { Data } from "../entity/Data"
+import { User } from "../entity/User"
 import { DataService } from "../service/DataService"
 
 export class DataController {
 
     private dataRepository = AppDataSource.getRepository(Data)
+    private userRepository = AppDataSource.getRepository(User)
+
     private dataService = new DataService()
 
     async all(request: Request, response: Response, next: NextFunction) {
@@ -27,13 +30,35 @@ export class DataController {
         return data
     }
 
+    async getAllDatasByUserId(request: Request, response: Response, next: NextFunction) {
+        try {
+            const id = +request.params.id
+
+            const datas = await this.userRepository.findOne(
+                {
+                    where: { id }
+                }
+            )
+            console.log(datas);
+            
+            if (!datas) { return "datas not exist"}
+    
+            return datas
+        }
+        catch (error) {
+            console.log(error)
+            response.status(500).send("An error occurred while fetching datas by user")            
+        }
+    }
+
+
     async save(request: Request, response: Response, next: NextFunction) {
         try {
             
-            const {format, name, value} = request.body
+            // const {format, name, value} = request.body
+            const id = +request.params.id
 
-
-            const data = await this.dataService.create({ format, name, value })
+            const data = await this.dataService.create(request.body)
             return data
         }
         catch (error) {

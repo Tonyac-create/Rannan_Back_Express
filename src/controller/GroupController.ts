@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { GroupService } from "../service/groupService"
+import { GroupService } from "../service/GroupService"
 export class GroupController {
 
     private groupService = new GroupService()
