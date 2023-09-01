@@ -47,16 +47,22 @@ export class DataController {
 
     async save(request: Request, response: Response, next: NextFunction) {
         try {
-
-            // const {format, name, value} = request.body
-            const id = +request.params.id
-
-            console.log("id du user récupérer dans controller", id);
+            const userId = +request.params.id
             
-            const data = await this.dataService.addDataOneUser(request.body, id)
-            console.log("nouvelle data controller", data);
+            const data = await this.dataService.addDataOneUser(request.body, userId)
             
             return data
+            // // const {format, name, value} = request.body
+            // const userId = +request.params.id
+
+
+            // console.log("id du user récupérer dans controller", userId);
+            
+            // const data = await this.dataService.addDataOneUser(request.body, userId)
+            
+            // console.log("nouvelle data controller", data);
+            
+            // return data
         }
         catch (error) {
             console.log(error);

@@ -60,15 +60,27 @@ export class DataService {
 
     async addDataOneUser(body: DataCreateInterface, userId: number): Promise<Data | User> {
         try {
-            const user_id = await this.userRepository.findOne({where: {id: userId}})
+            const user = await this.userRepository.findOne({
+                where: {id: userId}
+            })
+            
             const newData = this.dataRepository.create(body)
+            newData.user = user
 
-            console.log("User récupérer dans service", user_id);
-            console.log("new Data service", newData);
-            
-            
+            console.log("User récupérer dans service", user);
+            console.log("new Data service", newData);            
             
             return await this.dataRepository.save(newData)
+            // const user_id = await this.userRepository.findOne({
+            //     where: {id: userId}
+            // })
+
+            // const newData = this.dataRepository.create(body)
+
+            // console.log("User récupérer dans service", user_id);
+            // console.log("new Data service", newData);            
+            
+            // return await this.dataRepository.save(newData)
         }
         catch (error) {
             console.log(error);
