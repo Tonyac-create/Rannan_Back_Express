@@ -1,3 +1,4 @@
+import { log } from "util";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 import { User } from "../entity/User"
@@ -44,31 +45,34 @@ export class DataService {
     }
 
     // Récupération de toute les datasd'un user_id
-    async allDatasByUserId(id: number) {
+    async getDatasInUser(userId: number) {
         try {
-            const datas = await this.userRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    },
-                    relations: ["datas"]
-                }
-            )
-            if (datas) return datas
+            const user = await this.userRepository.find({
+                where: { id: userId },
+                relations: ["datas"]
+            })
 
-            return {
-                success: 'ko',
-                message: 'user not found'
-            }
+            if (!user) return 'User not found'
+
+            return user
+
         }
         catch (error) {
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log(error);
+
         }
     }
 
-    async create(body: DataCreateInterface) {
+    async addDataOneUser(body: DataCreateInterface, userId: number): Promise<Data | User> {
         try {
+            const user_id = await this.userRepository.findOne({where: {id: userId}})
             const newData = this.dataRepository.create(body)
+
+            console.log("User récupérer dans service", user_id);
+            console.log("new Data service", newData);
+            
+            
+            
             return await this.dataRepository.save(newData)
         }
         catch (error) {
