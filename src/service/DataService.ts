@@ -1,14 +1,20 @@
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
+import { User } from "../entity/User"
+import { DataCreateInterface } from '../interface/DataInterface';
 
 export class DataService {
 
     private dataRepository = AppDataSource.getRepository(Data)
+    private userRepository = AppDataSource.getRepository(User)
+
 
     // Récupération de toutes les datas crées
     async all() {
         try {
-            return await this.dataRepository.find();
+            return await this.dataRepository.find({
+                relations: ["creator"]
+            });
         }
         catch (error) {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
@@ -31,9 +37,31 @@ export class DataService {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
         }
     }
-    // IMPORTANT A voir problème de type sur mon DataInterface ou data.ts
-    // (body: DataCreateInterface) 
-    async create(body: any) {
+
+    // Récupération de toute les datasd'un user_id
+    async allDatasByUserId(id: number) {
+        try {
+            const datas = await this.userRepository.findOne(
+                {
+                    where: {
+                        id: id,
+                    },
+                    relations: ["datas"]
+                }
+            )
+            if (datas) return datas
+
+            return {
+                success: 'ko',
+                message: 'user not found'
+            }
+        }
+        catch (error) {
+            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+        }
+    }
+
+    async create(body: DataCreateInterface) {
         try {
             const newData = this.dataRepository.create(body)
             return await this.dataRepository.save(newData)
