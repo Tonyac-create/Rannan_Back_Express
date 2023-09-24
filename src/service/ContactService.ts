@@ -1,8 +1,8 @@
 import { AppDataSource } from "../data-source";
 import { Contact } from "../entity/Contact";
-import { ContactCreateInterface } from "../interface/ContactInterface";
 
 export class ContactService{
+
     private ContactRepository = AppDataSource.getRepository(Contact)
 
     async create(body: any){//A modifier typage utiliser interface ?
@@ -10,7 +10,7 @@ export class ContactService{
         try{
             const newContact = this.ContactRepository.create(body);
             
-            return body;
+            return newContact;
         }
         catch (error){
             return{
@@ -32,11 +32,7 @@ export class ContactService{
     async one(id: number){
         try{
             const contact = await this.ContactRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
+                { where: { id: id } }
             );
             if (contact) return contact;
 
@@ -53,11 +49,7 @@ export class ContactService{
     async remove(id: number){
         try{
             const contact = await this.ContactRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
+                { where: { id: id } }
             );
             if (contact){
                 this.ContactRepository.delete(contact)
