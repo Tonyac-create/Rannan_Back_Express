@@ -7,33 +7,18 @@ export class GroupService {
     private userRepository = AppDataSource.getRepository(User)
 
 
-    async allWithCreator() : Promise<Group[]>
+    //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
+    async allGroups() : Promise<Group[]>
     {
-        const groups = await this.groupRepository.find({
-            relations: ['creator'] // Specify the name of the relation to include
-        });
+        const groups = await this.groupRepository.find({});
         return groups;
     }
-
-    async findOne(groupId: number): Promise<Group | undefined> {
-        try {
-            const group = await this.groupRepository.findOne({
-                where: { id: groupId },
-                select: ["id", "name"], // Select only the necessary fields
-                relations: ['creator']
-            });
-            return group;
-        } catch (error) {
-            console.error("Error while fetching group:", error);
-            throw new Error("An error occurred while fetching group");
-        }
-    }
-    
     
     async allByCreatorId(creatorId: number): Promise<Group[]> {
         const groups = await this.groupRepository.find({
-            where: { id: creatorId },
-            select: ["id", "name"] // Select only the necessary fields
+            where: { creator: { id: creatorId } },
+            select: ["id", "name"], // Select only the necessary fields
+            relations: ['creator']
         });
         return groups;
     }
@@ -64,11 +49,11 @@ export class GroupService {
     
     
     
-    async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
+    async saveGroup(name: string,creator_id: number, members: Array<number>) {
         try {
             const group = this.groupRepository.create({
                 name,
-                creator: { id: creatorId }
+                creator_id
             });
             return await this.groupRepository.save(group);
         } catch (error) {
