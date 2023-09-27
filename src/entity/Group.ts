@@ -18,8 +18,4 @@ export class Group {
     @Column()
     limited_at: Date
 
-    @OneToOne(() => User)
-    @JoinColumn()
-    creator: User
-
 }

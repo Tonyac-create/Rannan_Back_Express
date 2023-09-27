@@ -9,16 +9,16 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({type: "varchar", length: 45})
+    @Column({type: "varchar", length: 45, default: ""})
     nickname: string
 
-    @Column({type: "varchar", length: 70})
+    @Column({type: "varchar", length: 70, default: ""})
     password: string
 
-    @Column({type: "varchar", length: 45, unique: true})
+    @Column({type: "varchar", length: 45,default: "", unique: true})
     email: string
 
-    @Column()
+    @Column({default: 0})
     avatar_id: number
 
     @CreateDateColumn()
