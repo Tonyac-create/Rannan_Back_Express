@@ -1,6 +1,5 @@
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
-import { DataCreateInterface } from '../interface/DataInterface';
 
 export class DataService {
 
@@ -18,14 +17,9 @@ export class DataService {
     async getOne(id: number) {
         try {
             const data = await this.dataRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
+                { where: { id: id } }
             )
             if (data) return data
-
             return {
                 success: 'ko',
                 message: 'user not found'
@@ -35,6 +29,7 @@ export class DataService {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
         }
     }
+
             // IMPORTANT A voir problème de type sur mon DataInterface ou data.ts
             // (body: DataCreateInterface) 
     async create(body: any) {
@@ -50,17 +45,10 @@ export class DataService {
     async remove(id: number) {
         try {
             const deleteData = await this.dataRepository.findOne(
-                {
-                    where: {
-                        id: id
-                    }
-                }
+                { where: { id: id } }
             )
-
             if (deleteData) {
-
                 return await this.dataRepository.remove(deleteData);
-
             } else {
                 return {
                     success: 'ko',
@@ -112,7 +100,7 @@ export class DataService {
         catch (error) {
             console.log("error:", error)
         }
-        
-    }
 
+       
+      };
 }

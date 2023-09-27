@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { GroupService } from "../service/groupService"
+import { GroupService } from "../service/GroupService"
 export class GroupController {
 
     private groupService = new GroupService()
@@ -47,13 +47,12 @@ export class GroupController {
 
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
-            const { name, creatorId } = request.body;
-            const savedGroup = await this.groupService.saveGroup(name, creatorId); // Pass the individual arguments
+            const newGroup = request.body;
+            const savedGroup = await this.groupService.saveGroup(newGroup); // Pass the individual arguments
             return savedGroup; // Return the saved group with a success status
         } catch (error) {
             // Gérer les erreurs, par exemple en renvoyant une réponse d'erreur appropriée
             console.error("Error while saving the group:", error); // Log the actual error
-
             return response.status(500).json({ error: "An error occurred while saving the group" });
         }
     }
