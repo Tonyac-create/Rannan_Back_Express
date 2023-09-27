@@ -6,16 +6,15 @@ export class GroupController {
 
 //Get all groups
     async all(request: Request, response: Response, next: NextFunction) {
-
-        return this.groupService.allWithCreator()
+        return this.groupService.allGroups()
     }
 
 //Get group by creator id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
-        const creatorId = parseInt(request.params.id);
+        const creator_id = parseInt(request.params.id);
 
         try {
-            const groups = await this.groupService.allByCreatorId(creatorId);
+            const groups = await this.groupService.allByCreatorId(creator_id);
 
             if (!groups || groups.length === 0) {
                 response.status(404).send("No groups found for the specified creator");
@@ -47,8 +46,8 @@ export class GroupController {
 
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
-            const { name, creatorId } = request.body;
-            const savedGroup = await this.groupService.saveGroup(name, creatorId); // Pass the individual arguments
+            const { name, creator_id, members } = request.body;
+            const savedGroup = await this.groupService.saveGroup(name, creator_id, members); // Pass the individual arguments
             return savedGroup; // Return the saved group with a success status
         } catch (error) {
             // Gérer les erreurs, par exemple en renvoyant une réponse d'erreur appropriée
