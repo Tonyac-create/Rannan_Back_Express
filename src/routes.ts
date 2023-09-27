@@ -2,6 +2,7 @@ import { UserController } from "./controller/UserController"
 import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
+import { ValidationController } from "./controller/ValidationController"
 
 
 export const Routes = [
@@ -89,7 +90,7 @@ export const Routes = [
         method: "put",
         route: "/datas/:id",
         controller: DataController,
-        action: "save"
+        action: "update"
     }, {
         method: "delete",
         route: "/datas/:id",
@@ -100,15 +101,20 @@ export const Routes = [
     // ------------------//ROUTES FOR CONTACT------------------------------
     {
         method: "get",
-        route: "/contacts",
+        route: "/allContacts/:id",
         controller: ContactController,
         action: "all"
     },  {
         method: "get",
+        route: "/contact/:id", //Adapter routes quand token disponible
+        controller: ContactController,
+        action: "oneByUser"
+    },  {
+        method: "get",
         route: "/contacts/:id",
         controller: ContactController,
-        action: "one"
-    },  {
+        action: "oneByRelation"
+    },{
         method: "post",
         route: "/contacts",
         controller: ContactController,
@@ -118,7 +124,34 @@ export const Routes = [
         route: "/contacts/:id",
         controller: ContactController,
         action: "remove"
-    }
+    },
     
+    // ------------------//ROUTES FOR VALIDATION------------------------------
+    {
+        method: "post",
+        route: "/validations",
+        controller: ValidationController,
+        action: "save"
+    },{
+        method: "put",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "update"
+    },{
+        method: "get",
+        route: "/sentvalidations/:userId",
+        controller: ValidationController,
+        action: "allByUser"
+    },{
+        method: "get",
+        route: "/validations/:contactId",
+        controller: ValidationController,
+        action: "allByContact"
+    },{
+        method: "delete",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "remove"
+    }
     
 ]

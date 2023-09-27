@@ -60,17 +60,29 @@ export class DataController {
         
     }
 
+    // async update(request: Request, response: Response, next: NextFunction) {
+    //     try {
+    //         const id = +request.params.id
+
+    //         const updateData = await this.dataService.update(id)
+
+    //         return updateData;
+
+    //     } catch (error) {
+    //         console.log("error", error)
+    //     }
+    // }
+
     async update(request: Request, response: Response, next: NextFunction) {
-        try {
-            const id = +request.params.id
+        
+        const id = +request.params.id
 
-            const updateData = await this.dataService.update(id)
+        const updateData = await this.dataRepository.findOne({ where: { id } })
 
-            return updateData;
+        this.dataRepository.merge(updateData, request.body);
+        await this.dataRepository.save(updateData);
+        return updateData
+      };
 
-        } catch (error) {
-            console.log("error", error)
-        }
-    }
 
 }

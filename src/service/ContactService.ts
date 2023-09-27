@@ -5,18 +5,20 @@ export class ContactService{
 
     private ContactRepository = AppDataSource.getRepository(Contact)
 
-    async create(body: any){//A modifier typage utiliser interface ?
-        console.log("ici le body de la requete "+body)
+    //Création d'un lien de contact entre 2 users
+    async create(user1Id: number, user2Id: number) : Promise<Contact | {success: string; message: string}> {
         try{
-            const newContact = this.ContactRepository.create(body);
-            
-            return newContact;
+            const newContact = this.ContactRepository.create({
+                user1 :{id: user1Id},
+                user2: {id: user2Id}
+            });
+            return await this.ContactRepository.save(newContact);
         }
         catch (error){
             return{
                 success:'ko',
                 message: error.message
-            }
+            };
         }
     }
 
@@ -32,7 +34,11 @@ export class ContactService{
     async one(id: number){
         try{
             const contact = await this.ContactRepository.findOne(
-                { where: { id: id } }
+                {
+                    where: {
+                        id: id,
+                    }
+                }
             );
             if (contact) return contact;
 
@@ -49,7 +55,11 @@ export class ContactService{
     async remove(id: number){
         try{
             const contact = await this.ContactRepository.findOne(
-                { where: { id: id } }
+                {
+                    where: {
+                        id: id,
+                    }
+                }
             );
             if (contact){
                 this.ContactRepository.delete(contact)
