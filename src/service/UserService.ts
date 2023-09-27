@@ -93,21 +93,26 @@ export class UserService {
             console.log("🐼UserService ~ remove ~ error:", error)
         }
     }
-    async update(id: number) {
-        try {
-            const updateUser = await this.userRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
-            );
-            if (updateUser) return this.userRepository.merge(updateUser);
 
-            return {
-                success: 'ko',
-                message: 'user not found'
-            }
+    async update(id: number, body: any) {
+        try {
+            const userToUpdate = await this.userRepository.findOne(
+                {where: { id: id }}
+            );
+            if (!userToUpdate) {
+                return {
+                    success: 'ko',
+                    message: 'user not found'
+                }
+            };
+            
+            userToUpdate.nickname = body.nickname
+            userToUpdate.email = body.email
+            userToUpdate.password = body.password
+            userToUpdate.avatar_id = body.avatar_id
+
+            const updatedUser = await this.userRepository.save(userToUpdate)
+            return updatedUser
         }
         catch (error) {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
