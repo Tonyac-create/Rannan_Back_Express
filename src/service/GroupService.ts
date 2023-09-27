@@ -19,9 +19,8 @@ export class GroupService {
     
     async allByCreatorId(creatorId: number): Promise<Group[]> {
         const groups = await this.groupRepository.find({
-            where: { creator: { id: creatorId } },
-            select: ["id", "name"], // Select only the necessary fields
-            relations: ['creator']
+            where: { id: creatorId },
+            select: ["id", "name"] // Select only the necessary fields
         });
         return groups;
     }
@@ -49,12 +48,9 @@ export class GroupService {
         }
     } 
 
-    async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
+    async saveGroup(body: any) {
         try {
-            const group = this.groupRepository.create({
-                name,
-                creator: { id: creatorId }
-            });
+            const group = this.groupRepository.create(body);
             return await this.groupRepository.save(group);
         } catch (error) {
             return {
