@@ -5,7 +5,7 @@ export class AuthorizationService{
     private AuthorizationRepository = AppDataSource.getRepository(Authorization)
 
     //Création d'une autorisation
-    async create(target: number, target_id:number) : Promise<Authorization | {success: string; message: string}>{
+    async create(target: string, target_id:number) : Promise<Authorization | {success: string; message: string}>{
         try{
             const newAuthorization = this.AuthorizationRepository.create({
                 target: target,

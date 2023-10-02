@@ -78,7 +78,7 @@ export class UserController {
             const user = await this.userService.oneById(+request.params.id)
             if (user) {
                 // call update service
-                return this.userService.update(user, request.body);
+                return this.userService.update(user.id, request.body);
             }
             // IF not found user
             return {

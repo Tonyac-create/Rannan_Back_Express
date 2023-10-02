@@ -25,6 +25,7 @@ export class GroupController {
         const creator_id = parseInt(request.params.id);
 
         try {
+            return creator_id
             const groups = await this.groupService.allByCreatorId(creator_id);
 
             if (!groups || groups.length === 0) {
@@ -67,8 +68,8 @@ export class GroupController {
 
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
-            const { name, creator_id, members } = request.body;
-            const savedGroup = await this.groupService.saveGroup(name, creator_id, members); // Pass the individual arguments
+            const { name, creator_id } = request.body;
+            const savedGroup = await this.groupService.saveGroup(name, creator_id); // Pass the individual arguments
             return savedGroup; // Return the saved group with a success status
         } catch (error) {
             // Gérer les erreurs, par exemple en renvoyant une réponse d'erreur appropriée

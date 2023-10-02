@@ -8,11 +8,8 @@ export class GroupService {
     private userRepository = AppDataSource.getRepository(User)
 
 
-    //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
-    async allGroups() : Promise<Group[]>
     async allGroups() : Promise<Group[]>
     {
-        const groups = await this.groupRepository.find({});
         const groups = await this.groupRepository.find({});
         return groups;
     }
@@ -20,9 +17,7 @@ export class GroupService {
     async findOne(groupId: number): Promise<Group | undefined> {
         try {
             const group = await this.groupRepository.findOne({
-                where: { id: groupId },
-                select: ["id", "name"], // Select only the necessary fields
-                relations: ['creator']
+                where: { id: groupId }
             });
             return group;
         } catch (error) {
@@ -33,9 +28,7 @@ export class GroupService {
     
     
     async allByCreatorId(creator_id: number): Promise<Group[]> {
-        const groups = await this.groupRepository.find({
-            where: { creator_id: creator_id }
-        });
+        const groups = await this.groupRepository.find({where: { creatorId: creator_id }});
         return groups;
     }
 
@@ -67,12 +60,7 @@ export class GroupService {
     
     async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
         try {
-            const group = this.groupRepository.create({
-                name,
-                creator: { id: creatorId }
-            });
-    
-            return await this.groupRepository.save(group);
+            return {success: "no", message: "En cours de developpement."};
         } catch (error) {
             return {
                 success: 'ko',
@@ -100,6 +88,10 @@ export class GroupService {
         }
         await this.groupRepository.remove(groupToRemove);
         return "Group has been removed";
+    }
+
+    async deleteUserToGroup(userId: number, groupId: number): Promise<string> {
+        return "En cour de développement";
     }
 
 }

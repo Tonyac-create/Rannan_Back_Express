@@ -27,20 +27,23 @@ export class User {
     @UpdateDateColumn()
     updated_at: Date
 
-    @OneToMany(() => Validation, (validation) => validation.user)
+    @OneToMany(() => Validation, (validation) => validation.userId)
     user: User[]
 
-    @OneToMany(() => Validation, (validation) => validation.contact)
+    @OneToMany(() => Validation, (validation) => validation.contactId)
     contact: User[]
 
-    @OneToMany(() => Contact, (contact) => contact.user1)
+    @OneToMany(() => Contact, (contact) => contact.user1Id)
     users1: Contact[]
 
-    @OneToMany(() => Contact, (contact) => contact.user2)
+    @OneToMany(() => Contact, (contact) => contact.user2Id)
     users2: Contact[]
 
-    @OneToMany ( () => Data, (data) => data.user)
+    @OneToMany ( () => Data, (data) => data.userId)
     datas: Data[]
+
+    @OneToMany ( () => Group, (group) => group.creatorId)
+    groupsCreated: Group[]
 
     @ManyToMany( () => Group)
     @JoinTable()

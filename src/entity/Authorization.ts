@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column} from "typeorm"
+import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column, ManyToMany, JoinTable} from "typeorm"
+import { Data } from "./Data"
 
 @Entity()
 export class Authorization {
@@ -6,7 +7,7 @@ export class Authorization {
     id: number
 
     @Column({type: "enum", enum: ["group", "user"]})
-    target: number
+    target: string
 
     @Column()
     target_id: number
@@ -16,5 +17,9 @@ export class Authorization {
 
     @UpdateDateColumn()
     updated_at: Date
+
+    @ManyToMany( () => Data)
+    @JoinTable()
+    datas : Data[]
 
 }

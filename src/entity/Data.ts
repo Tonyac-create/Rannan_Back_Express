@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, ManyToMany, JoinTable, JoinColumn } from "typeorm"
 import { User } from "./User"
 import { Authorization } from "./Authorization"
 
@@ -19,7 +19,7 @@ export class Data {
         type: "enum",
         enum: DataFormat
         })
-    format: DataFormat
+    type: DataFormat
 
     @Column({type: "varchar", length: 45})
     name: string
@@ -33,11 +33,15 @@ export class Data {
     @UpdateDateColumn()
     updated_at: Date
 
+    @Column()
+    userId: number
+
     @ManyToOne(() => User, (user) => user.datas)
+    @JoinColumn({name: "userId"})
     user: User
 
     @ManyToMany( () => Authorization)
     @JoinTable()
-    authorisations : Authorization[]
+    authorizations : Authorization[]
 
 }

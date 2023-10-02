@@ -8,9 +8,9 @@ export class ValidationService{
     async create(userId: number, contactId: number, status: number) : Promise<Validation | {success: string; message: string}>{
         try{
             const newValidation = this.ValidationRepostiory.create({
-                user: {id: userId},
-                contact: {id: contactId},
-                status: status
+                userId: {id: userId},
+                contactId: {id: contactId},
+                validation: status
             });
             return await this.ValidationRepostiory.save(newValidation);
         }
@@ -26,8 +26,8 @@ export class ValidationService{
     async oneByUsers(userId: number, contactId: number): Promise<Validation[]>{
         const validation = await this.ValidationRepostiory.find({
             where:{
-                user: {id: userId},
-                contact: {id: contactId}
+                userId: {id: userId},
+                contactId: {id: contactId}
             }
         });
         return validation;
@@ -42,7 +42,7 @@ export class ValidationService{
     //Récupérer toutes les demandes envoyées par un user
     async allByUserId(userId: number): Promise<Validation[]>{
         const validations = await this.ValidationRepostiory.find({
-            where: {user: {id: userId}}
+            where: {userId: {id: userId}}
         });
         return validations;
     }
@@ -50,7 +50,7 @@ export class ValidationService{
     //Récupérer toutes les demandes reçues 
     async allByContactId(contactId: number): Promise<Validation[]>{
         const validations = await this.ValidationRepostiory.find({
-            where: {contact: {id: contactId}}
+            where: {contactId: {id: contactId}}
         });
         return validations;
     }
@@ -68,7 +68,7 @@ export class ValidationService{
     //MaJ d'une validation (répondre à celle-ci)
     async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
         try{
-            await this.ValidationRepostiory.update(id, {status: status});
+            await this.ValidationRepostiory.update(id, {validation: status});
             const validation = await this.oneById(id);
             return validation;           
         }
