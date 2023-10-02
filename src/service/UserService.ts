@@ -62,13 +62,25 @@ export class UserService {
         }
     }
 
-    async update(user: User, body: object) {
+    async update(id: number, body: any) {
         try {
-            // Update user data
-            const updateDone = this.userRepository.merge(user, body)
-            // Save user data on db and return
-            await this.userRepository.save(updateDone)
-            return updateDone
+            const userToUpdate = await this.userRepository.findOne(
+                {where: { id: id }}
+            );
+            if (!userToUpdate) {
+                return {
+                    success: 'ko',
+                    message: 'user not found'
+                }
+            };
+            
+            userToUpdate.nickname = body.nickname
+            userToUpdate.email = body.email
+            userToUpdate.password = body.password
+            userToUpdate.avatar_id = body.avatar_id
+
+            const updatedUser = await this.userRepository.save(userToUpdate)
+            return updatedUser
         }
         catch (error) {
             console.log("🐼 ~ file: UserService.ts:79 ~ update ~ error:", error)

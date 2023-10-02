@@ -1,11 +1,14 @@
 import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
 import { Data } from "../entity/Data"
+import { User } from "../entity/User"
 import { DataService } from "../service/DataService"
 
 export class DataController {
 
     private dataRepository = AppDataSource.getRepository(Data)
+    private userRepository = AppDataSource.getRepository(User)
+
     private dataService = new DataService()
 
     async all(request: Request, response: Response, next: NextFunction) {
@@ -13,6 +16,7 @@ export class DataController {
     }
 
     async getOne(request: Request, response: Response, next: NextFunction) {
+        // Récupération via l'id de la data
         const id = +request.params.id
 
         const data = await this.dataRepository.findOne(
@@ -21,23 +25,48 @@ export class DataController {
             }
         )
 
-        if (!data) { return "data not fund"}
+        if (!data) { return "data not fund" }
 
         return data
     }
 
-    async save(request: Request, response: Response, next: NextFunction) {
+    async getDatasInUser(request: Request, response: Response, next: NextFunction) {
         try {
-            
-            const {format, name, value} = request.body
 
+            const userId = +request.params.id
+            const datas = await this.dataService.getDatasInUser(userId)
+            return datas
 
-            const data = await this.dataService.create({ format, name, value })
-            return data
         }
         catch (error) {
             console.log(error);
-              
+
+        }
+    }
+
+
+    async save(request: Request, response: Response, next: NextFunction) {
+        try {
+            const userId = +request.params.id
+            
+            const data = await this.dataService.addDataOneUser(request.body, userId)
+            
+            return data
+            // // const {format, name, value} = request.body
+            // const userId = +request.params.id
+
+
+            // console.log("id du user récupérer dans controller", userId);
+            
+            // const data = await this.dataService.addDataOneUser(request.body, userId)
+            
+            // console.log("nouvelle data controller", data);
+            
+            // return data
+        }
+        catch (error) {
+            console.log(error);
+
         }
     }
 
@@ -46,35 +75,23 @@ export class DataController {
             const id = +request.params.id
 
             let dataToRemove = await this.dataRepository.findOneBy({ id })
-    
+
             if (!dataToRemove) return "this data not exist"
-    
+
             await this.dataRepository.remove(dataToRemove)
-    
+
             return "data has been removed"
         }
         catch (error) {
             console.log(error);
-            
+
         }
-        
+
     }
 
-    // async update(request: Request, response: Response, next: NextFunction) {
-    //     try {
-    //         const id = +request.params.id
-
-    //         const updateData = await this.dataService.update(id)
-
-    //         return updateData;
-
-    //     } catch (error) {
-    //         console.log("error", error)
-    //     }
-    // }
 
     async update(request: Request, response: Response, next: NextFunction) {
-        
+
         const id = +request.params.id
 
         const updateData = await this.dataRepository.findOne({ where: { id } })
@@ -82,7 +99,7 @@ export class DataController {
         this.dataRepository.merge(updateData, request.body);
         await this.dataRepository.save(updateData);
         return updateData
-      };
+    };
 
 
 }
