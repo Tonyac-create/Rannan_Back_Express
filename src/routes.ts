@@ -2,6 +2,7 @@ import { UserController } from "./controller/UserController"
 import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
+import { ValidationController } from "./controller/ValidationController"
 
 
 export const Routes = [
@@ -81,27 +82,32 @@ export const Routes = [
 
     // ------------------//ROUTES FOR DATA------------------------------
     , {
-        method: "get",
+        method: "get", // Récupération de toutes les datas
         route: "/datas",
         controller: DataController,
         action: "all"
     }, {
-        method: "get",
+        method: "get", // Récupération d'une data
         route: "/datas/:id",
         controller: DataController,
         action: "getOne"
+    }, {
+        method: "get", // Récupération de toutes les datas d'un utilisateur
+        route: "/datas/user/:id",  // :id = user_id
+        controller: DataController,
+        action: "getDatasInUser"
     }, { 
-        method: "post",
-        route: "/datas",
+        method: "post", // Création d'une data pour un utilisateur
+        route: "users/:id/data",
         controller: DataController,
         action: "save"
     }, { 
-        method: "put",
+        method: "put", // Modification d'une data
         route: "/datas/:id",
         controller: DataController,
         action: "update"
     }, {
-        method: "delete",
+        method: "delete", // Suppression d'une data
         route: "/datas/:id",
         controller: DataController, 
         action: "remove"
@@ -110,15 +116,20 @@ export const Routes = [
     // ------------------//ROUTES FOR CONTACT------------------------------
     {
         method: "get",
-        route: "/contacts",
+        route: "/allContacts/:id",
         controller: ContactController,
         action: "all"
     },  {
         method: "get",
+        route: "/contact/:id", //Adapter routes quand token disponible
+        controller: ContactController,
+        action: "oneByUser"
+    },  {
+        method: "get",
         route: "/contacts/:id",
         controller: ContactController,
-        action: "one"
-    },  {
+        action: "oneByRelation"
+    },{
         method: "post",
         route: "/contacts",
         controller: ContactController,
@@ -128,7 +139,34 @@ export const Routes = [
         route: "/contacts/:id",
         controller: ContactController,
         action: "remove"
-    }
+    },
     
+    // ------------------//ROUTES FOR VALIDATION------------------------------
+    {
+        method: "post",
+        route: "/validations",
+        controller: ValidationController,
+        action: "save"
+    },{
+        method: "put",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "update"
+    },{
+        method: "get",
+        route: "/sentvalidations/:userId",
+        controller: ValidationController,
+        action: "allByUser"
+    },{
+        method: "get",
+        route: "/validations/:contactId",
+        controller: ValidationController,
+        action: "allByContact"
+    },{
+        method: "delete",
+        route: "/validation/:id",
+        controller: ValidationController,
+        action: "remove"
+    }
     
 ]

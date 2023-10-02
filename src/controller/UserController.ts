@@ -49,7 +49,7 @@ export class UserController {
     async update(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id;
-            const updatedUser = await this.userService.update(id); // Appel avec un seul argument
+            const updatedUser = await this.userService.update(id, request.body); // Appel avec un seul argument
             return updatedUser;
         } catch (error) {
             console.log("🐼UserController ~ update ~ error:", error);

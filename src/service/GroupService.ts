@@ -9,11 +9,9 @@ export class GroupService {
 
 
     //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
-    async allWithCreator() : Promise<Group[]>
+    async allGroups() : Promise<Group[]>
     {
-        const groups = await this.groupRepository.find({
-            relations: ['creator'] // Specify the name of the relation to include
-        });
+        const groups = await this.groupRepository.find({});
         return groups;
     }
 
@@ -32,11 +30,9 @@ export class GroupService {
     }
     
     
-    async allByCreatorId(creatorId: number): Promise<Group[]> {
+    async allByCreatorId(creator_id: number): Promise<Group[]> {
         const groups = await this.groupRepository.find({
-            where: { creator: { id: creatorId } },
-            select: ["id", "name"], // Select only the necessary fields
-            relations: ['creator']
+            where: { creator_id: creator_id }
         });
         return groups;
     }
@@ -98,7 +94,7 @@ export class GroupService {
     }
     
     
-    async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
+    async saveGroup(name: string,creator_id: number, members: Array<number>) {
         try {
             const creator = await this.userRepository.findOneBy({id:creatorId}); // Get the user object
             if (!creator) {

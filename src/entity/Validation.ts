@@ -14,7 +14,7 @@ export class Validation {
     contact: User
 
     @Column({type: "tinyint", default: 0})
-    validation: number
+    status: number
 
     @CreateDateColumn()
     created_at: Date
