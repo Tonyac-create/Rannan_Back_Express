@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { Group } from "../entity/Group"
 import { User } from "../entity/User"
+
 export class GroupService {
 
     private groupRepository = AppDataSource.getRepository(Group)
@@ -9,16 +10,31 @@ export class GroupService {
 
     //////////////////////A MODIFIER POUR RENVOYER UNIQUEMENT LE CREATOR_ID/////////////////////////
     async allGroups() : Promise<Group[]>
+    async allGroups() : Promise<Group[]>
     {
+        const groups = await this.groupRepository.find({});
         const groups = await this.groupRepository.find({});
         return groups;
     }
+
+    async findOne(groupId: number): Promise<Group | undefined> {
+        try {
+            const group = await this.groupRepository.findOne({
+                where: { id: groupId },
+                select: ["id", "name"], // Select only the necessary fields
+                relations: ['creator']
+            });
+            return group;
+        } catch (error) {
+            console.error("Error while fetching group:", error);
+            throw new Error("An error occurred while fetching group");
+        }
+    }
     
-    async allByCreatorId(creatorId: number): Promise<Group[]> {
+    
+    async allByCreatorId(creator_id: number): Promise<Group[]> {
         const groups = await this.groupRepository.find({
-            where: { creator: { id: creatorId } },
-            select: ["id", "name"], // Select only the necessary fields
-            relations: ['creator']
+            where: { creator_id: creator_id }
         });
         return groups;
     }
@@ -40,7 +56,7 @@ export class GroupService {
             userToUpdate.groups = [...userToUpdate.groups, group]; // Add user to the existing groups
             await this.userRepository.save(userToUpdate);
     
-            return userToUpdate.groups.find(g => g.id === groupId);
+            return "Utilisateur ajouté au groupe";
         } catch (error) {
             console.error("Error while adding user to group:", error);
             throw new Error("An error occurred while adding user to group");
@@ -49,12 +65,13 @@ export class GroupService {
     
     
     
-    async saveGroup(name: string,creator_id: number, members: Array<number>) {
+    async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
         try {
             const group = this.groupRepository.create({
                 name,
-                creator_id
+                creator: { id: creatorId }
             });
+    
             return await this.groupRepository.save(group);
         } catch (error) {
             return {
@@ -63,6 +80,7 @@ export class GroupService {
             };
         }
     }
+    
     
     async updateGroup(id: number, name: string, limited_at: Date | null): Promise<Group | undefined> {
         const groupToUpdate = await this.groupRepository.findOneBy({ id })
