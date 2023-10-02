@@ -1,6 +1,8 @@
+import { DataFormat } from "../entity/Data";
+
 export interface DataCreateInterface {
 
-    format: string;
+    format: DataFormat;
     name: string;
     value: string;
 }
