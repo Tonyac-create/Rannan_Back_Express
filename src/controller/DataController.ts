@@ -18,25 +18,16 @@ export class DataController {
     async getOne(request: Request, response: Response, next: NextFunction) {
         // Récupération via l'id de la data
         const id = +request.params.id
-
-        const data = await this.dataRepository.findOne(
-            {
-                where: { id }
-            }
-        )
-
+        const data = await this.dataRepository.findOne({where: { id }})
         if (!data) { return "data not fund" }
-
         return data
     }
 
     async getDatasInUser(request: Request, response: Response, next: NextFunction) {
         try {
-
             const userId = +request.params.id
             const datas = await this.dataService.getDatasInUser(userId)
             return datas
-
         }
         catch (error) {
             console.log(error);

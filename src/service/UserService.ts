@@ -12,85 +12,53 @@ export class UserService {
             return this.userRepository.find()
         }
         catch (error) {
-            console.log("🐼UserService ~ all ~ error:", error)
+        console.log("🐼 ~ file: UserService.ts:15 ~ all ~ error:", error)
         }
     }
 
-    async one(id: number) {
+    async oneById(id: number) {
         try {
             // Search a User by ID
-            const user = await this.userRepository.findOne({
-                where: {
-                    id: id
-                },
-            })
-            // If ID is found
-            if (user) return user
-            // If ID is not found
-            return {
-                success: "ko",
-                message: "user not found"
-            }
+            return await this.userRepository.findOne({ where: { id } })
         } catch (error) {
-            console.log("🐼UserService ~ one ~ error:", error)
+        console.log("🐼 ~ file: UserService.ts:29 ~ oneById ~ error:", error)
         }
     }
 
-    async create(body: UserCreateInterface) {
+    async oneByMail(body: UserCreateInterface) {
         try {
-            // Check if email is already used
+            // Search a User by email
             const user = await this.userRepository.findOne({
                 where: {
                     email: body.email
                 },
             })
-            // IF email not exist
-            if (!user) {
-                // New User Create
-                const newUser = this.userRepository.create(body)
-                // New User Save on db
-                return await this.userRepository.save(newUser)
-            }
-            // IF email already exist
-            return {
-                success: `ko`,
-                message: `email '${body.email}' already use`
-            }
+            return user
+        } catch (error) {
+        console.log("🐼 ~ file: UserService.ts:43 ~ oneByMail ~ error:", error)
+        }
+    }
+
+    async create(body: UserCreateInterface) {
+        try {
+            // Create New User
+            const newUser = this.userRepository.create(body)
+            // Save New User on db
+            await this.userRepository.save(newUser)
+            return newUser
         }
         catch (error) {
-            console.log("🐼UserService ~ create ~ error:", error)
+        console.log("🐼 ~ file: UserService.ts:56 ~ create ~ error:", error)
         }
     }
 
     async remove(id: number) {
         try {
-            // Search a User by ID
-            const user = await this.userRepository.findOne({
-                where: {
-                    id: id
-                },
-            })
-            // IF ID is found
-            if (user) {
-                // save user name for return message
-                const message = {
-                    success: "ok",
-                    message: `user ${user.nickname} deleted`
-                }
-                // Delete user by ID
-                await this.userRepository.delete(id)
-                // return message with user's nickname
-                return message
-            }
-            // IF ID is not found
-            return {
-                success: "ko",
-                message: "user not found"
-            }
-            
+            // Delete user by ID
+            await this.userRepository.delete(id)
         }
         catch (error) {
-            console.log("🐼UserService ~ remove ~ error:", error)
+        console.log("🐼 ~ file: UserService.ts:66 ~ remove ~ error:", error)
         }
     }
 
@@ -115,7 +83,7 @@ export class UserService {
             return updatedUser
         }
         catch (error) {
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log("🐼 ~ file: UserService.ts:79 ~ update ~ error:", error)
         }
         
     }

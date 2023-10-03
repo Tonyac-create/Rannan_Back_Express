@@ -7,10 +7,10 @@ export class Contact {
     id: number
 
     @ManyToOne(() => User, (user) => user.id)
-    user1: User
+    user1Id: User
 
     @ManyToOne(() => User, (user) => user.id)
-    user2: User
+    user2Id: User
 
     @CreateDateColumn()
     created_at: Date

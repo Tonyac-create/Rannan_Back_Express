@@ -25,41 +25,25 @@ export class DataService {
     // Récupération d'une data par son id
     async getOne(id: number) {
         try {
-            const data = await this.dataRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
-            )
-            if (data) return data
-
-            return {
-                success: 'ko',
-                message: 'user not found'
-            }
+            return await this.dataRepository.findOne({ where: { id: id } })
         }
         catch (error) {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
         }
     }
 
-    // Récupération de toute les datasd'un user_id
+    // Récupération de toute les datas d'un user_id
     async getDatasInUser(userId: number) {
         try {
             const user = await this.userRepository.find({
                 where: { id: userId },
                 relations: ["datas"]
             })
-
             if (!user) return 'User not found'
-
             return user
-
         }
         catch (error) {
             console.log(error);
-
         }
     }
 
@@ -68,24 +52,9 @@ export class DataService {
             const user = await this.userRepository.findOne({
                 where: {id: userId}
             })
-            
             const newData = this.dataRepository.create(body)
-            newData.user = user
-
-            console.log("User récupérer dans service", user);
-            console.log("new Data service", newData);            
-            
+            newData.userId = user.id
             return await this.dataRepository.save(newData)
-            // const user_id = await this.userRepository.findOne({
-            //     where: {id: userId}
-            // })
-
-            // const newData = this.dataRepository.create(body)
-
-            // console.log("User récupérer dans service", user_id);
-            // console.log("new Data service", newData);            
-            
-            // return await this.dataRepository.save(newData)
         }
         catch (error) {
             console.log(error);
@@ -96,17 +65,10 @@ export class DataService {
     async remove(id: number) {
         try {
             const deleteData = await this.dataRepository.findOne(
-                {
-                    where: {
-                        id: id
-                    }
-                }
+                { where: { id: id } }
             )
-
             if (deleteData) {
-
                 return await this.dataRepository.remove(deleteData);
-
             } else {
                 return {
                     success: 'ko',
