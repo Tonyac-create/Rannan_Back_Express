@@ -27,11 +27,11 @@ export class User {
     @UpdateDateColumn()
     updated_at: Date
 
-    @OneToMany(() => Validation, (validation) => validation.user)
-    user: User[]
+    // @OneToMany(() => Validation, (validation) => validation.user)
+    // user: User[]
 
-    @OneToMany(() => Validation, (validation) => validation.contact)
-    contact: User[]
+    // @OneToMany(() => Validation, (validation) => validation.contact)
+    // contact: User[]
 
     @OneToMany(() => Contact, (contact) => contact.user1)
     users1: Contact[]
