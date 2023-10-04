@@ -6,21 +6,13 @@ import { DataService } from "../service/DataService"
 
 export class DataController {
 
-    private dataRepository = AppDataSource.getRepository(Data)
-    private userRepository = AppDataSource.getRepository(User)
-
+// Services
+    private dataRepository = AppDataSource.getRepository(Data) //! a remplacer par le dataService
     private dataService = new DataService()
 
+//? Utile?
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.dataRepository.find()
-    }
-
-    async getOne(request: Request, response: Response, next: NextFunction) {
-        // Récupération via l'id de la data
-        const id = +request.params.id
-        const data = await this.dataRepository.findOne({where: { id }})
-        if (!data) { return "data not fund" }
-        return data
+        return this.dataRepository.find() //! a remplacer par le dataService
     }
 
     async getDatasInUser(request: Request, response: Response, next: NextFunction) {
@@ -31,66 +23,54 @@ export class DataController {
         }
         catch (error) {
             console.log(error);
-
         }
+    }
+
+    async getOne(request: Request, response: Response, next: NextFunction) {
+        // Récupération via l'id de la data
+        const id = +request.params.id
+        const data = await this.dataRepository.findOne({where: { id }}) //! a remplacer par le dataService
+        if (!data) { return "data not fund" }
+        return data
     }
 
 
     async save(request: Request, response: Response, next: NextFunction) {
         try {
-            const userId = +request.params.id
-            
-            const data = await this.dataService.addDataOneUser(request.body, userId)
-            
+            const data = await this.dataService.addDataOneUser(request.body)
             return data
             // // const {format, name, value} = request.body
             // const userId = +request.params.id
-
-
             // console.log("id du user récupérer dans controller", userId);
-            
             // const data = await this.dataService.addDataOneUser(request.body, userId)
-            
             // console.log("nouvelle data controller", data);
-            
             // return data
         }
         catch (error) {
             console.log(error);
-
         }
     }
+
+    async update(request: Request, response: Response, next: NextFunction) {
+        const id = +request.params.id
+        const updateData = await this.dataRepository.findOne({ where: { id } })  //! a remplacer par le dataService
+        this.dataRepository.merge(updateData, request.body);  //! a remplacer par le dataService
+        await this.dataRepository.save(updateData);  //! a remplacer par le dataService
+        return updateData
+    };
 
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id
-
-            let dataToRemove = await this.dataRepository.findOneBy({ id })
-
+            let dataToRemove = await this.dataRepository.findOneBy({ id })  //! a remplacer par le dataService
             if (!dataToRemove) return "this data not exist"
-
-            await this.dataRepository.remove(dataToRemove)
-
+            await this.dataRepository.remove(dataToRemove)  //! a remplacer par le dataService
             return "data has been removed"
         }
         catch (error) {
             console.log(error);
-
         }
-
     }
-
-
-    async update(request: Request, response: Response, next: NextFunction) {
-
-        const id = +request.params.id
-
-        const updateData = await this.dataRepository.findOne({ where: { id } })
-
-        this.dataRepository.merge(updateData, request.body);
-        await this.dataRepository.save(updateData);
-        return updateData
-    };
 
 
 }

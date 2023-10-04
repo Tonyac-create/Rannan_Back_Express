@@ -9,8 +9,8 @@ export class ContactService{
     async create(user1Id: number, user2Id: number) : Promise<Contact | {success: string; message: string}> {
         try{
             const newContact = this.ContactRepository.create({
-                user1Id :{id: user1Id},
-                user2Id: {id: user2Id}
+                user1 :{id: user1Id},
+                user2: {id: user2Id}
             });
             return await this.ContactRepository.save(newContact);
         }
@@ -33,8 +33,8 @@ export class ContactService{
 
     async allByUserId(id: any){
         try{
-            const allUserOne = await this.ContactRepository.find({where: {user1Id: id}})
-            const allUserTwo = await this.ContactRepository.find({where: {user2Id: id}})
+            const allUserOne = await this.ContactRepository.find({where: {user1_id: id}})
+            const allUserTwo = await this.ContactRepository.find({where: {user2_id: id}})
             return [...allUserOne, ...allUserTwo]
         }
         catch (error){

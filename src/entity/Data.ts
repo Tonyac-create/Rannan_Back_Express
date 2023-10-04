@@ -34,14 +34,18 @@ export class Data {
     updated_at: Date
 
     @Column()
-    userId: number
+    user_id: number
 
     @ManyToOne(() => User, (user) => user.datas)
-    @JoinColumn({name: "userId"})
+    @JoinColumn({name: "user_id"})
     user: User
 
     @ManyToMany( () => Authorization)
-    @JoinTable()
+    @JoinTable({
+        name: "data_has_authorizations",
+        joinColumn: { name: "data_id" },
+        inverseJoinColumn: { name: "authorization_id" }
+    })
     authorizations : Authorization[]
 
 }

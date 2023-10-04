@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthorizationService } from "../service/AuthorizationService";
+import { AuthService } from "../service/AuthService";
 import { DataService } from "../service/DataService";
 import { GroupService } from "../service/GroupService";
 import { UserService } from "../service/UserService";
 
-export class AuthorizationController{
-    private authorizationService = new AuthorizationService()
+export class AuthController{
+    private authService = new AuthService()
     private dataService = new DataService()
     private groupService = new GroupService()
     private userService = new UserService()
@@ -32,7 +32,7 @@ export class AuthorizationController{
                     }
                     else{
                         //Execution de la fonction
-                        const authorization = await this.authorizationService.create(target, target_id);
+                        const authorization = await this.authService.create(target, target_id);
                         if(!authorization){
                             response.status(400).send("Bad request")
                         }
@@ -52,7 +52,7 @@ export class AuthorizationController{
                 }
                 else{
                     //Éxecution de la fonction
-                    const authorization = await this.authorizationService.create(target, target_id);
+                    const authorization = await this.authService.create(target, target_id);
                     if(!authorization){
                         response.status(400).send("Bad request")
                     }

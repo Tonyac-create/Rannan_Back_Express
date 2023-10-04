@@ -8,11 +8,12 @@ export class ValidationService{
     async create(userId: number, contactId: number, status: number) : Promise<Validation | {success: string; message: string}>{
         try{
             const newValidation = this.ValidationRepostiory.create({
-                userId: {id: userId},
-                contactId: {id: contactId},
+                user_id: userId,
+                contact_id: contactId,
                 validation: status
             });
             return await this.ValidationRepostiory.save(newValidation);
+            return {success: "KO", message: "A revoir"}
         }
         catch(error){
             return{
@@ -26,8 +27,8 @@ export class ValidationService{
     async oneByUsers(userId: number, contactId: number): Promise<Validation[]>{
         const validation = await this.ValidationRepostiory.find({
             where:{
-                userId: {id: userId},
-                contactId: {id: contactId}
+                user_id: userId,
+                contact_id: contactId
             }
         });
         return validation;
@@ -42,7 +43,7 @@ export class ValidationService{
     //Récupérer toutes les demandes envoyées par un user
     async allByUserId(userId: number): Promise<Validation[]>{
         const validations = await this.ValidationRepostiory.find({
-            where: {userId: {id: userId}}
+            where: {user_id: userId}
         });
         return validations;
     }
@@ -50,7 +51,7 @@ export class ValidationService{
     //Récupérer toutes les demandes reçues 
     async allByContactId(contactId: number): Promise<Validation[]>{
         const validations = await this.ValidationRepostiory.find({
-            where: {contactId: {id: contactId}}
+            where: {contact_id: contactId}
         });
         return validations;
     }

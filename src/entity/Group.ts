@@ -19,14 +19,10 @@ export class Group {
     limited_at: Date | null;
 
     @Column()
-    creatorId: number;
+    creator_id: number;
 
     @ManyToOne(() => User, (user) => user.groupsCreated)
-    @JoinColumn({name: "creatorId"})
+    @JoinColumn({name: "creator_id"})
     creator: User
-
-    @ManyToMany( () => User)
-    @JoinTable()
-    members : User[]
 
 }

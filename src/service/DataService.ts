@@ -10,7 +10,7 @@ export class DataService {
     private userRepository = AppDataSource.getRepository(User)
 
 
-    // Récupération de toutes les datas crées
+// Récupération de toutes les datas crées
     async all() {
         try {
             return await this.dataRepository.find({
@@ -22,7 +22,7 @@ export class DataService {
         }
     }
 
-    // Récupération d'une data par son id
+// Récupération d'une data par son id
     async getOne(id: number) {
         try {
             return await this.dataRepository.findOne({ where: { id: id } })
@@ -32,7 +32,7 @@ export class DataService {
         }
     }
 
-    // Récupération de toute les datas d'un user_id
+// Récupération de toute les datas d'un user_id
     async getDatasInUser(userId: number) {
         try {
             const user = await this.userRepository.find({
@@ -47,13 +47,13 @@ export class DataService {
         }
     }
 
-    async addDataOneUser(body: DataCreateInterface, userId: number): Promise<Data | User> {
+    async addDataOneUser(body: DataCreateInterface): Promise<Data | User> {
         try {
-            const user = await this.userRepository.findOne({
-                where: {id: userId}
-            })
+            // const user = await this.userRepository.findOne({
+            //     where: {id: userId}
+            // })
+            // newData.userId = user.id
             const newData = this.dataRepository.create(body)
-            newData.userId = user.id
             return await this.dataRepository.save(newData)
         }
         catch (error) {
@@ -61,7 +61,7 @@ export class DataService {
         }
     }
 
-    // Suppression d'une data
+// Suppression d'une data
     async remove(id: number) {
         try {
             const deleteData = await this.dataRepository.findOne(
@@ -75,15 +75,13 @@ export class DataService {
                     message: 'data not found'
                 }
             }
-
         }
         catch (error) {
             console.log(error);
-
         }
     }
 
-    // Mise à jour d'une data
+// Mise à jour d'une data
     async update(id: number) {
         try {
             const updateData = await this.dataRepository.findOne(
@@ -93,15 +91,11 @@ export class DataService {
                     }
                 }
             )
-
             if (updateData) return this.dataRepository.merge(updateData)
-
-
         }
         catch (error) {
             console.log("error:", error)
         }
-
     }
 
 }

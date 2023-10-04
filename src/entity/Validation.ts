@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from "typeorm"
 import { User } from "./User"
 
 @Entity()
@@ -7,11 +7,19 @@ export class Validation {
     @PrimaryGeneratedColumn()
     id: number
 
-    @ManyToOne(() => User, (user) => user.id)
-    userId: User
+    @Column()
+    user_id: number
 
     @ManyToOne(() => User, (user) => user.id)
-    contactId: User
+    @JoinColumn({name: "user_id"})
+    user: User
+
+    @Column()
+    contact_id: number
+
+    @ManyToOne(() => User, (user) => user.id)
+    @JoinColumn({name: "contact_id"})
+    contact: User
 
     @Column({type: "tinyint", default: 0})
     validation: number

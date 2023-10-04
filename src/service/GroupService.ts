@@ -5,7 +5,7 @@ import { User } from "../entity/User"
 export class GroupService {
 
     private groupRepository = AppDataSource.getRepository(Group)
-    private userRepository = AppDataSource.getRepository(User)
+    private userRepository = AppDataSource.getRepository(User) //? a remplacer par le userService?
 
 
     async allGroups() : Promise<Group[]>
@@ -28,7 +28,7 @@ export class GroupService {
     
     
     async allByCreatorId(creator_id: number): Promise<Group[]> {
-        const groups = await this.groupRepository.find({where: { creatorId: creator_id }});
+        const groups = await this.groupRepository.find({where: { creator_id: creator_id }});
         return groups;
     }
 
@@ -42,7 +42,7 @@ export class GroupService {
                 throw new Error("User not found");
             }
             const userToUpdate = users[0];
-            const group = await this.groupRepository.findOneBy({ id:groupId });
+            const group = await this.groupRepository.findOneBy({ id: groupId });
             if (!group) {
                 throw new Error("Group not found");
             }
@@ -55,21 +55,23 @@ export class GroupService {
             throw new Error("An error occurred while adding user to group");
         }
     } 
-    
-    
-    
-    async saveGroup(name: string, creatorId: number): Promise<Group | { success: string; message: string }> {
+
+    async saveGroup(name: string, creator_id: number): Promise<Group | { success: string; message: string }> {
         try {
-            return {success: "no", message: "En cours de developpement."};
+            const newGroup = {
+                name: name,
+                creator_id: creator_id
+            }
+            const savedGroup = this.groupRepository.create(newGroup)
+            return await this.groupRepository.save(savedGroup)
         } catch (error) {
             return {
-                success: 'ko',
+                success: 'KO',
                 message: error.message
             };
         }
     }
-    
-    
+
     async updateGroup(id: number, name: string, limited_at: Date | null): Promise<Group | undefined> {
         const groupToUpdate = await this.groupRepository.findOneBy({ id })
         if (!groupToUpdate) {

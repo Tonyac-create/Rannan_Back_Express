@@ -18,22 +18,17 @@ export class UserService {
 
     async oneById(id: number) {
         try {
-            // Search a User by ID
+            // Find a User by ID
             return await this.userRepository.findOne({ where: { id } })
         } catch (error) {
-        console.log("🐼 ~ file: UserService.ts:29 ~ oneById ~ error:", error)
+        console.log("🐼 ~ file: UserService.ts:24 ~ oneById ~ error:", error)
         }
     }
 
     async oneByMail(body: UserCreateInterface) {
         try {
             // Search a User by email
-            const user = await this.userRepository.findOne({
-                where: {
-                    email: body.email
-                },
-            })
-            return user
+            return await this.userRepository.findOne({ where: { email: body.email } })
         } catch (error) {
         console.log("🐼 ~ file: UserService.ts:43 ~ oneByMail ~ error:", error)
         }

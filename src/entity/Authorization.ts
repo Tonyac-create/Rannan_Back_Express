@@ -1,12 +1,19 @@
-import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column, ManyToMany, JoinTable} from "typeorm"
-import { Data } from "./Data"
+import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column } from "typeorm"
+
+export enum TargetFormat {
+    GROUP = "group",
+    USER = "user"
+}
 
 @Entity()
 export class Authorization {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column({type: "enum", enum: ["group", "user"]})
+    @Column({
+        type: "enum",
+        enum: TargetFormat
+        })
     target: string
 
     @Column()
@@ -17,9 +24,5 @@ export class Authorization {
 
     @UpdateDateColumn()
     updated_at: Date
-
-    @ManyToMany( () => Data)
-    @JoinTable()
-    datas : Data[]
 
 }
