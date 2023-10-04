@@ -31,6 +31,17 @@ export class ContactService{
         }
     }
 
+    async allByUserId(id: any){
+        try{
+            const allUserOne = await this.ContactRepository.find({where: {user1Id: id}})
+            const allUserTwo = await this.ContactRepository.find({where: {user2Id: id}})
+            return [...allUserOne, ...allUserTwo]
+        }
+        catch (error){
+            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+        }
+    }
+
     async one(id: number){
         try{
             const contact = await this.ContactRepository.findOne(

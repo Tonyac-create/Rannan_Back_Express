@@ -7,166 +7,182 @@ import { ValidationController } from "./controller/ValidationController"
 
 export const Routes = [
 
-    // ------------------//ROUTES FOR USER------------------------------
+// ------------------//ROUTES FOR USER------------------------------
     {
-        method: "get",
+        method: "get", // Récupération de tout les users
         route: "/users",
         controller: UserController,
         action: "all"
-    }, {
-        method: "get",
-        route: "/users/:id",
+    },{
+        method: "get", // Récupération d'un user par son id
+        route: "/user/:id", // :id = user.id
         controller: UserController,
         action: "one"
-    }, {
-        method: "post",
-        route: "/users",
+    },{
+        method: "post", // Enregistrer un nouveau user
+        route: "/user",
         controller: UserController,
         action: "save"
+    },{
+        method: "put", // Mettre a jour un user par son id
+        route: "/user/:id", // :id = user.id
+        controller: UserController,
+        action: "update"
     }, {
-        method: "delete",
-        route: "/users/:id",
+        method: "delete", // Supprimer un user par son id
+        route: "/user/:id", // :id = user.id
         controller: UserController,
         action: "remove"
-    },{
-        method: "put", // Utilisez la méthode HTTP PUT pour la mise à jour
-        route: "/users/:id", // Route pour mettre à jour un utilisateur en utilisant son ID
-        controller: UserController,
-        action: "update" // Nom de la méthode dans le UserController
     },
     
 
-    // ------------------//ROUTES FOR GROUPS------------------------------
-
+// ------------------//ROUTES FOR GROUPS------------------------------
     {
-        method: "get",
+        method: "get", // Récupération de tout les groupes
         route: "/groups",
         controller: GroupController,
         action: "all"
     },{
-        method: "get",
-        route: "/groups/:id",
+        method: "get", // Récupération d'un groupe par son id
+        route: "/group/:id", // :id = group.id
         controller: GroupController,
         action: "one"
-    }, {
-        method: "get",
-        route: "/groups/user/:id",
-        controller: GroupController,
-        action: "groupsByCreatorId"
-    }, {
-        method: "post",
-        route: "/groups",
+    },{
+        method: "post", // Enregistrer un nouveau groupe
+        route: "/group",
         controller: GroupController,
         action: "save"
-    }, {
-        method: "post",
-        route: "/groups/user/:id",//:id = user_id
+    },{
+        method: "put", // Mettre a jour un groupe par son id
+        route: "/group/:id", // :id = group.id
+        controller: GroupController,
+        action: "update"
+    },{
+        method: "delete", //Supprimer un groupe par son id
+        route: "/group/:id", // :id = group.id
+        controller: GroupController,
+        action: "remove"
+    },{
+        method: "get", // Récupération de tout les groupes d'un user par l'id du user
+        route: "/groups/user/:id", // :id = user.id
+        controller: GroupController,
+        action: "allUserGroups"
+    },{
+        method: "post", // Ajouter un user dans un groupe
+        route: "/group/user/:id", // :id = user.id
         controller: GroupController,
         action: "addUserInGroup"
-    }, {
-        method: "delete",
-        route: "/groups/user/:id",//:id = user_id
+    },{
+        method: "delete", // Supprimer un user d'un groupe
+        route: "/group/user/:id",// :id = user.id
         controller: GroupController,
         action: "deleteUserInGroup"
     },{
-        method: "delete",
-        route: "/groups/:id",
+        method: "get", // Récupération de tout les groupes par le creator_id
+        route: "/groups/creator/:id", // :id = group.creator_id
         controller: GroupController,
-        action: "remove"
-    },{
-        method: "put", // Utilisez la méthode HTTP PUT pour la mise à jour
-        route: "/groups/:id", // Route pour mettre à jour un groupe en utilisant son ID
-        controller: GroupController,
-        action: "update" // Nom de la méthode dans le UserController
-    },
-
-    // ------------------//ROUTES FOR DATA------------------------------
-    , {
-        method: "get", // Récupération de toutes les datas
-        route: "/datas",
-        controller: DataController,
-        action: "all"
-    }, {
-        method: "get", // Récupération d'une data
-        route: "/datas/:id",
-        controller: DataController,
-        action: "getOne"
-    }, {
-        method: "get", // Récupération de toutes les datas d'un utilisateur
-        route: "/datas/user/:id",  // :id = user_id
-        controller: DataController,
-        action: "getDatasInUser"
-    }, { 
-        method: "post", // Création d'une data pour un utilisateur
-        route: "users/:id/data",
-        controller: DataController,
-        action: "save"
-    }, { 
-        method: "put", // Modification d'une data
-        route: "/datas/:id",
-        controller: DataController,
-        action: "update"
-    }, {
-        method: "delete", // Suppression d'une data
-        route: "/datas/:id",
-        controller: DataController, 
-        action: "remove"
+        action: "groupsByCreatorId"
     },
 
     // ------------------//ROUTES FOR CONTACT------------------------------
     {
-        method: "get",
-        route: "/allContacts/:id",
+        method: "get", // Récupération de tout les contacts d'un user par son id
+        route: "/contacts/user/:id", // :id = user.id
         controller: ContactController,
         action: "all"
-    },  {
-        method: "get",
-        route: "/contact/:id", //Adapter routes quand token disponible
-        controller: ContactController,
-        action: "oneByUser"
-    },  {
-        method: "get",
-        route: "/contacts/:id",
-        controller: ContactController,
-        action: "oneByRelation"
     },{
-        method: "post",
-        route: "/contacts",
+        method: "get", // Récupération d'un contact (relation) par son id
+        route: "/contact/:id", // :id = contact.id
+        controller: ContactController,
+        action: "one"
+    },{
+        method: "post", // Enregistrer un nouveau contact
+        route: "/contact",
         controller: ContactController,
         action: "save"
     },  {
-        method: "delete",
-        route: "/contacts/:id",
+        method: "delete", // Supprimer un contact par son id
+        route: "/contact/:id", // :id = contact.id
         controller: ContactController,
         action: "remove"
     },
-    
-    // ------------------//ROUTES FOR VALIDATION------------------------------
+
+// ------------------//ROUTES FOR VALIDATION------------------------------
     {
-        method: "post",
-        route: "/validations",
-        controller: ValidationController,
-        action: "save"
-    },{
-        method: "put",
-        route: "/validation/:id",
-        controller: ValidationController,
-        action: "update"
-    },{
-        method: "get",
-        route: "/sentvalidations/:userId",
+        method: "get", // Récupération de toutes les validations envoyé par un user par son id
+        route: "/validations/:id", // :id = user.id => user_id
         controller: ValidationController,
         action: "allByUser"
     },{
-        method: "get",
-        route: "/validations/:contactId",
+        method: "get", // Récupération de toutes les validations reçu par un user par son id
+        route: "/validations/user/:id", // :id = user.id => contact_id
         controller: ValidationController,
         action: "allByContact"
     },{
-        method: "delete",
-        route: "/validation/:id",
+        method: "put", // Mettre a jour une validation
+        route: "/validation/:id", // :id = validation.id
+        controller: ValidationController,
+        action: "update"
+    },{
+        method: "post", // Enregistrer une nouvelle validation
+        route: "/validation",
+        controller: ValidationController,
+        action: "save"
+    },{
+        method: "delete", // Supprimer une validation
+        route: "/validation/:id", // :id = validation.id
         controller: ValidationController,
         action: "remove"
+    },
+
+// ------------------//ROUTES FOR DATA------------------------------
+    {
+        method: "get", // Récupération de toutes les datas d'un user par son id
+        route: "/datas/:id",  // :id = user.id
+        controller: DataController,
+        action: "getDatasInUser"
+    },{
+        method: "get", // Récupération d'une data par son id
+        route: "/data/:id", // :id = data.id
+        controller: DataController,
+        action: "getOne"
+    },{ 
+        method: "post", // Enregistrer une nouvelle data
+        route: "/data",
+        controller: DataController,
+        action: "save"
+    },{ 
+        method: "put", // Mettre a jour une data
+        route: "/data/:id", // :id = data.id
+        controller: DataController,
+        action: "update"
+    },{
+        method: "delete", // Suppression d'une data
+        route: "/datas/:id", // id: = data.id
+        controller: DataController, 
+        action: "remove"
+    },
+
+// ------------------//ROUTES FOR AUTHORIZATION------------------------------
+    {
+        method: "get", // Récupération de toutes les authorisations d'une target
+        route: "/auths/:target/:id", // :target = group/user & :id = group.id/user.id
+        controller: DataController,
+        action: "all"
+    },{
+        method: "get", // Récupération d'une authorisation par son id
+        route: "/auth/:id", // :id = data.id
+        controller: DataController,
+        action: "getOne"
+    },{ 
+        method: "post", // Enregistrer une nouvelle authorisation
+        route: "/auth",
+        controller: DataController,
+        action: "save"
+    },{
+        method: "delete", // Suppression d'une authorisation
+        route: "/auth/:id", // id: = authorization.id
+        controller: DataController, 
+        action: "remove"
     }
-    
 ]
