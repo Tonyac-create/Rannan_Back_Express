@@ -3,6 +3,7 @@ import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { ValidationController } from "./controller/ValidationController"
+import { AuthController } from "./controller/AuthController"
 
 
 export const Routes = [
@@ -58,10 +59,15 @@ export const Routes = [
         controller: GroupController,
         action: "update"
     },{
-        method: "delete", //Supprimer un groupe par son id
+        method: "delete", // Supprimer un groupe par son id
         route: "/group/:id", // :id = group.id
         controller: GroupController,
         action: "remove"
+    },{
+        method: "get", // Récupération de tout les groupes par le creator_id
+        route: "/groups/creator/:id", // :id = group.creator_id
+        controller: GroupController,
+        action: "groupsByCreatorId"
     },{
         method: "get", // Récupération de tout les groupes d'un user par l'id du user
         route: "/groups/user/:id", // :id = user.id
@@ -69,19 +75,14 @@ export const Routes = [
         action: "allUserGroups"
     },{
         method: "post", // Ajouter un user dans un groupe
-        route: "/group/user/:id", // :id = user.id
+        route: "/group/user", //
         controller: GroupController,
         action: "addUserInGroup"
     },{
         method: "delete", // Supprimer un user d'un groupe
-        route: "/group/user/:id",// :id = user.id
+        route: "/group/user",//
         controller: GroupController,
         action: "deleteUserInGroup"
-    },{
-        method: "get", // Récupération de tout les groupes par le creator_id
-        route: "/groups/creator/:id", // :id = group.creator_id
-        controller: GroupController,
-        action: "groupsByCreatorId"
     },
 
     // ------------------//ROUTES FOR CONTACT------------------------------
@@ -119,15 +120,15 @@ export const Routes = [
         controller: ValidationController,
         action: "allByContact"
     },{
-        method: "put", // Mettre a jour une validation
-        route: "/validation/:id", // :id = validation.id
-        controller: ValidationController,
-        action: "update"
-    },{
         method: "post", // Enregistrer une nouvelle validation
         route: "/validation",
         controller: ValidationController,
         action: "save"
+    },{
+        method: "put", // Mettre a jour une validation
+        route: "/validation/:id", // :id = validation.id
+        controller: ValidationController,
+        action: "update"
     },{
         method: "delete", // Supprimer une validation
         route: "/validation/:id", // :id = validation.id
@@ -157,8 +158,8 @@ export const Routes = [
         controller: DataController,
         action: "update"
     },{
-        method: "delete", // Suppression d'une data
-        route: "/datas/:id", // id: = data.id
+        method: "delete", // Supprimer une data
+        route: "/datas/:id", // :id = data.id
         controller: DataController, 
         action: "remove"
     },
@@ -166,23 +167,23 @@ export const Routes = [
 // ------------------//ROUTES FOR AUTHORIZATION------------------------------
     {
         method: "get", // Récupération de toutes les authorisations d'une target
-        route: "/auths/:target/:id", // :target = group/user & :id = group.id/user.id
-        controller: DataController,
+        route: "/auths", //
+        controller: AuthController,
         action: "all"
     },{
         method: "get", // Récupération d'une authorisation par son id
-        route: "/auth/:id", // :id = data.id
-        controller: DataController,
+        route: "/auth/:id", // :id = authorisation.id
+        controller: AuthController,
         action: "getOne"
     },{ 
         method: "post", // Enregistrer une nouvelle authorisation
         route: "/auth",
-        controller: DataController,
+        controller: AuthController,
         action: "save"
     },{
-        method: "delete", // Suppression d'une authorisation
-        route: "/auth/:id", // id: = authorization.id
-        controller: DataController, 
+        method: "delete", // Supprimer une authorisation
+        route: "/auth/:id", // :id = authorization.id
+        controller: AuthController, 
         action: "remove"
     }
 ]
