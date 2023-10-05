@@ -43,7 +43,7 @@ export class AuthController{
                 //Si la demande est pour un groupe (target === "group")
                 if(target === "group"){
                     //Récupérer le groupe target pour vérifier qu'il existe
-                    const targetedGroup = await this.groupService.findOne(target_id);
+                    const targetedGroup = await this.groupService.oneGroup(target_id);
                     if(!targetedGroup){
                         response.status(404).send("Group not found");
                     }

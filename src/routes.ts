@@ -44,11 +44,6 @@ export const Routes = [
 
     // ------------------//ROUTES FOR GROUPS------------------------------
     {
-        method: "get", // Récupération de tout les groupes
-        route: "/groups",
-        controller: GroupController,
-        action: "all"
-    }, {
         method: "get", // Récupération d'un groupe par son id
         route: "/group/:id", // :id = group.id
         controller: GroupController,
