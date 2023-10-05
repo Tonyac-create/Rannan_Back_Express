@@ -22,15 +22,17 @@ export class ContactService{
         }
     }
 
+    //récupérer tous le contacts
     async all(){
         try{
             return await this.ContactRepository.find();
         }
         catch (error){
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log("🚀 ~ file: ContactService.ts:31 ~ ContactService ~ all ~ error:", error)    
         }
     }
 
+    //récupérer tous les contacts d'un user
     async allByUserId(id: any){
         try{
             const allUserOne = await this.ContactRepository.find({where: {user1_id: id}})
@@ -38,31 +40,33 @@ export class ContactService{
             return [...allUserOne, ...allUserTwo]
         }
         catch (error){
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log("🚀 ~ file: ContactService.ts:43 ~ ContactService ~ allByUserId ~ error:", error) 
         }
     }
 
-    async one(id: number){
+    //récupérer un contact par id contact
+    async one(id: number): Promise<Contact[]> {
+        const contact = await this.ContactRepository.findBy({id});
+        return contact;    
+    }
+
+    //Récupérer un contact spécifique entre 2 users
+    async oneByUsers(user1Id: number, user2Id: number): Promise<Contact[]> {
         try{
-            const contact = await this.ContactRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
+            const contact = await this.ContactRepository.find({
+                where:{
+                    user1: { id: user1Id},
+                    user2: { id: user2Id}
                 }
-            );
-            if (contact) return contact;
-
-            return {
-                success: 'ko',
-                message: 'user not found'
-            }
+            });
+            return contact;
         }
-        catch (error) {
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+        catch(error){
+            console.log("🚀 ~ file: ContactService.ts:81 ~ ContactService ~ oneByUsers ~ error:", error)
         }
     }
 
+    //Eliminer un contact
     async remove(id: number){
         try{
             const contact = await this.ContactRepository.findOne(

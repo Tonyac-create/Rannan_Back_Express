@@ -1,7 +1,5 @@
-import { AppDataSource } from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
-import { User } from "../entity/User";
 import { UserService } from "../service/UserService";
 
 export class ValidationController{
@@ -9,7 +7,6 @@ export class ValidationController{
 // Services
     private validationService = new ValidationService();
     private userService = new UserService();
-    // private userRepository = AppDataSource.getRepository(User);
 
 //Récupérer toutes les demandes envoyées par un user
     async allByUser(request: Request, response: Response, next: NextFunction){
