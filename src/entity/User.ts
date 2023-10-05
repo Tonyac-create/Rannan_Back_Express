@@ -27,11 +27,11 @@ export class User {
     @UpdateDateColumn()
     updated_at: Date
 
-    // @OneToMany(() => Validation, (validation) => validation.user)
-    // user: User[]
+    @OneToMany(() => Validation, (validation) => validation.user)
+    user: User[]
 
-    // @OneToMany(() => Validation, (validation) => validation.contact)
-    // contact: User[]
+    @OneToMany(() => Validation, (validation) => validation.contact)
+    contact: User[]
 
     @OneToMany(() => Contact, (contact) => contact.user1)
     users1: Contact[]
@@ -39,11 +39,18 @@ export class User {
     @OneToMany(() => Contact, (contact) => contact.user2)
     users2: Contact[]
 
-    @OneToMany ( () => Data, (data) => data.user)
+    @OneToMany ( () => Data, (data) => data.user_id)
     datas: Data[]
 
+    @OneToMany ( () => Group, (group) => group.creator_id)
+    groupsCreated: Group[]
+
     @ManyToMany( () => Group)
-    @JoinTable()
+    @JoinTable({
+        name: "user_has_groups",
+        joinColumn: { name: "user_id" },
+        inverseJoinColumn: { name: "group_id" }
+    })
     groups : Group[]
 
 }
