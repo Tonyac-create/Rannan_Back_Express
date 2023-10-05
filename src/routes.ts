@@ -35,7 +35,7 @@ export const Routes = [
         controller: UserController,
         action: "remove"
     }, {
-        method: "post", // Supprimer un user par son id
+        method: "post", // Créer une data d'un user
         route: "/user/:id/data", // :id = user.id
         controller: DataController,
         action: "save"
