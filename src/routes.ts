@@ -192,7 +192,7 @@ export const Routes = [
         method: "post", // Enregistrer une nouvelle authorisation
         route: "/auth",
         controller: AuthController,
-        action: "save"
+        action: "createAuthorization"
     }, {
         method: "delete", // Supprimer une authorisation
         route: "/auth/:id", // :id = authorization.id

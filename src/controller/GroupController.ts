@@ -1,10 +1,12 @@
 import { NextFunction, Request, Response } from "express"
 import { GroupService } from "../service/GroupService"
+import { UserService } from "../service/UserService"
 
 export class GroupController {
 
 // Services
     private groupService = new GroupService()
+    private userService = new UserService()
 
 // Récupération de tout les groupes
     async all(request: Request, response: Response, next: NextFunction) {
