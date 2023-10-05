@@ -15,6 +15,17 @@ export class AuthController{
 // Récupération de toutes les authorisations d'une target (BODY : target = "group" ou "user" / id = target_id)
 
 // Récupération d'une authorisation par son id
+    async getAuthById(request: Request, response: Response, next: NextFunction) {
+        try {
+            const id = +request.params.id
+            const authorisation = await this.authService.getAuthById(id)
+            return authorisation
+        }
+        catch (error) {
+            console.log("🚀 ~ file: AuthController.ts:23 ~ AuthController ~ getAuthById ~ error:", error)
+        }
+
+    }
 
 // Enregistrer une nouvelle authorisation
     async createAuthorization(request: Request, response: Response, next: NextFunction){
@@ -78,6 +89,19 @@ export class AuthController{
     }
 
     //Supprimer une authorisation
+    async remove(request: Request, response: Response, next: NextFunction) {
+        try {
+            const id = +request.params.id
+            let authToRemove = await this.authService.getAuthById(id)
 
+            if (!authToRemove) return "this authorization not exist"
+
+            await this.authService.remove(id)
+            return "auth has been removed"
+        }
+        catch (error) {
+            console.log("🚀 ~ file: AuthController.ts:103 ~ AuthController ~ remove ~ error:", error)
+        }
+    }
 
 }
