@@ -2,23 +2,27 @@ import { AppDataSource } from "../data-source";
 import { NextFunction, Request, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
 import { User } from "../entity/User";
+import { UserService } from "../service/UserService";
 
 export class ValidationController{
 
 // Services
     private validationService = new ValidationService();
-    private userRepository = AppDataSource.getRepository(User); //! a remplacer par le userService
+    private userService = new UserService();
+    // private userRepository = AppDataSource.getRepository(User);
 
 //Récupérer toutes les demandes envoyées par un user
     async allByUser(request: Request, response: Response, next: NextFunction){
         //Récupérer l'id de l'user à partir du token (attendre)
-        const userId = parseInt(request.params.userId);
+        const userId = parseInt(request.params.id);
         try{
             const validations = await this.validationService.allByUserId(userId);
             if(!validations || validations.length === 0){
                 response.status(404).send("no validations found");
             }
-            response.status(200).send(validations);
+            else{
+                response.status(200).send(validations);
+            }
         }
         catch(error){
             console.error("Error while fetching validations by user id:", error);
@@ -29,13 +33,15 @@ export class ValidationController{
 //Récupérer toutes les demandes envoyées reçues par un user
     async allByContact(request: Request, response: Response, next: NextFunction){
         //Récupérer l'id de l'user à partir du token (attendre)
-        const contactId = parseInt(request.params.contactId);
+        const contactId = parseInt(request.params.id);
         try{
             const validations = await this.validationService.allByContactId(contactId);
             if(!validations || validations.length === 0){
                 response.status(404).send("no validations found");
             }
-            response.status(200).send(validations);
+            else{
+                response.status(200).send(validations);
+            }
         }
         catch(error){
             console.error("Error while fetching validations by contact id:", error);
@@ -51,8 +57,8 @@ export class ValidationController{
         const status = 0;
         try{
             //Verification que les users existent
-            const userOk = await this.userRepository.findOneBy({id: userId}); //! a remplacer par le userService
-            const contactOk = await this.userRepository.findOneBy({id: contactId}); //! a remplacer par le userService
+            const userOk = await this.userService.oneById(userId);
+            const contactOk = await this.userService.oneById(contactId);
             if(!userOk || !contactOk || !userOk && !contactOk){
                 response.status(404).send("One of the users, or the two don't exist")
             }
@@ -85,7 +91,9 @@ export class ValidationController{
                         if (!validation){
                             response.status(400).send("Bad request");
                         }
-                        response.status(201).send(validation).send("request sent")
+                        else{
+                            response.status(201).send(validation).send("request sent")
+                        }
                     }
                 }
             }
