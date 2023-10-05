@@ -75,12 +75,12 @@ export const Routes = [
         action: "allUserGroups"
     },{
         method: "post", // Ajouter un user dans un groupe
-        route: "/group/user", //
+        route: "/groups/user", //
         controller: GroupController,
         action: "addUserInGroup"
     },{
         method: "delete", // Supprimer un user d'un groupe
-        route: "/group/user",//
+        route: "/groups/user",//
         controller: GroupController,
         action: "deleteUserInGroup"
     },
@@ -111,12 +111,12 @@ export const Routes = [
 // ------------------//ROUTES FOR VALIDATION------------------------------
     {
         method: "get", // Récupération de toutes les validations envoyé par un user par son id
-        route: "/validations/:id", // :id = user.id => user_id
+        route: "/validations/user/:id", // :id = user.id => user_id
         controller: ValidationController,
         action: "allByUser"
     },{
         method: "get", // Récupération de toutes les validations reçu par un user par son id
-        route: "/validations/user/:id", // :id = user.id => contact_id
+        route: "/validations/contact/:id", // :id = user.id => contact_id
         controller: ValidationController,
         action: "allByContact"
     },{
