@@ -5,12 +5,18 @@ import { GroupService } from "../service/GroupService";
 import { UserService } from "../service/UserService";
 
 export class AuthController{
+
+// Services
     private authService = new AuthService()
     private dataService = new DataService()
     private groupService = new GroupService()
     private userService = new UserService()
 
-//Création d'une autorisation pour un user
+// Récupération de toutes les authorisations d'une target (BODY : target = "group" ou "user" / id = target_id)
+
+// Récupération d'une authorisation par son id
+
+// Enregistrer une nouvelle authorisation
     async createAuthorization(request: Request, response: Response, next: NextFunction){
         //Récupérer les variables du corps de la reqête
         const data_id = request.body.data_id;
@@ -71,15 +77,7 @@ export class AuthController{
         }
     }
 
-    //Récupération de toutes les authorisations qu'un user a donné (id createur)
-
-    //Récupération de toutes les authorisations qu'un user a reçu (id du target)
-
-    //Récupération de toutes les authorisations qu'un groupe a (id du groupe)
-
-    //Récupation de toutes les authorisations d'une data précise (id de la data)
-
-    //Récupération d'un authorisation précise (id de l'authorisation)
-
     //Supprimer une authorisation
+
+
 }
