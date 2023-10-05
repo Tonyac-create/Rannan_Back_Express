@@ -6,15 +6,15 @@ import { DataService } from "../service/DataService"
 
 export class DataController {
 
-// Services
-    private dataRepository = AppDataSource.getRepository(Data) //! a remplacer par le dataService
+    // Services
     private dataService = new DataService()
 
-//? Utile?
+    // Récupération de toutes les datas crées
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.dataRepository.find() //! a remplacer par le dataService
+        return this.dataService.all()
     }
 
+    // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: Request, response: Response, next: NextFunction) {
         try {
             const userId = +request.params.id
@@ -26,45 +26,52 @@ export class DataController {
         }
     }
 
+    // Récupération d'une data par son id
     async getOne(request: Request, response: Response, next: NextFunction) {
         // Récupération via l'id de la data
         const id = +request.params.id
-        const data = await this.dataRepository.findOne({where: { id }}) //! a remplacer par le dataService
+        const data = await this.dataService.getOneById(id)
         if (!data) { return "data not fund" }
         return data
     }
 
-
+    // Création d'une data par userid
     async save(request: Request, response: Response, next: NextFunction) {
+        const { id, type, name, value } = request.body
         try {
-            const data = await this.dataService.addDataOneUser(request.body)
+            const id = +request.params.id
+
+            const data = await this.dataService.createDataOneUser(id, type, name, value)
             return data
-            // // const {format, name, value} = request.body
-            // const userId = +request.params.id
-            // console.log("id du user récupérer dans controller", userId);
-            // const data = await this.dataService.addDataOneUser(request.body, userId)
-            // console.log("nouvelle data controller", data);
-            // return data
         }
         catch (error) {
             console.log(error);
         }
     }
 
+    // Modification d'une data avec son id
     async update(request: Request, response: Response, next: NextFunction) {
-        const id = +request.params.id
-        const updateData = await this.dataRepository.findOne({ where: { id } })  //! a remplacer par le dataService
-        this.dataRepository.merge(updateData, request.body);  //! a remplacer par le dataService
-        await this.dataRepository.save(updateData);  //! a remplacer par le dataService
-        return updateData
+        try {
+            const id = +request.params.id
+            const data = await this.dataService.getOneById(id)
+            if (!data) { return "data not found"}
+            return this.dataService.update(data.id, request.body)
+        }
+        catch (error) {
+            console.log("🚀 ~ file: DataController.ts:60 ~ DataController ~ update ~ error:", error)
+        }
+
     };
 
+    // Suppression d'une data
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id
-            let dataToRemove = await this.dataRepository.findOneBy({ id })  //! a remplacer par le dataService
+            let dataToRemove = await this.dataService.getOneById(id)
+
             if (!dataToRemove) return "this data not exist"
-            await this.dataRepository.remove(dataToRemove)  //! a remplacer par le dataService
+
+            await this.dataService.remove(id)
             return "data has been removed"
         }
         catch (error) {
@@ -74,3 +81,13 @@ export class DataController {
 
 
 }
+
+
+
+
+            // // const {format, name, value} = request.body
+            // const userId = +request.params.id
+            // console.log("id du user récupérer dans controller", userId);
+            // const data = await this.dataService.addDataOneUser(request.body, userId)
+            // console.log("nouvelle data controller", data);
+            // return data

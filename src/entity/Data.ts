@@ -33,11 +33,7 @@ export class Data {
     @UpdateDateColumn()
     updated_at: Date
 
-    @Column()
-    user_id: number
-
     @ManyToOne(() => User, (user) => user.datas)
-    @JoinColumn({name: "user_id"})
     user: User
 
     @ManyToMany( () => Authorization)

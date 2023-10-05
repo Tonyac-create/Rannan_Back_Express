@@ -46,7 +46,7 @@ export class UserService {
         console.log("🐼 ~ file: UserService.ts:56 ~ create ~ error:", error)
         }
     }
-
+    
     async remove(id: number) {
         try {
             // Delete user by ID
@@ -57,6 +57,7 @@ export class UserService {
         }
     }
 
+    
     async update(id: number, body: any) {
         try {
             const userToUpdate = await this.userRepository.findOne(

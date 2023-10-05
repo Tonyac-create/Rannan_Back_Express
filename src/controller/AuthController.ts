@@ -19,7 +19,7 @@ export class AuthController{
 
         try{
             //Récupérer la data et verifier qu'elle existe
-            const data = await this.dataService.getOne(data_id);
+            const data = await this.dataService.getOneById(data_id);
             if(!data){
                 response.status(404).send("The data doesn't exist");
             } else {

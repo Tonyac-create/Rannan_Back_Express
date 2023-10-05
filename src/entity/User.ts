@@ -39,7 +39,7 @@ export class User {
     @OneToMany(() => Contact, (contact) => contact.user2)
     users2: Contact[]
 
-    @OneToMany ( () => Data, (data) => data.user_id)
+    @OneToMany ( () => Data, (data) => data.user)
     datas: Data[]
 
     @OneToMany ( () => Group, (group) => group.creator_id)
