@@ -53,8 +53,8 @@ export class ContactController{
         const user2Id = parseInt(request.body.user2Id);
         try{
             //Verifications que les user existent (1 et 2)
-            const user1Ok =await this.userService.oneById(user1Id);
-            const user2Ok = await this.userService.oneById(user2Id);
+            const user1Ok =await this.userService.findOne("id", user1Id);
+            const user2Ok = await this.userService.findOne("id", user2Id);
             if(!user1Ok || !user2Ok || !user1Ok && !user2Ok){
                 response.status(404).send("One of the users, or the two don't exist")
             }

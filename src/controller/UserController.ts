@@ -6,7 +6,7 @@ export class UserController {
 // Services
     private userService = new UserService()
 
-// get All users
+// Récupération de tout les users
     async all(request: Request, response: Response, next: NextFunction) {
         try {
             return await this.userService.all()
@@ -16,31 +16,31 @@ export class UserController {
         }
     }
 
-// get One user by id
+// Récupération d'un user par son id
     async one(request: Request, response: Response, next: NextFunction) {
         try {
-            // get user by id
-            const user = await this.userService.oneById(+request.params.id)
-            // IF user not found
+        // Chercher un user par son id
+            const user = await this.userService.findOne("id", +request.params.id)
+        // SI l'id n'est pas trouvé
             if (!user) {
                 return {
                     success: `ko`,
                     message: `user not found`
                 }
             }
-            // IF user is found
+        // SI l'id est trouvé
             return user
         } catch (error) {
         console.log("🐼 ~ file: UserController.ts:33 ~ one ~ error:", error)
         }
     }
 
-// Save a user
+// Enregistrer un nouveau user
     async save(request: Request, response: Response, next: NextFunction) {
         try {
-            // get user by mail
-            const user = await this.userService.oneByMail(request.body)
-            // IF mail already has in db
+        // Chercher un user par son mail
+            const user = await this.userService.findOne("email", request.body.email)
+        // SI le mail existe déja
             if (user) {
                 return {
                     success: `ko`,
@@ -54,11 +54,11 @@ export class UserController {
         }
     }
 
-// Update a user
+// Mettre a jour un user par son id
     async update(request: Request, response: Response, next: NextFunction) {
         try {
             // get user by id
-            const user = await this.userService.oneById(+request.params.id)
+            const user = await this.userService.findOne("id", +request.params.id)
             // IF user not found
             if (!user) {
                 return {
@@ -73,11 +73,11 @@ export class UserController {
         }
     }
 
-// Remove a user
+// Supprimer un user par son id
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
             // get user by id
-            const user = await this.userService.oneById(+request.params.id)
+            const user = await this.userService.findOne("id", +request.params.id)
             // IF user not found
             if (!user) {
                 return {

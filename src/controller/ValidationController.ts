@@ -54,8 +54,8 @@ export class ValidationController{
         const status = 0;
         try{
             //Verification que les users existent
-            const userOk = await this.userService.oneById(userId);
-            const contactOk = await this.userService.oneById(contactId);
+            const userOk = await this.userService.findOne("id", userId);
+            const contactOk = await this.userService.findOne("id", contactId);
             if(!userOk || !contactOk || !userOk && !contactOk){
                 response.status(404).send("One of the users, or the two don't exist")
             }

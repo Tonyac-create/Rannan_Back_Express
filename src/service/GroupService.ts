@@ -8,8 +8,7 @@ export class GroupService {
     private userRepository = AppDataSource.getRepository(User) //? a remplacer par le userService?
 
 
-    async allGroups() : Promise<Group[]>
-    {
+    async allGroups() : Promise<Group[]> {
         const groups = await this.groupRepository.find({});
         return groups;
     }

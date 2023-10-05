@@ -6,12 +6,12 @@ export class GroupController {
 // Services
     private groupService = new GroupService()
 
-//Get all groups
+// Récupération de tout les groupes
     async all(request: Request, response: Response, next: NextFunction) {
         return this.groupService.allGroups()
     }
 
-//Get one group by id
+// Récupération d'un groupe par son id
     async one(request: Request, response: Response, next: NextFunction) {
         const groupId = parseInt(request.params.id);
         try {
@@ -22,7 +22,7 @@ export class GroupController {
         }
     }
 
-//Post new group
+// Enregistrer un nouveau groupe
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
             const { name, creator_id } = request.body;
@@ -34,7 +34,7 @@ export class GroupController {
         }
     }
 
-// Update group
+// Mettre a jour un groupe par son id
     async update(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id);
         const { name, limited_at } = request.body;
@@ -46,7 +46,7 @@ export class GroupController {
         }
     }
 
-// Delete group
+// Supprimer un groupe par son id
     async remove(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id);
         try {
@@ -57,7 +57,7 @@ export class GroupController {
         }
     }
 
-//Get group by creator id
+// Récupération de tout les groupes par le creator_id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
         const creator_id = parseInt(request.params.id);
         try {
@@ -71,7 +71,7 @@ export class GroupController {
         }
     }
 
-// Find all groups of a user by user id
+// Récupération de tout les groupes d'un user par l'id du user
     async allUserGroups(request: Request, response: Response, next: NextFunction) {
     try {
         return "En cour de développement"
@@ -80,7 +80,7 @@ export class GroupController {
     }
     }
 
-// Add user to a group
+// Ajouter un user dans un groupe
     async addUserInGroup(request: Request, response: Response, next: NextFunction) {
         const userId = parseInt(request.body.userId);
         const groupId = parseInt(request.body.groupId);
@@ -92,7 +92,7 @@ export class GroupController {
         }
     }
 
-// Delete user to a group
+// Supprimer un user d'un groupe
     async deleteUserInGroup(request: Request, response: Response, next: NextFunction) {
         const userId = parseInt(request.body.userId);
         const groupId = parseInt(request.body.groupId);

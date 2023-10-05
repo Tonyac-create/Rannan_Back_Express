@@ -16,21 +16,15 @@ export class UserService {
         }
     }
 
-    async oneById(id: number) {
+    async findOne(field: string, value: number | string) {
         try {
             // Find a User by ID
-            return await this.userRepository.findOne({ where: { id } })
+            return await this.userRepository.findOne({
+                where: { [field]: value },
+                relations: ['groups']
+            })
         } catch (error) {
         console.log("🐼 ~ file: UserService.ts:24 ~ oneById ~ error:", error)
-        }
-    }
-
-    async oneByMail(body: UserCreateInterface) {
-        try {
-            // Search a User by email
-            return await this.userRepository.findOne({ where: { email: body.email } })
-        } catch (error) {
-        console.log("🐼 ~ file: UserService.ts:43 ~ oneByMail ~ error:", error)
         }
     }
 
@@ -47,6 +41,29 @@ export class UserService {
         }
     }
 
+    async update(id: number, body: any) {
+        try {
+            const userToUpdate = await this.userRepository.findOne(
+                {where: { id: id }}
+            )
+            if (!userToUpdate) {
+                return {
+                    success: 'ko',
+                    message: 'user not found'
+                }
+            }
+            userToUpdate.nickname = body.nickname
+            userToUpdate.email = body.email
+            userToUpdate.password = body.password
+            userToUpdate.avatar_id = body.avatar_id
+            const updatedUser = await this.userRepository.save(userToUpdate)
+            return updatedUser
+        }
+        catch (error) {
+            console.log("🐼 ~ file: UserService.ts:79 ~ update ~ error:", error)
+        }
+    }
+
     async remove(id: number) {
         try {
             // Delete user by ID
@@ -55,32 +72,6 @@ export class UserService {
         catch (error) {
         console.log("🐼 ~ file: UserService.ts:66 ~ remove ~ error:", error)
         }
-    }
-
-    async update(id: number, body: any) {
-        try {
-            const userToUpdate = await this.userRepository.findOne(
-                {where: { id: id }}
-            );
-            if (!userToUpdate) {
-                return {
-                    success: 'ko',
-                    message: 'user not found'
-                }
-            };
-            
-            userToUpdate.nickname = body.nickname
-            userToUpdate.email = body.email
-            userToUpdate.password = body.password
-            userToUpdate.avatar_id = body.avatar_id
-
-            const updatedUser = await this.userRepository.save(userToUpdate)
-            return updatedUser
-        }
-        catch (error) {
-            console.log("🐼 ~ file: UserService.ts:79 ~ update ~ error:", error)
-        }
-        
     }
 
 }
