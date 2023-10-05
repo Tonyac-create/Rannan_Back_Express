@@ -27,10 +27,10 @@ export class User {
     @UpdateDateColumn()
     updated_at: Date
 
-    @OneToMany(() => Validation, (validation) => validation.user_id)
+    @OneToMany(() => Validation, (validation) => validation.user)
     user: User[]
 
-    @OneToMany(() => Validation, (validation) => validation.contact_id)
+    @OneToMany(() => Validation, (validation) => validation.contact)
     contact: User[]
 
     @OneToMany(() => Contact, (contact) => contact.user1)
@@ -39,7 +39,7 @@ export class User {
     @OneToMany(() => Contact, (contact) => contact.user2)
     users2: Contact[]
 
-    @OneToMany ( () => Data, (data) => data.user_id)
+    @OneToMany ( () => Data, (data) => data.user)
     datas: Data[]
 
     @OneToMany ( () => Group, (group) => group.creator_id)

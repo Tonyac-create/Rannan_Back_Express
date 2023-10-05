@@ -10,14 +10,14 @@ export class Contact {
     user1_id: number
 
     @ManyToOne(() => User, (user) => user.id)
-    @JoinColumn({name: "user1_id"})
+    // @JoinColumn({name: "user1_id"})
     user1: User
 
     @Column()
     user2_id: number
 
     @ManyToOne(() => User, (user) => user.id)
-    @JoinColumn({name: "user2_id"})
+    // @JoinColumn({name: "user2_id"})
     user2: User
 
     @CreateDateColumn()

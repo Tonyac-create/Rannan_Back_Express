@@ -10,34 +10,32 @@ export class DataService {
     private userRepository = AppDataSource.getRepository(User)
 
 
-// Récupération de toutes les datas crées
+    // Récupération de toutes les datas crées
     async all() {
         try {
-            return await this.dataRepository.find({
-                relations: ["creator"]
-            });
+            return await this.dataRepository.find();
         }
         catch (error) {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
         }
     }
 
-// Récupération d'une data par son id
-    async getOne(id: number) {
+    // Récupération d'une data par son id
+    async getOneById(id: number) {
         try {
-            return await this.dataRepository.findOne({ where: { id: id } })
+            return await this.dataRepository.findOne({ where: { id } })
         }
         catch (error) {
             console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
         }
     }
 
-// Récupération de toute les datas d'un user_id
+    // Récupération de toute les datas d'un user_id
     async getDatasInUser(userId: number) {
         try {
             const user = await this.userRepository.find({
                 where: { id: userId },
-                relations: ["datas"]
+                relations: {datas: true}
             })
             if (!user) return 'User not found'
             return user
@@ -47,42 +45,40 @@ export class DataService {
         }
     }
 
-    async addDataOneUser(body: DataCreateInterface): Promise<Data | User> {
+    // Création d'une data pour un utilisateur
+    async createDataOneUser(id: number, type: any, name: string, value: string) {
         try {
-            // const user = await this.userRepository.findOne({
-            //     where: {id: userId}
-            // })
-            // newData.userId = user.id
-            const newData = this.dataRepository.create(body)
-            return await this.dataRepository.save(newData)
+            const user = await this.userRepository.findOne({
+                where: {id}
+            })
+            console.log("🚀 ~ file: DataService.ts:58 ~ DataService ~ createDataOneUser ~ user:", user)
+            if (!user) return 'User not found'
+            const newData = new Data()
+            newData.user = user
+            newData.type = type
+            newData.name = name
+            newData.value = value
+            
+            await this.dataRepository.save(newData)
+            return newData
         }
         catch (error) {
             console.log(error);
         }
     }
 
-// Suppression d'une data
+    // Suppression d'une data
     async remove(id: number) {
         try {
-            const deleteData = await this.dataRepository.findOne(
-                { where: { id: id } }
-            )
-            if (deleteData) {
-                return await this.dataRepository.remove(deleteData);
-            } else {
-                return {
-                    success: 'ko',
-                    message: 'data not found'
-                }
-            }
+            await this.dataRepository.delete(id)
         }
         catch (error) {
             console.log(error);
         }
     }
 
-// Mise à jour d'une data
-    async update(id: number) {
+    // Mise à jour d'une data
+    async update(id: number, body: any) {
         try {
             const updateData = await this.dataRepository.findOne(
                 {
@@ -91,7 +87,13 @@ export class DataService {
                     }
                 }
             )
-            if (updateData) return this.dataRepository.merge(updateData)
+            if (!updateData) { return 'data not found'}
+            
+            updateData.type = body.type
+            updateData.name = body.name
+            updateData.value = body.value
+
+            return this.dataRepository.save(updateData)
         }
         catch (error) {
             console.log("error:", error)
