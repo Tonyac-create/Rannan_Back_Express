@@ -61,12 +61,11 @@ export class GroupController {
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
         const creator_id = parseInt(request.params.id);
         try {
-            return creator_id //! ajouté lors du merge total pour avoir un retour et éviter l'erreur
-            // const groups = await this.groupService.allByCreatorId(creator_id);
-            // if (!groups || groups.length === 0) {
-            //     throw new Error("No groups found for the specified creator");
-            // } 
-            // response.send(groups);
+            const groups = await this.groupService.allByCreatorId(creator_id);
+            if (!groups) {
+                throw new Error("No groups found for the specified creator");
+            } 
+            response.send(groups);
         } catch (error) {
             throw new Error("An error occurred while fetching groups by creator id");
         }
@@ -75,8 +74,7 @@ export class GroupController {
 // Find all groups of a user by user id
     async allUserGroups(request: Request, response: Response, next: NextFunction) {
     try {
-        const user_id = parseInt(request.params.id) //? ajouté lors du merge total pour créer la route
-        return user_id //? ajouté lors du merge total pour créer la route
+        return "En cour de développement"
     } catch (error) {
         return error
     }

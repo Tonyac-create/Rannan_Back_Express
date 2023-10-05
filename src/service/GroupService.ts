@@ -25,36 +25,6 @@ export class GroupService {
             throw new Error("An error occurred while fetching group");
         }
     }
-    
-    
-    async allByCreatorId(creator_id: number): Promise<Group[]> {
-        const groups = await this.groupRepository.find({where: { creator_id: creator_id }});
-        return groups;
-    }
-
-    async addUserToGroup(userId: number, groupId: number): Promise<String> {
-        try {
-            const users = await this.userRepository.find({
-                where: { id: userId },
-                relations: ['groups'] // Load the 'groups' relation for the user
-            });
-            if (!users || users.length === 0) {
-                throw new Error("User not found");
-            }
-            const userToUpdate = users[0];
-            const group = await this.groupRepository.findOneBy({ id: groupId });
-            if (!group) {
-                throw new Error("Group not found");
-            }
-            userToUpdate.groups = [...userToUpdate.groups, group]; // Add user to the existing groups
-            await this.userRepository.save(userToUpdate);
-    
-            return "Utilisateur ajouté au groupe";
-        } catch (error) {
-            console.error("Error while adding user to group:", error);
-            throw new Error("An error occurred while adding user to group");
-        }
-    } 
 
     async saveGroup(name: string, creator_id: number): Promise<Group | { success: string; message: string }> {
         try {
@@ -92,8 +62,53 @@ export class GroupService {
         return "Group has been removed";
     }
 
+    async allByCreatorId(creator_id: number): Promise<Group[]> {
+        const groups = await this.groupRepository.find({where: { creator_id: creator_id }});
+        return groups;
+    }
+
+    async addUserToGroup(userId: number, groupId: number): Promise<String> {
+        try {
+            const users = await this.userRepository.find({ //? a remplacer par le userService?
+                where: { id : userId },
+                relations: ['groups'] // Load the 'groups' relation for the user
+            });
+            if (!users) {
+                throw new Error("User not found");
+            }
+            const userToUpdate = users[0];
+            const group = await this.groupRepository.findOneBy({ id: groupId });
+            if (!group) {
+                throw new Error("Group not found");
+            }
+            userToUpdate.groups = [...userToUpdate.groups, group]; // Add user to the existing groups
+            await this.userRepository.save(userToUpdate); //? a remplacer par le userService?
+            return "Utilisateur ajouté au groupe";
+        } catch (error) {
+            console.error("Error while adding user to group:", error);
+            throw new Error("An error occurred while adding user to group");
+        }
+    }
+
     async deleteUserToGroup(userId: number, groupId: number): Promise<string> {
-        return "En cour de développement";
+        try {
+            const user = await this.userRepository.findOne({ //? a remplacer par le userService?
+                where: { id: userId },
+                relations: ['groups'] // Load the 'groups' relation for the user
+            });
+            if (!user) {
+                return "User not found"
+            }
+            const groupToDelete = user.groups.findIndex(group => group.id === groupId)
+            if (!groupToDelete) {
+                return ("Group not found for this user")
+            }
+            const removedGroup = user.groups.splice(groupToDelete, 1)[0]
+            await this.userRepository.save(user) //? a remplacer par le userService?
+            return `Utilisateur retiré du groupe ${removedGroup.name}`
+        } catch (error) {
+            console.error("Error while adding user to group:", error)
+        }
     }
 
 }
