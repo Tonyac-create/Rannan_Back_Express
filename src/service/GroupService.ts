@@ -1,6 +1,5 @@
 import { AppDataSource } from "../data-source"
 import { Group } from "../entity/Group"
-import { User } from "../entity/User"
 import { GroupCreateInterface } from "../interface/GroupInterface"
 import { UserService } from "./UserService"
 
@@ -10,13 +9,17 @@ export class GroupService {
     private userService = new UserService()
 
     async allGroupsBy(field: string, value: number) {
-        const groups = await this.groupRepository.find({where: {[field]: value}})
-        if (!groups || groups.length === 0) return "No groups found with specified creator"
-        const groupsFound = groups.map(group => {
-            const { name, id, limited_at, creator_id } = group
-            return { name, id, limited_at, creator_id }
-        })
-        return groupsFound
+        try {
+            const groups = await this.groupRepository.find({where: {[field]: value}})
+            if (!groups || groups.length === 0) return "No groups found with specified creator"
+            const groupsFound = groups.map(group => {
+                const { name, id, limited_at, creator_id } = group
+                return { name, id, limited_at, creator_id }
+            })
+            return groupsFound
+        } catch (error) {
+            throw error.message
+        }
     }
 
     async oneGroup(groupId: number): Promise<Group | undefined> {
@@ -24,8 +27,7 @@ export class GroupService {
             const group = await this.groupRepository.findOneBy({id: groupId})
             return group;
         } catch (error) {
-            console.error("Error while fetching group:", error);
-            throw new Error("An error occurred while fetching group");
+            throw error.message
         }
     }
 
@@ -34,10 +36,7 @@ export class GroupService {
             const newGroup = this.groupRepository.create(groupData)
             return await this.groupRepository.save(newGroup)
         } catch (error) {
-            return {
-                success: 'KO',
-                message: error.message
-            };
+            throw error.message
         }
     }
 
@@ -51,25 +50,33 @@ export class GroupService {
             }
             return `Group ${group.name} has updated`
         } catch (error) {
-            console.log("error :", error);
+            throw error.message
         }
     }
 
     async removeGroup(id: number) {
-        const group = await this.groupRepository.findOneBy({ id: id })
-        if (!group) return "group not found"
-        await this.groupRepository.remove(group)
-        return `Group ${group.name} has deleted`
+        try {
+            const group = await this.groupRepository.findOneBy({ id: id })
+            if (!group) return "group not found"
+            await this.groupRepository.remove(group)
+            return `Group ${group.name} has deleted`
+        } catch (error) {
+            throw error.message
+        }
     }
 
     async allUserGroups(userId: number) {
-        const user = await this.userService.findOne("id", userId, true)
-        if (!user) return "User not found"
-        const groups = user.groups.map(group => {
-            const { name, id, limited_at, creator_id } = group
-            return { name, id, limited_at, creator_id }
-        })
-        return groups
+        try {
+            const user = await this.userService.findOne("id", userId, true)
+            if (!user) return "User not found"
+            const groups = user.groups.map(group => {
+                const { name, id, limited_at, creator_id } = group
+                return { name, id, limited_at, creator_id }
+            })
+            return groups
+        } catch (error) {
+            throw error.message
+        }
     }
 
     async addUserToGroup(userId: number, groupId: number): Promise<String> {
@@ -82,8 +89,7 @@ export class GroupService {
             await this.userService.create(user)
             return `Utilisateur ${user.nickname} ajouté au groupe ${group.name}`
         } catch (error) {
-            console.error("Error while adding user to group:", error);
-            throw new Error("An error occurred while adding user to group");
+            throw error.message
         }
     }
 
@@ -101,7 +107,7 @@ export class GroupService {
             await this.userService.create(user)
             return `Utilisateur ${user.nickname} retiré du groupe ${removedGroup.name}`
         } catch (error) {
-            console.error("Error while adding user to group:", error)
+            throw error.message
         }
     }
 
