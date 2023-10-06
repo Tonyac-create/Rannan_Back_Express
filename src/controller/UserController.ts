@@ -20,10 +20,10 @@ export class UserController {
     async one(request: Request, response: Response, next: NextFunction) {
         try {
         // Chercher un user par son id
-            const user = await this.userService.findOne("id", +request.params.id)
+            const user = await this.userService.findOne("id", +request.params.id, false)
         // SI l'id n'est pas trouvé
             if (!user) {
-                throw new Error("User not found")
+                return("User not found")
             }
         // SI l'id est trouvé
             return user
@@ -36,10 +36,10 @@ export class UserController {
     async save(request: Request, response: Response, next: NextFunction) {
         try {
         // Chercher un user par son mail
-            const user = await this.userService.findOne("email", request.body.email)
+            const user = await this.userService.findOne("email", request.body.email, false)
         // SI le mail existe déja
             if (user) {
-                throw new Error(`Email ${user.email} already used`)
+                return(`Email ${user.email} already used`)
             }
             // IF mail does not exist
             const newUser = await this.userService.create(request.body)
@@ -53,10 +53,10 @@ export class UserController {
     async update(request: Request, response: Response, next: NextFunction) {
         try {
             // get user by id
-            const user = await this.userService.findOne("id", +request.params.id)
+            const user = await this.userService.findOne("id", +request.params.id, false)
             // IF user not found
             if (!user) {
-                throw new Error("User not found")
+                return("User not found")
             }
             // IF user is found
             await this.userService.update(user.id, request.body)
@@ -70,10 +70,10 @@ export class UserController {
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
             // get user by id
-            const user = await this.userService.findOne("id", +request.params.id)
+            const user = await this.userService.findOne("id", +request.params.id, false)
             // IF user not found
             if (!user) {
-                throw new Error("User not found")
+                return ("User not found")
             }
             // IF user is found
             const userName = user.nickname

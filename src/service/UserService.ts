@@ -17,12 +17,18 @@ export class UserService {
     }
 
 // Find a User by field and value
-    async findOne(field: string, value: number | string) {
+    async findOne(field: string, value: number | string, populate: boolean) {
         try {
-            return this.userRepository.findOne({
-                where: { [field]: value },
-                relations: ['groups','datas']
-            })
+            if (populate === true) {
+                return this.userRepository.findOne({
+                    where: { [field]: value },
+                    relations: ['groups','datas']
+                })
+            } else {
+                return this.userRepository.findOne({
+                    where: { [field]: value }
+                })
+            }
         } catch (error) {
             throw new Error(error)
         }

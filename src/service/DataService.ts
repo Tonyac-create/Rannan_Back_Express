@@ -33,7 +33,7 @@ export class DataService {
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(userId: number) {
         try {
-            const user = await this.userService.findOne("id", userId)
+            const user = await this.userService.findOne("id", userId, false)
             if (!user) return 'User not found'
             return user
         }
@@ -45,7 +45,7 @@ export class DataService {
     // Création d'une data pour un utilisateur
     async createDataOneUser(id: number, type: any, name: string, value: string) {
         try {
-            const user = await this.userService.findOne("id", id
+            const user = await this.userService.findOne("id", id, false
             //     {
             //     where: {id}
             // }

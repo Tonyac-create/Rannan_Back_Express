@@ -63,7 +63,7 @@ export class GroupService {
     }
 
     async allUserGroups(userId: number) {
-        const user = await this.userService.findOne("id", userId)
+        const user = await this.userService.findOne("id", userId, true)
         if (!user) return "User not found"
         const groups = user.groups.map(group => {
             const { name, id, limited_at, creator_id } = group
@@ -74,7 +74,7 @@ export class GroupService {
 
     async addUserToGroup(userId: number, groupId: number): Promise<String> {
         try {
-            const user = await this.userService.findOne("id", userId)
+            const user = await this.userService.findOne("id", userId, true)
             if (!user) return "User not found"
             const group = await this.groupRepository.findOneBy({ id: groupId })
             if (!group) return "Group not found"
@@ -89,7 +89,7 @@ export class GroupService {
 
     async deleteUserToGroup(userId: number, groupId: number): Promise<string> {
         try {
-            const user = await this.userService.findOne("id", userId)
+            const user = await this.userService.findOne("id", userId, true)
             if (!user) {
                 return "User not found"
             }
