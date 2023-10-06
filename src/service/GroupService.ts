@@ -79,7 +79,7 @@ export class GroupService {
             const group = await this.groupRepository.findOneBy({ id: groupId })
             if (!group) return "Group not found"
             user.groups.push(group)
-            await this.userService.save(user)
+            await this.userService.create(user)
             return `Utilisateur ${user.nickname} ajouté au groupe ${group.name}`
         } catch (error) {
             console.error("Error while adding user to group:", error);
@@ -98,7 +98,7 @@ export class GroupService {
                 return ("This user wasn't in this group")
             }
             const removedGroup = user.groups.splice(groupToDelete, 1)[0]
-            await this.userService.save(user)
+            await this.userService.create(user)
             return `Utilisateur ${user.nickname} retiré du groupe ${removedGroup.name}`
         } catch (error) {
             console.error("Error while adding user to group:", error)
