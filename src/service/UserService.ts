@@ -22,7 +22,7 @@ export class UserService {
             if (populate === true) {
                 return this.userRepository.findOne({
                     where: { [field]: value },
-                    relations: ['groups','datas']
+                    relations: ['groups']
                 })
             } else {
                 return this.userRepository.findOne({

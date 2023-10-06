@@ -17,8 +17,7 @@ export class DataController {
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: Request, response: Response, next: NextFunction) {
         try {
-            const userId = +request.params.id
-            const datas = await this.dataService.getDatasInUser(userId)
+            const datas = await this.dataService.getDatasInUser(+request.params.user_id)
             return datas
         }
         catch (error) {
@@ -37,11 +36,11 @@ export class DataController {
 
     // Création d'une data par userid
     async save(request: Request, response: Response, next: NextFunction) {
-        const { id, type, name, value } = request.body
+        const { id, type, name, value, user_id } = request.body
         try {
             const id = +request.params.id
 
-            const data = await this.dataService.createDataOneUser(id, type, name, value)
+            const data = await this.dataService.createDataOneUser(id, type, name, value, user_id)
             return data
         }
         catch (error) {
