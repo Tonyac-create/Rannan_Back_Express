@@ -63,7 +63,7 @@ export class AuthController{
             //Si la demande est pour un autre user (target === "user")
             if (target === "user") {
                 //Récupér l'user et vérifier qu'il existe (atendre service)
-                const targetedUser = await this.userService.findOne("id", target_id);
+                const targetedUser = await this.userService.findOne("id", target_id, false);
                 if(!targetedUser){
                     response.status(404).send("Targeted user not found.")
                 }

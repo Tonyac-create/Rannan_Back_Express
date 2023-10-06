@@ -4,6 +4,6 @@ export class ResponseMaker {
 
     async responseSuccess(message :string, data :any): Promise<ResponseInterface>{
 
-        return { message, data, date : new Date()}
+        return { message: message, data: data, date : new Date()}
     }
 }

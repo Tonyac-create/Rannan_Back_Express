@@ -12,49 +12,55 @@ export class UserService {
             return this.userRepository.find()
         }
         catch (error) {
-            throw error
+            throw error.message
         }
     }
 
 // Find a User by field and value
-    async findOne(field: string, value: number | string):Promise<User> {
+    async findOne(field: string, value: number | string, populate: boolean) {
         try {
-            return this.userRepository.findOne({
-                where: { [field]: value },
-                relations: ['groups','datas'] // !TODO: rendre optionnel le populate
-            })
+            if (populate === true) {
+                return this.userRepository.findOne({
+                    where: { [field]: value },
+                    relations: ['groups','datas']
+                })
+            } else {
+                return this.userRepository.findOne({
+                    where: { [field]: value }
+                })
+            }
         } catch (error) {
-            throw error
+            throw error.message
         }
     }
 
 // Create New User
-    async create(body: UserCreateInterface) {
+    async saveUser(body: UserCreateInterface) {
         try {
             return this.userRepository.save(body)
         }
         catch (error) {
-            throw error
+            throw error.message
         }
     }
 
 // Update user
     async update(id: number, body: any) {
         try {
-            await this.userRepository.update(id, body)
+            return await this.userRepository.update(id, body)
         }
         catch (error) {
-            throw error
+            throw error.message
         }
     }
 
 // Delete user by ID
     async remove(id: number) {
         try {
-            await this.userRepository.delete(id)
+            return await this.userRepository.delete(id)
         }
         catch (error) {
-            throw error
+            throw error.message
         }
     }
 }
