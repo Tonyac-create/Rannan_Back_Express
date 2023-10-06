@@ -1,13 +1,11 @@
-import express from "express"
+import express, { ErrorRequestHandler } from "express"
 import * as bodyParser from "body-parser"
 import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
 import dotenv from "dotenv"
 dotenv.config()
-
 AppDataSource.initialize().then(async () => {
-
     // create express app
     const app = express()
     app.use(bodyParser.json())

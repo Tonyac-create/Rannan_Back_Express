@@ -17,11 +17,11 @@ export class UserService {
     }
 
 // Find a User by field and value
-    async findOne(field: string, value: number | string) {
+    async findOne(field: string, value: number | string):Promise<User> {
         try {
             return this.userRepository.findOne({
                 where: { [field]: value },
-                relations: ['groups','datas']
+                relations: ['groups','datas'] // !TODO: rendre optionnel le populate
             })
         } catch (error) {
             throw error
@@ -31,8 +31,7 @@ export class UserService {
 // Create New User
     async create(body: UserCreateInterface) {
         try {
-            const newUser = await this.userRepository.save(body)
-            return newUser
+            return this.userRepository.save(body)
         }
         catch (error) {
             throw error
