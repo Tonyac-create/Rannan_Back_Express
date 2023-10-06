@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express"
 import { UserService } from "../service/UserService"
+import { STATUS_CODES } from "http"
 
 export class UserController {
 
@@ -12,7 +13,7 @@ export class UserController {
             const users = await this.userService.all()
             return users
         } catch (error) {
-            throw new Error(`UserController.all ERROR: ${error}`)
+            response.status(500).json({ error: error.message })
         }
     }
 
@@ -23,12 +24,12 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id, false)
         // SI l'id n'est pas trouvé
             if (!user) {
-                return("User not found")
+                throw new Error("L'utilisateur n'a pas été trouvé")
             }
         // SI l'id est trouvé
             return user
         } catch (error) {
-            throw new Error(`UserController.one ERROR: ${error}`)
+            response.status(500).json({ error: error.message })
         }
     }
 
@@ -39,13 +40,13 @@ export class UserController {
             const user = await this.userService.findOne("email", request.body.email, false)
         // SI le mail existe déja
             if (user) {
-                return(`Email ${user.email} already used`)
+                throw new Error(`Email ${user.email} already used`)
             }
             // IF mail does not exist
             const newUser = await this.userService.create(request.body)
             return newUser
         } catch (error) {
-            throw new Error(`UserController.save ERROR: ${error}`)
+            response.status(500).json({ error: error.message })
         }
     }
 
@@ -56,13 +57,13 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id, false)
             // IF user not found
             if (!user) {
-                return("User not found")
+                throw new Error("User not found")
             }
             // IF user is found
             await this.userService.update(user.id, request.body)
             return ('User updated successfully')
         } catch (error) {
-            throw new Error(`UserController.update ERROR : ${error}`)
+            response.status(500).json({ error: error.message })
         }
     }
 
@@ -73,14 +74,14 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id, false)
             // IF user not found
             if (!user) {
-                return ("User not found")
+                throw new Error ("User not found")
             }
             // IF user is found
             const userName = user.nickname
             await this.userService.remove(+request.params.id)
             return(`User ${userName} has been deleted`)
         } catch (error) {
-            throw new Error("UserController.remove ERROR :")
+            response.status(500).json({ error: error.message })
         }
     }
 }

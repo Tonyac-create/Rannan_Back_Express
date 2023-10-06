@@ -12,7 +12,7 @@ export class UserService {
             return this.userRepository.find()
         }
         catch (error) {
-            throw new Error(error)
+            throw error.message
         }
     }
 
@@ -30,7 +30,7 @@ export class UserService {
                 })
             }
         } catch (error) {
-            throw new Error(error)
+            throw error.message
         }
     }
 
@@ -41,7 +41,7 @@ export class UserService {
             return newUser
         }
         catch (error) {
-            throw new Error(error)
+            throw error.message
         }
     }
 
@@ -51,7 +51,7 @@ export class UserService {
             await this.userRepository.update(id, body)
         }
         catch (error) {
-            throw new Error(error)
+            throw error.message
         }
     }
 
@@ -61,7 +61,7 @@ export class UserService {
             await this.userRepository.delete(id)
         }
         catch (error) {
-            throw new Error(error)
+            throw error.message
         }
     }
 }
