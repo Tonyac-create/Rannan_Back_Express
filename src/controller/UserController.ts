@@ -1,17 +1,18 @@
 import { NextFunction, Request, Response } from "express"
 import { UserService } from "../service/UserService"
-import { STATUS_CODES } from "http"
+import { ResponseMaker } from "../utils/ResponseMaker"
 
 export class UserController {
 
 // Services
     private userService = new UserService()
+    private responseMaker = new ResponseMaker()
 
 // Récupération de tout les users
     async all(request: Request, response: Response, next: NextFunction) {
         try {
             const users = await this.userService.all()
-            return users
+            return this.responseMaker.responseSuccess(`All users`, users)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -27,7 +28,7 @@ export class UserController {
                 throw new Error("L'utilisateur n'a pas été trouvé")
             }
         // SI l'id est trouvé
-            return user
+            return this.responseMaker.responseSuccess(`User id: ${user.id}`, user)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -43,8 +44,8 @@ export class UserController {
                 throw new Error(`Email ${user.email} already used`)
             }
             // IF mail does not exist
-            const newUser = await this.userService.create(request.body)
-            return newUser
+            const newUser = await this.userService.saveUser(request.body)
+            return this.responseMaker.responseSuccess(`New user id: ${newUser.id}`, newUser)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -60,8 +61,8 @@ export class UserController {
                 throw new Error("User not found")
             }
             // IF user is found
-            await this.userService.update(user.id, request.body)
-            return ('User updated successfully')
+            const updatedUser = await this.userService.update(user.id, request.body)
+            return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -79,7 +80,7 @@ export class UserController {
             // IF user is found
             const userName = user.nickname
             await this.userService.remove(+request.params.id)
-            return(`User ${userName} has been deleted`)
+            return this.responseMaker.responseSuccess(`User ${userName} has been deleted`, user)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }

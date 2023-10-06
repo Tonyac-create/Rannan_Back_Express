@@ -35,7 +35,7 @@ export class UserService {
     }
 
 // Create New User
-    async create(body: UserCreateInterface) {
+    async saveUser(body: UserCreateInterface) {
         try {
             return this.userRepository.save(body)
         }
@@ -47,7 +47,7 @@ export class UserService {
 // Update user
     async update(id: number, body: any) {
         try {
-            await this.userRepository.update(id, body)
+            return await this.userRepository.update(id, body)
         }
         catch (error) {
             throw error.message
@@ -57,7 +57,7 @@ export class UserService {
 // Delete user by ID
     async remove(id: number) {
         try {
-            await this.userRepository.delete(id)
+            return await this.userRepository.delete(id)
         }
         catch (error) {
             throw error.message

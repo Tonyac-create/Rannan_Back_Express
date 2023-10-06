@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ContactService } from "../service/ContactService";
 import { UserService } from "../service/UserService";
 import { ResponseInterface } from "../interface/ResponseInterface";
-import { ResponseMaker } from "../utils/responseMaker";
+import { ResponseMaker } from "../utils/ResponseMaker";
 
 export class ContactController{
 
@@ -55,8 +55,8 @@ export class ContactController{
         try{
 
             //Verifications que les user existent (1 et 2)
-            const user1Ok =await this.userService.findOne("id", +request.body.user1Id);
-            const user2Ok = await this.userService.findOne("id", +request.body.user2Id);
+            const user1Ok =await this.userService.findOne("id", +request.body.user1Id, false);
+            const user2Ok = await this.userService.findOne("id", +request.body.user2Id, false);
 
             if(!user1Ok || !user2Ok){
                 throw new Error("One of the users, or the two don't exist")

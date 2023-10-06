@@ -1,8 +1,5 @@
-import { log } from "util";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
-import { User } from "../entity/User"
-import { DataCreateInterface } from '../interface/DataInterface';
 import { UserService } from "./UserService";
 
 export class DataService {
