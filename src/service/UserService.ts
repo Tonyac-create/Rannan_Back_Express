@@ -6,9 +6,9 @@ export class UserService {
 
     private userRepository = AppDataSource.getRepository(User)
 
+// Find and Return all users
     async all() {
         try {
-            // Find and Return all users
             return this.userRepository.find()
         }
         catch (error) {
@@ -16,23 +16,23 @@ export class UserService {
         }
     }
 
+// Find a User by field and value
     async findOne(field: string, value: number | string) {
         try {
-            // Find a User by ID
-            return await this.userRepository.findOne({
+            const user = await this.userRepository.findOne({
                 where: { [field]: value },
                 relations: ['groups']
             })
+            return user
         } catch (error) {
         console.log("🐼 ~ file: UserService.ts:24 ~ oneById ~ error:", error)
         }
     }
 
+// Create New User
     async create(body: UserCreateInterface) {
         try {
-            // Create New User
             const newUser = this.userRepository.create(body)
-            // Save New User on db
             await this.userRepository.save(newUser)
             return newUser
         }
@@ -41,37 +41,42 @@ export class UserService {
         }
     }
 
+// Update user
     async update(id: number, body: any) {
         try {
-            const userToUpdate = await this.userRepository.findOne(
-                {where: { id: id }}
-            )
-            if (!userToUpdate) {
-                return {
-                    success: 'ko',
-                    message: 'user not found'
-                }
-            }
-            userToUpdate.nickname = body.nickname
-            userToUpdate.email = body.email
-            userToUpdate.password = body.password
-            userToUpdate.avatar_id = body.avatar_id
-            const updatedUser = await this.userRepository.save(userToUpdate)
-            return updatedUser
+            await this.userRepository.update(id, {
+                nickname: body.nickname,
+                email: body.email,
+                password: body.password,
+                avatar_id: body.avatar_id
+            })
+            return "User as updated"
         }
         catch (error) {
             console.log("🐼 ~ file: UserService.ts:79 ~ update ~ error:", error)
         }
     }
 
+// Delete user by ID
     async remove(id: number) {
         try {
-            // Delete user by ID
             await this.userRepository.delete(id)
         }
         catch (error) {
         console.log("🐼 ~ file: UserService.ts:66 ~ remove ~ error:", error)
         }
     }
+
+// Save User for GroupController
+    async save(body: UserCreateInterface) {
+        try {
+            const savedUser = await this.userRepository.save(body)
+            return savedUser
+        }
+        catch (error) {
+        console.log("🐼 ~ file: UserService.ts:56 ~ create ~ error:", error)
+        }
+    }
+
 
 }

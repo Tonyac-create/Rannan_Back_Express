@@ -8,19 +8,17 @@ export class GroupController {
     private groupService = new GroupService()
     private userService = new UserService()
 
-// Récupération de tout les groupes
-    async all(request: Request, response: Response, next: NextFunction) {
-        return this.groupService.allGroups()
-    }
-
 // Récupération d'un groupe par son id
     async one(request: Request, response: Response, next: NextFunction) {
-        const groupId = parseInt(request.params.id);
         try {
-            const group = await this.groupService.findOne(groupId);
-            return group;
+            const group = await this.groupService.oneGroup(+request.params.id)
+            if (!group) {
+                response.status(404).send("Group not found")
+            } else {
+                response.status(201).send(group)
+            }
         } catch (error) {
-            return error;
+            response.status(400).send("GroupController.all ERROR :" + error)
         }
     }
 
@@ -28,81 +26,67 @@ export class GroupController {
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
             const { name, creator_id } = request.body;
-            const savedGroup = await this.groupService.saveGroup(name, creator_id); // Pass the individual arguments
-            return savedGroup; // Return the saved group with a success status
+            const savedGroup = await this.groupService.saveGroup({name, creator_id});
+            return savedGroup;
         } catch (error) {
-            // Gérer les erreurs, par exemple en renvoyant une réponse d'erreur appropriée
-            throw new Error("Error while saving the group"); 
+            response.status(400).send("GroupController.save ERROR :" + error)
         }
     }
 
 // Mettre a jour un groupe par son id
     async update(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id);
-        const { name, limited_at } = request.body;
         try {
-            const updatedGroup = await this.groupService.updateGroup(id, name, limited_at);
-            return updatedGroup;
+            const update = await this.groupService.updateGroup(+request.params.id, request.body);
+            response.send(update)
         } catch (error) {
-            throw new Error("Error while updating the group:"); 
+            response.status(400).send("GroupController.update ERROR :" + error)
         }
     }
 
 // Supprimer un groupe par son id
     async remove(request: Request, response: Response, next: NextFunction) {
-        const id = parseInt(request.params.id);
         try {
-            const removalResult = await this.groupService.removeGroup(id);
-            return removalResult;
+            const removedGroup = await this.groupService.removeGroup(+request.params.id);
+            response.send(removedGroup)
         } catch (error) {
-            throw new Error("Error while removing the group"); 
+            response.status(400).send("GroupController.remove ERROR :" + error)
         }
     }
 
 // Récupération de tout les groupes par le creator_id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
-        const creator_id = parseInt(request.params.id);
         try {
-            const groups = await this.groupService.allByCreatorId(creator_id);
-            if (!groups) {
-                throw new Error("No groups found for the specified creator");
-            } 
+            const groups = await this.groupService.allGroupsBy("creator_id", +request.params.id);
             response.send(groups);
         } catch (error) {
-            throw new Error("An error occurred while fetching groups by creator id");
+            response.status(400).send("GroupController.groupsByCreatorId ERROR :" + error)
         }
     }
 
 // Récupération de tout les groupes d'un user par l'id du user
     async allUserGroups(request: Request, response: Response, next: NextFunction) {
     try {
-        return "En cour de développement"
+        return await this.groupService.allUserGroups(+request.params.id)
     } catch (error) {
-        return error
+        response.status(400).send("GroupController.allUserGroups ERROR :" + error)
     }
     }
 
 // Ajouter un user dans un groupe
     async addUserInGroup(request: Request, response: Response, next: NextFunction) {
-        const userId = parseInt(request.body.userId);
-        const groupId = parseInt(request.body.groupId);
         try {
-            const addedUser = await this.groupService.addUserToGroup(userId, groupId);
-            return addedUser;
+            return await this.groupService.addUserToGroup(+request.body.userId, +request.body.groupId);
         } catch (error) {
-            return error
+            response.status(400).send("GroupController.addUserInGroup ERROR :" + error)
         }
     }
 
 // Supprimer un user d'un groupe
     async deleteUserInGroup(request: Request, response: Response, next: NextFunction) {
-        const userId = parseInt(request.body.userId);
-        const groupId = parseInt(request.body.groupId);
         try {
-            const removedUser = await this.groupService.deleteUserToGroup(userId, groupId);
-            return removedUser;
+            return await this.groupService.deleteUserToGroup(+request.body.userId, +request.body.groupId);
         } catch (error) {
-            return error;
+            response.status(400).send("GroupController.deleteUserInGroup ERROR :" + error)
         }
     }
 

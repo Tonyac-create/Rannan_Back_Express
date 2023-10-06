@@ -12,7 +12,7 @@ export class UserController {
             return await this.userService.all()
         } 
         catch (error) {
-        console.log("🐼 ~ file: UserController.ts:14 ~ all ~ error:", error)
+        response.status(400).send("UserController.all ERROR :").send(error)
         }
     }
 
@@ -31,7 +31,7 @@ export class UserController {
         // SI l'id est trouvé
             return user
         } catch (error) {
-        console.log("🐼 ~ file: UserController.ts:33 ~ one ~ error:", error)
+            response.status(400).send("UserController.one ERROR :").send(error)
         }
     }
 
@@ -50,7 +50,7 @@ export class UserController {
             // IF mail does not exist
             return await this.userService.create(request.body)
         } catch (error) {
-        console.log("🐼 ~ file: UserController.ts:52 ~ save ~ error:", error)
+            response.status(400).send("UserController.save ERROR :").send(error)
         }
     }
 
@@ -69,7 +69,7 @@ export class UserController {
             // IF user is found
             return this.userService.update(user.id, request.body)
         } catch (error) {
-            console.log("🐼 ~ file: UserController.ts:71 ~ update ~ error:", error)
+            response.status(400).send("UserController.update ERROR :").send(error)
         }
     }
 
@@ -93,7 +93,7 @@ export class UserController {
                 message: `user '${userName}' was deleted`
             }
         } catch (error) {
-        console.log("🐼 ~ file: UserController.ts:95 ~ remove ~ error:", error)
+            response.status(400).send("UserController.remove ERROR :").send(error)
         }
     }
 }
