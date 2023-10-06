@@ -16,7 +16,7 @@ export class DataService {
             return await this.dataRepository.find();
         }
         catch (error) {
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log("🚀 ~ file: DataService.ts:19 ~ DataService ~ all ~ error:", error)
         }
     }
 
@@ -26,7 +26,7 @@ export class DataService {
             return await this.dataRepository.findOne({ where: { id } })
         }
         catch (error) {
-            console.log("🚀 ~ file: UserService.ts:15 ~ UserService ~ all ~ error:", error)
+            console.log("🚀 ~ file: DataService.ts:29 ~ DataService ~ getOneById ~ error:", error)
         }
     }
 
@@ -41,7 +41,7 @@ export class DataService {
             return user
         }
         catch (error) {
-            console.log(error);
+            console.log("🚀 ~ file: DataService.ts:44 ~ DataService ~ getDatasInUser ~ error:", error)
         }
     }
 
@@ -63,7 +63,7 @@ export class DataService {
             return newData
         }
         catch (error) {
-            console.log(error);
+            console.log("🚀 ~ file: DataService.ts:66 ~ DataService ~ createDataOneUser ~ error:", error)
         }
     }
 
@@ -73,7 +73,7 @@ export class DataService {
             await this.dataRepository.delete(id)
         }
         catch (error) {
-            console.log(error);
+            console.log("🚀 ~ file: DataService.ts:76 ~ DataService ~ remove ~ error:", error)
         }
     }
 
@@ -96,7 +96,7 @@ export class DataService {
             return this.dataRepository.save(updateData)
         }
         catch (error) {
-            console.log("error:", error)
+            console.log("🚀 ~ file: DataService.ts:99 ~ DataService ~ update ~ error:", error)
         }
     }
 

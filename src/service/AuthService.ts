@@ -40,15 +40,7 @@ export class AuthService {
     }
 
     //Lier la data et l'authorisation
-    async linkDataToAuthorization(dataId: number, authorizationId: number): Promise<void> {
-        try {
-            
-        }
-        catch (error) {
-
-        }
-
-    }
+    
 
     //Supprimer une authorisation
     async remove(id: number) {
