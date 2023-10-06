@@ -9,10 +9,10 @@ export class UserController {
 // Récupération de tout les users
     async all(request: Request, response: Response, next: NextFunction) {
         try {
-            return await this.userService.all()
-        } 
-        catch (error) {
-        response.status(400).send("UserController.all ERROR :").send(error)
+            const users = await this.userService.all()
+            return response.json(users)
+        } catch (error) {
+            response.status(400).send(`UserController.all ERROR: ${error}`)
         }
     }
 
@@ -23,15 +23,12 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id)
         // SI l'id n'est pas trouvé
             if (!user) {
-                return {
-                    success: `ko`,
-                    message: `user not found`
-                }
+                return response.status(400).send("User not found")
             }
         // SI l'id est trouvé
-            return user
+            return response.json(user)
         } catch (error) {
-            response.status(400).send("UserController.one ERROR :").send(error)
+            response.status(400).send(`UserController.one ERROR: ${error}`)
         }
     }
 
@@ -42,15 +39,13 @@ export class UserController {
             const user = await this.userService.findOne("email", request.body.email)
         // SI le mail existe déja
             if (user) {
-                return {
-                    success: `ko`,
-                    message: `email ${user.email} already used`
-                }
+                response.status(400).send(`Email ${user.email} already used`)
             }
             // IF mail does not exist
-            return await this.userService.create(request.body)
+            const newUser = await this.userService.create(request.body)
+            return response.json(newUser)
         } catch (error) {
-            response.status(400).send("UserController.save ERROR :").send(error)
+            response.status(400).send(`UserController.save ERROR: ${error}`)
         }
     }
 
@@ -61,13 +56,11 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id)
             // IF user not found
             if (!user) {
-                return {
-                    success: 'ko',
-                    message: 'user not found'
-                }
+                return response.status(400).send("User not found")
             }
             // IF user is found
-            return this.userService.update(user.id, request.body)
+            await this.userService.update(user.id, request.body)
+            return response.status(200).send('User updated successfully')
         } catch (error) {
             response.status(400).send("UserController.update ERROR :").send(error)
         }
@@ -80,18 +73,12 @@ export class UserController {
             const user = await this.userService.findOne("id", +request.params.id)
             // IF user not found
             if (!user) {
-                return {
-                    success: `ko`,
-                    message: `user not found`
-                }
+                return response.status(400).send("User not found")
             }
             // IF user is found
             const userName = user.nickname
             await this.userService.remove(+request.params.id)
-            return {
-                success: `ok`,
-                message: `user '${userName}' was deleted`
-            }
+            return response.status(200).send(`User ${userName} has been deleted`)
         } catch (error) {
             response.status(400).send("UserController.remove ERROR :").send(error)
         }
