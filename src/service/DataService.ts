@@ -3,12 +3,12 @@ import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 import { User } from "../entity/User"
 import { DataCreateInterface } from '../interface/DataInterface';
+import { UserService } from "./UserService";
 
 export class DataService {
 
     private dataRepository = AppDataSource.getRepository(Data)
-    private userRepository = AppDataSource.getRepository(User)
-
+    private userService = new UserService()
 
     // Récupération de toutes les datas crées
     async all() {
@@ -33,10 +33,7 @@ export class DataService {
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(userId: number) {
         try {
-            const user = await this.userRepository.find({
-                where: { id: userId },
-                relations: {datas: true}
-            })
+            const user = await this.userService.findOne("id", userId)
             if (!user) return 'User not found'
             return user
         }
@@ -48,9 +45,11 @@ export class DataService {
     // Création d'une data pour un utilisateur
     async createDataOneUser(id: number, type: any, name: string, value: string) {
         try {
-            const user = await this.userRepository.findOne({
-                where: {id}
-            })
+            const user = await this.userService.findOne("id", id
+            //     {
+            //     where: {id}
+            // }
+            )
             console.log("🚀 ~ file: DataService.ts:58 ~ DataService ~ createDataOneUser ~ user:", user)
             if (!user) return 'User not found'
             const newData = new Data()

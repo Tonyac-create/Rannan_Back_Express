@@ -21,7 +21,7 @@ export class UserService {
         try {
             const user = await this.userRepository.findOne({
                 where: { [field]: value },
-                relations: ['groups']
+                relations: ['groups','datas']
             })
             return user
         } catch (error) {
