@@ -1,22 +1,19 @@
 import { NextFunction, Request, Response } from "express"
 import { GroupService } from "../service/GroupService"
-import { UserService } from "../service/UserService"
 
 export class GroupController {
 
 // Services
     private groupService = new GroupService()
-    private userService = new UserService()
 
 // Récupération d'un groupe par son id
     async one(request: Request, response: Response, next: NextFunction) {
         try {
             const group = await this.groupService.oneGroup(+request.params.id)
             if (!group) {
-                response.status(404).send("Group not found")
-            } else {
-                response.status(201).send(group)
+                throw new Error("Group not found")
             }
+            return group
         } catch (error) {
             response.status(400).send("GroupController.all ERROR :" + error)
         }
@@ -25,9 +22,8 @@ export class GroupController {
 // Enregistrer un nouveau groupe
     async save(request: Request, response: Response, next: NextFunction) { 
         try {
-            const { name, creator_id } = request.body;
-            const savedGroup = await this.groupService.saveGroup({name, creator_id});
-            return savedGroup;
+            const { name, creator_id } = request.body
+            return await this.groupService.saveGroup({name, creator_id})
         } catch (error) {
             response.status(400).send("GroupController.save ERROR :" + error)
         }
@@ -36,8 +32,7 @@ export class GroupController {
 // Mettre a jour un groupe par son id
     async update(request: Request, response: Response, next: NextFunction) {
         try {
-            const update = await this.groupService.updateGroup(+request.params.id, request.body);
-            response.send(update)
+            return await this.groupService.updateGroup(+request.params.id, request.body);
         } catch (error) {
             response.status(400).send("GroupController.update ERROR :" + error)
         }
@@ -46,8 +41,7 @@ export class GroupController {
 // Supprimer un groupe par son id
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
-            const removedGroup = await this.groupService.removeGroup(+request.params.id);
-            response.send(removedGroup)
+            return await this.groupService.removeGroup(+request.params.id);
         } catch (error) {
             response.status(400).send("GroupController.remove ERROR :" + error)
         }
@@ -56,8 +50,7 @@ export class GroupController {
 // Récupération de tout les groupes par le creator_id
     async groupsByCreatorId(request: Request, response: Response, next: NextFunction) {
         try {
-            const groups = await this.groupService.allGroupsBy("creator_id", +request.params.id);
-            response.send(groups);
+            return await this.groupService.allGroupsBy("creator_id", +request.params.id);
         } catch (error) {
             response.status(400).send("GroupController.groupsByCreatorId ERROR :" + error)
         }
@@ -89,6 +82,4 @@ export class GroupController {
             response.status(400).send("GroupController.deleteUserInGroup ERROR :" + error)
         }
     }
-
-
 }
