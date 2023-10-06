@@ -37,8 +37,7 @@ export class UserService {
 // Create New User
     async create(body: UserCreateInterface) {
         try {
-            const newUser = await this.userRepository.save(body)
-            return newUser
+            return this.userRepository.save(body)
         }
         catch (error) {
             throw error.message

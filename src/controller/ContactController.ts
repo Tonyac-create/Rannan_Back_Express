@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from "express";
 import { ContactService } from "../service/ContactService";
 import { UserService } from "../service/UserService";
+import { ResponseInterface } from "../interface/ResponseInterface";
+import { ResponseMaker } from "../utils/responseMaker";
 
 export class ContactController{
 
 // Services
     private contactService = new ContactService();
     private userService = new UserService();
+    private responseMaker = new ResponseMaker();
 
 // Récupérer la liste de contacts d'un utilisateur 
     async all(request: Request, response: Response, next: NextFunction){
@@ -47,51 +50,37 @@ export class ContactController{
     }
 
 //Mettre 2 users en contact
-    async save(request: Request, response: Response, next: NextFunction){
+    async save(request: Request, response: Response, next: NextFunction): Promise<ResponseInterface>{
         //Récupération user1 dans le token (à faire)
-        const user1Id = parseInt(request.body.user1Id);
-        const user2Id = parseInt(request.body.user2Id);
         try{
+
             //Verifications que les user existent (1 et 2)
-            const user1Ok =await this.userService.findOne("id", user1Id, false);
-            const user2Ok = await this.userService.findOne("id", user2Id, false);
-            if(!user1Ok || !user2Ok || !user1Ok && !user2Ok){
-                response.status(404).send("One of the users, or the two don't exist")
+            const user1Ok =await this.userService.findOne("id", +request.body.user1Id);
+            const user2Ok = await this.userService.findOne("id", +request.body.user2Id);
+
+            if(!user1Ok || !user2Ok){
+                throw new Error("One of the users, or the two don't exist")
             }
-            else{
-                //User1 n'est pas le même que User2
-                if(user1Ok.id === user2Ok.id){
-                    response.status(400).send("User1 and User2 are the same user")
-                }
-                else{
-                    //Verifier que ces users ne sont pas deja en contact
-                    let usersAreInContact;
-                    const contact = await this.contactService.oneByUsers(user1Id, user2Id);
-                    if (!contact || contact.length === 0){
-                        usersAreInContact = false;
-                    }
-                    else{
-                        usersAreInContact = true;
-                    }
-                    console.log(usersAreInContact);
-                    if(usersAreInContact === true){
-                        response.status(400).send("Users are already in contact");
-                    }
-                    else{ //Execution de la fonction
-                        const contact = await this.contactService.create(user1Id, user2Id);
-                        if (!contact){
-                            response.status(400).send("Bad request")
-                        }
-                        else{
-                            response.status(201).send(contact).send("users are now contacts")
-                        }
-                    }
-                }
+            //User1 n'est pas le même que User2
+            if(user1Ok.id === user2Ok.id){
+                throw new Error("User1 and User2 are the same user")
             }
+            
+            //Verifier que ces users ne sont pas deja en contact
+            const testContact = await this.contactService.oneByUsers(+request.body.user1Id, +request.body.user2Id);
+            if (testContact){
+                throw new Error("Users are already in contact")
+            }
+            //Execution de la fonction
+            const contact = await this.contactService.create(+request.body.user1Id, +request.body.user2Id);
+            if (!contact){
+                throw new Error("Bad request")
+            }
+            return this.responseMaker.responseSuccess("users are now contacts", contact)
+            
         }
         catch(error){
-            console.error("Error in the contact creation:", error);
-            response.status(500).send("An error ocurred while fetching contacts");
+            response.status(400).json({error :error.message, date : new Date()})
         }  
     }
 
