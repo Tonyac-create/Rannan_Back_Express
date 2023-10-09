@@ -63,7 +63,8 @@ export class ValidationController{
             }
             //Verifier qu'il n'y a pas une demande entre ces users
             const testValidation = await this.validationService.oneByUsers(userId, contactId);
-            if(testValidation || testValidation.length !== 0){
+            if(testValidation){
+                console.log(testValidation);
                 throw new Error("A contact request exists already")
             }
             //Execution de la fonction
@@ -87,7 +88,7 @@ export class ValidationController{
         try{
             //Vérifier que la validation existe
             const targetValidation = await this.validationService.oneById(id)
-            if(!targetValidation || targetValidation.length === 0){
+            if(!targetValidation){
                 response.status(401).send("Unauthorized"); //eviter une faille de securite, ne pas specifier que le repository existe pas
             }
             else{

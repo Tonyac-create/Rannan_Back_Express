@@ -21,9 +21,9 @@ export class ValidationService{
     }
 
     //Récupérer une validation spécifique entre 2 users
-    async oneByUsers(userId: number, contactId: number): Promise<Validation[]>{
+    async oneByUsers(userId: number, contactId: number): Promise<Validation>{
         try{
-            const validation = await this.ValidationRepostiory.find(
+            return this.ValidationRepostiory.findOne(
                 {where:{
                     user_id: userId,
                     contact_id: contactId
@@ -33,7 +33,6 @@ export class ValidationService{
                     contact_id: userId
                 }}
             );
-        return validation;
         }
         catch(error){
             console.log("🚀 ~ file: ValidationService.ts:35 ~ ValidationService ~ oneByUsers ~ error:", error);
@@ -42,9 +41,9 @@ export class ValidationService{
     }
 
     //Récupérer une validation spécifique entre 2 users par id de la validation
-    async oneById(id: number): Promise<Validation[]>{
+    async oneById(id: number): Promise<Validation>{
         try{
-            const validation = await this.ValidationRepostiory.findBy({id});
+            const validation = await this.ValidationRepostiory.findOneBy({id});
             return validation;
         }
         catch(error){
@@ -93,7 +92,7 @@ export class ValidationService{
     }
 
     //MaJ d'une validation (répondre à celle-ci)
-    async update(id: number, status: number): Promise<Validation[] | {success: string; message: string}>{
+    async update(id: number, status: number): Promise<Validation | {success: string; message: string}>{
         try{
             await this.ValidationRepostiory.update(id, {validation: status});
             const validation = await this.oneById(id);
