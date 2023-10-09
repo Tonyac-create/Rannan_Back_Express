@@ -18,15 +18,14 @@ export class ContactController{
         try{
             const contacts =  await this.contactService.allByUserId(userId)
             if (!contacts || contacts.length === 0){
-                response.status(404).send("No contacts found for this user");
+                throw new Error("No contacts found");
             }
             else{
-                response.status(200).send(contacts);
+                return this.responseMaker.responseSuccess("Contacts found for the user", contacts)
             }
         }
         catch (error){
-            console.error("Error while fetching contacts by user id:", error);
-            response.status(500).send("An error ocurred while fetching contacts by user Id");
+            response.status(500).json({error :error.message, date : new Date()})
         }  
     }
 
@@ -37,15 +36,14 @@ export class ContactController{
             const contact = await this.contactService.one(id);
             //Verification que la relation existe
             if(!contact || contact.length === 0){
-                response.status(404).send("Contact not found");
+                throw new Error("Contact not found")
             }
             else{
-                response.status(200).send(contact);
+                return this.responseMaker.responseSuccess("Contact found", contact)
             }
         }
         catch(error){
-            console.error("Cannot fetch contact by Id:", error);
-            response.status(500).send("An error ocurred while fetching contact by its id");
+            response.status(500).json({error :error.message, date : new Date()})
         }
     }
 
@@ -80,22 +78,25 @@ export class ContactController{
             
         }
         catch(error){
-            response.status(400).json({error :error.message, date : new Date()})
+            response.status(500).json({error :error.message, date : new Date()})
         }  
     }
 
 //Eliminer un user de ses contacts 
     async remove(request: Request, response: Response, next: NextFunction){
-        const id = parseInt(request.params.id);
-        //Récupérer l'id de l'user depuis le token et verifier qu'il correspond à user1 (Attendre token auth)
         //401 pour non authorisé
         try{
-            const removeResult = await this.contactService.remove(id)
-            return removeResult;
+            const contact = await this.contactService.one(+request.params.id);
+            if(!contact){
+                throw new Error ("Contact not found.")
+            }
+            else{
+                await this.contactService.remove(contact);
+                return this.responseMaker.responseSuccess('Contact was removed', contact);
+            }
         }
         catch (error){
-            console.error("Error in the contact deletion:", error);
-            response.status(500).send("An error ocurred while deletiing the contact");
+            response.status(500).json({error :error.message, date : new Date()})
         }  
     }
 }

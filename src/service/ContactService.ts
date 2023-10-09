@@ -17,6 +17,7 @@ export class ContactService{
 
         }
         catch (error){
+            console.log("🚀 ~ file: ContactService.ts:20 ~ ContactService ~ create ~ error:", error);
             throw new Error(error)
         }
     }
@@ -27,7 +28,8 @@ export class ContactService{
             return await this.ContactRepository.find();
         }
         catch (error){
-            console.log("🚀 ~ file: ContactService.ts:31 ~ ContactService ~ all ~ error:", error)    
+            console.log("🚀 ~ file: ContactService.ts:31 ~ ContactService ~ all ~ error:", error);
+            throw new Error(error); 
         }
     }
 
@@ -39,14 +41,21 @@ export class ContactService{
             return [...allUserOne, ...allUserTwo]
         }
         catch (error){
-            console.log("🚀 ~ file: ContactService.ts:43 ~ ContactService ~ allByUserId ~ error:", error) 
+            console.log("🚀 ~ file: ContactService.ts:43 ~ ContactService ~ allByUserId ~ error:", error);
+            throw new Error(error)
         }
     }
 
     //récupérer un contact par id contact
     async one(id: number): Promise<Contact[]> {
-        const contact = await this.ContactRepository.findBy({id});
-        return contact;    
+        try{
+            const contact = await this.ContactRepository.findBy({id});
+            return contact;  
+        }
+        catch(error){
+            console.log("🚀 ~ file: ContactService.ts:53 ~ ContactService ~ one ~ error:", error);
+            throw new Error(error)
+        }  
     }
 
     //Récupérer un contact spécifique entre 2 users
@@ -67,21 +76,13 @@ export class ContactService{
     }
 
     //Eliminer un contact
-    async remove(id: number){
+    async remove(contact: any){
         try{
-            const contact = await this.ContactRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
-            );
-            if (contact){
-                this.ContactRepository.delete(contact)
-            }
+            this.ContactRepository.delete(contact);
         }
         catch(error) {
-            throw new Error
+            console.log("🚀 ~ file: ContactService.ts:75 ~ ContactService ~ remove ~ error:", error);
+            throw new Error(error)
         }
     }
 }
