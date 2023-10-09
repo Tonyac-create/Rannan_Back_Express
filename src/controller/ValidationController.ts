@@ -1,48 +1,46 @@
 import { NextFunction, Request, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
 import { UserService } from "../service/UserService";
+import { ResponseMaker } from "../utils/ResponseMaker";
 
 export class ValidationController{
 
 // Services
     private validationService = new ValidationService();
     private userService = new UserService();
+    private responseMaker = new ResponseMaker();;
 
 //Récupérer toutes les demandes envoyées par un user
     async allByUser(request: Request, response: Response, next: NextFunction){
         //Récupérer l'id de l'user à partir du token (attendre)
-        const userId = parseInt(request.params.id);
         try{
-            const validations = await this.validationService.allByUserId(userId);
+            const validations = await this.validationService.allByUserId(+request.params.id);
             if(!validations || validations.length === 0){
-                response.status(404).send("no validations found");
+                throw new Error("no validations found");
             }
             else{
-                response.status(200).send(validations);
+                return this.responseMaker.responseSuccess("Validations found", validations)
             }
         }
         catch(error){
-            console.error("Error while fetching validations by user id:", error);
-            response.status(500).send("An error ocurred while fetching validations by user Id");
+            response.status(500).json({error :error.message, date : new Date()})
         }
     }
 
 //Récupérer toutes les demandes envoyées reçues par un user
     async allByContact(request: Request, response: Response, next: NextFunction){
         //Récupérer l'id de l'user à partir du token (attendre)
-        const contactId = parseInt(request.params.id);
         try{
-            const validations = await this.validationService.allByContactId(contactId);
+            const validations = await this.validationService.allByContactId(+request.params.id);
             if(!validations || validations.length === 0){
-                response.status(404).send("no validations found");
+                throw new Error("no validations found");
             }
             else{
-                response.status(200).send(validations);
+                return this.responseMaker.responseSuccess("Validations found", validations)
             }
         }
         catch(error){
-            console.error("Error while fetching validations by contact id:", error);
-            response.status(500).send("An error ocurred while fetching validations by contact Id");
+            response.status(500).json({error :error.message, date : new Date()})
         }
     }
 
@@ -57,47 +55,26 @@ export class ValidationController{
             const userOk = await this.userService.findOne("id", userId, false);
             const contactOk = await this.userService.findOne("id", contactId, false);
             if(!userOk || !contactOk || !userOk && !contactOk){
-                response.status(404).send("One of the users, or the two don't exist")
+                throw new Error("One of the users, or the two don't exist")
             }
-            else{
-                //Verifier que user n'est pas le même qeu contact
-                if( userOk.id === contactOk.id){
-                    response.status(400).send("User and Contact are the same user");
-                }
-                else{
-                    //Verifier qu'il n'y a pas une demande entre ces users
-                    let validationExists;
-                    const validation = await this.validationService.oneByUsers(userId, contactId);
-                    if(!validation || validation.length === 0){
-                        const validation = await this.validationService.oneByUsers(contactId, userId);
-                        if(!validation || validation.length === 0){
-                            validationExists = false
-                        }
-                        else{
-                            validationExists = true;
-                        }
-                    }
-                    else{
-                        validationExists = true;
-                    }
-                    if( validationExists === true){
-                        response.status(400).send("A contact request exists already")
-                    }
-                    else{ //Execution de la fonction
-                        const validation = await this.validationService.create(userId, contactId, status);
-                        if (!validation){
-                            response.status(400).send("Bad request");
-                        }
-                        else{
-                            response.status(201).send(validation).send("request sent")
-                        }
-                    }
-                }
+            //Verifier que user n'est pas le même qeu contact
+            if( userOk.id === contactOk.id){
+                throw new Error("User and Contact are the same user");
             }
+            //Verifier qu'il n'y a pas une demande entre ces users
+            const testValidation = await this.validationService.oneByUsers(userId, contactId);
+            if(testValidation || testValidation.length !== 0){
+                throw new Error("A contact request exists already")
+            }
+            //Execution de la fonction
+            const validation = await this.validationService.create(userId, contactId, status);
+            if (!validation){
+                throw new Error("Bad request")
+            }
+            return this.responseMaker.responseSuccess("Contact request sent", validation) 
         }
         catch(error){
-            console.error("Error in the validation creation:", error);
-            response.status(500).send("An error ocurred while fetching the validation");
+            response.status(500).json({error :error.message, date : new Date()})
         }
     }
 
@@ -133,23 +110,21 @@ export class ValidationController{
             }
         }
         catch(error){
-            console.error("Error in the validation update.", error);
-            response.status(500).send("An error ocurred while fetching the validation");
+            response.status(500).json({error :error.message, date : new Date()})
         }    
     }
 
 //Supprimer une validation
     async remove(request: Request, response: Response, next: NextFunction){
-        const id = parseInt(request.params.id);
         //Récupérer l'id de l'user depuis le token et verifier qu'il correspond à celui de contact (Attendre token auth)
         //401 pour non authorisé
         try{
-            const removeValidation = await this.validationService.remove(id);
-            return removeValidation;
+            const validation = await this.validationService.oneById(+request.params.id)
+            await this.validationService.remove(validation);
+            return this.responseMaker.responseSuccess("Validation deleted", validation)
         }
         catch(error){
-            console.error("Error in the validation deletion:", error);
-            response.status(500).send("An error ocurred while deletiing the validation");
+            response.status(500).json({error :error.message, date : new Date()})
         } 
     }
 

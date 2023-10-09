@@ -74,8 +74,7 @@ export class ContactController{
             if (!contact){
                 throw new Error("Bad request")
             }
-            return this.responseMaker.responseSuccess("users are now contacts", contact)
-            
+            return this.responseMaker.responseSuccess("users are now contacts", contact)    
         }
         catch(error){
             response.status(500).json({error :error.message, date : new Date()})
