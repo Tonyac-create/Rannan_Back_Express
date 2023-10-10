@@ -62,9 +62,12 @@ export class ValidationController{
                 throw new Error("User and Contact are the same user");
             }
             //Verifier qu'il n'y a pas une demande entre ces users
-            const testValidation = await this.validationService.oneByUsers(userId, contactId);
-            if(testValidation){
-                console.log(testValidation);
+            const testValidation1 = await this.validationService.oneByUsers(userId, contactId);
+            if(testValidation1){
+                throw new Error("A contact request exists already")
+            }
+            const testValidation2 = await this.validationService.oneByUsers(contactId, userId);
+            if(testValidation2){
                 throw new Error("A contact request exists already")
             }
             //Execution de la fonction
@@ -89,28 +92,23 @@ export class ValidationController{
             //Vérifier que la validation existe
             const targetValidation = await this.validationService.oneById(id)
             if(!targetValidation){
-                response.status(401).send("Unauthorized"); //eviter une faille de securite, ne pas specifier que le repository existe pas
+                throw new Error("Unauthorized.")
             }
-            else{
-                //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
-                //Verifier que l'user qui update la demande correspond à le destinataire de la demande
-                const targetContact = 2; //targetValidation.contactId; y a une erreur dans la recup
-                if(contactId !== targetContact){
-                    response.status(401).send("Unauthorized");
-                }
-                else{
-                    //execution de la fonction
-                    const updatedValidation = await this.validationService.update(id, status);
-                    if (!updatedValidation){
-                        response.status(400).send("An error ocurred while updating the validation")
-                    }
-                    else{
-                        response.status(200).send(updatedValidation)
-                    }
-                }
+            //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
+            //Verifier que l'user qui update la demande correspond à le destinataire de la demande
+            const targetContact = targetValidation.contact_id;
+            if(contactId !== targetContact){
+                throw new Error("Unauthorized.")
             }
+            //execution de la fonction
+            const updatedValidation = await this.validationService.update(id, status);
+            if (!updatedValidation){
+                throw new Error("An error ocurred while updating the validation")
+            }
+            return this.responseMaker.responseSuccess("Contact request updated",updatedValidation)
         }
         catch(error){
+            console.log("🚀 ~ file: ValidationController.ts:111 ~ ValidationController ~ update ~ error:", error);
             response.status(500).json({error :error.message, date : new Date()})
         }    
     }
