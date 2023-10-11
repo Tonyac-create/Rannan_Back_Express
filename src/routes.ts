@@ -138,12 +138,6 @@ export const Routes = [
 
     // ------------------//ROUTES FOR DATA------------------------------
     {
-        method: "get", // Récupération de toutes les datas
-        route: "/datas",
-        controller: DataController,
-        action: "all"
-    },
-    {
         method: "get", // Récupération de toutes les datas d'un user par son id
         route: "/datas/:id",  // :id = user.id
         controller: DataController,

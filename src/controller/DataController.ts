@@ -3,36 +3,45 @@ import { NextFunction, Request, Response } from "express"
 import { Data } from "../entity/Data"
 import { User } from "../entity/User"
 import { DataService } from "../service/DataService"
+import { ResponseInterface } from "../interface/ResponseInterface"
+import { ResponseMaker } from "../utils/ResponseMaker"
 
 export class DataController {
 
     // Services
     private dataService = new DataService()
-
-    // Récupération de toutes les datas crées
-    async all(request: Request, response: Response, next: NextFunction) {
-        return this.dataService.all()
-    }
+    private responseMaker = new ResponseMaker()
 
     // Récupération de toute les datas d'un user_id
-    async getDatasInUser(request: Request, response: Response, next: NextFunction) {
+    async getDatasInUser(request: Request, response: Response, next: NextFunction)
+        : Promise<ResponseInterface> {
         try {
-            const userId = +request.params.id
-            const datas = await this.dataService.getDatasInUser(userId)
-            return datas
+
+            const id = +request.params.user_id
+
+            const datas = await this.dataService.getDatasInUser(id)
+            if (!datas) {
+                throw new Error("No datas")
+            }
+
+            return this.responseMaker.responseSuccess("datas found", datas)
         }
         catch (error) {
-            console.log(error);
+            response.status(400).json({ error: error.message })
         }
     }
 
     // Récupération d'une data par son id
     async getOne(request: Request, response: Response, next: NextFunction) {
         // Récupération via l'id de la data
-        const id = +request.params.id
-        const data = await this.dataService.getOneById(id)
-        if (!data) { return "data not fund" }
-        return data
+        try {
+            const id = +request.params.id
+            const data = await this.dataService.getOneById(id)
+            if (!data) { return "data not fund" }
+            return this.responseMaker.responseSuccess("data found", data)
+        } catch (error) {
+            response.status(500).json({ error: error.message })
+        }
     }
 
     // Création d'une data par userid
@@ -42,10 +51,10 @@ export class DataController {
             const id = +request.params.id
 
             const data = await this.dataService.createDataOneUser(id, type, name, value)
-            return data
+            return this.responseMaker.responseSuccess("data created", data)
         }
         catch (error) {
-            console.log(error);
+            response.status(500).json({ error: error.message })
         }
     }
 
@@ -54,11 +63,11 @@ export class DataController {
         try {
             const id = +request.params.id
             const data = await this.dataService.getOneById(id)
-            if (!data) { return "data not found"}
+            if (!data) { return "data not found" }
             return this.dataService.update(data.id, request.body)
         }
         catch (error) {
-            console.log("🚀 ~ file: DataController.ts:60 ~ DataController ~ update ~ error:", error)
+            response.status(500).json({ error: error.message })
         }
 
     };
@@ -75,19 +84,10 @@ export class DataController {
             return "data has been removed"
         }
         catch (error) {
-            console.log(error);
+            response.status(500).json({ error: error.message })
         }
     }
 
 
 }
 
-
-
-
-            // // const {format, name, value} = request.body
-            // const userId = +request.params.id
-            // console.log("id du user récupérer dans controller", userId);
-            // const data = await this.dataService.addDataOneUser(request.body, userId)
-            // console.log("nouvelle data controller", data);
-            // return data

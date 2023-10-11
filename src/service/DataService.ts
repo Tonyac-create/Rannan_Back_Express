@@ -7,15 +7,6 @@ export class DataService {
     private dataRepository = AppDataSource.getRepository(Data)
     private userService = new UserService()
 
-    // Récupération de toutes les datas crées
-    async all() {
-        try {
-            return await this.dataRepository.find();
-        }
-        catch (error) {
-            console.log("🚀 ~ file: DataService.ts:19 ~ DataService ~ all ~ error:", error)
-        }
-    }
 
     // Récupération d'une data par son id
     async getOneById(id: number) {
@@ -23,7 +14,7 @@ export class DataService {
             return await this.dataRepository.findOne({ where: { id } })
         }
         catch (error) {
-            console.log("🚀 ~ file: DataService.ts:29 ~ DataService ~ getOneById ~ error:", error)
+            throw error.message
         }
     }
 
@@ -35,7 +26,7 @@ export class DataService {
             return user
         }
         catch (error) {
-            console.log("🚀 ~ file: DataService.ts:44 ~ DataService ~ getDatasInUser ~ error:", error)
+            throw error.message
         }
     }
 
@@ -59,7 +50,7 @@ export class DataService {
             return newData
         }
         catch (error) {
-            console.log("🚀 ~ file: DataService.ts:66 ~ DataService ~ createDataOneUser ~ error:", error)
+            throw error.message
         }
     }
 
@@ -69,7 +60,7 @@ export class DataService {
             await this.dataRepository.delete(id)
         }
         catch (error) {
-            console.log("🚀 ~ file: DataService.ts:76 ~ DataService ~ remove ~ error:", error)
+            throw error.message
         }
     }
 
@@ -92,7 +83,7 @@ export class DataService {
             return this.dataRepository.save(updateData)
         }
         catch (error) {
-            console.log("🚀 ~ file: DataService.ts:99 ~ DataService ~ update ~ error:", error)
+            throw error.message
         }
     }
 
