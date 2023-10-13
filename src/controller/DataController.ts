@@ -50,7 +50,7 @@ export class DataController {
         try {
             const id = +request.params.id
 
-            const data = await this.dataService.createDataOneUser(id, type, name, value)
+            const data = await this.dataService.createDataOneUser(id, type, name, value, user_id)
             return this.responseMaker.responseSuccess("data created", data)
         }
         catch (error) {
