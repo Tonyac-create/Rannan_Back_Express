@@ -6,7 +6,7 @@ export enum TargetFormat {
 }
 
 @Entity()
-export class Authorization {
+export class Share {
     @PrimaryGeneratedColumn()
     id: number
 
@@ -19,10 +19,10 @@ export class Authorization {
     @Column()
     target_id: number
 
+    @Column()
+    owner_id: number
+
     @CreateDateColumn()
     created_at: Date
-
-    @UpdateDateColumn()
-    updated_at: Date
 
 }

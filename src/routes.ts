@@ -3,7 +3,7 @@ import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { ValidationController } from "./controller/ValidationController"
-import { AuthController } from "./controller/AuthController"
+import { ShareController } from "./controller/ShareController"
 
 
 export const Routes = [
@@ -166,24 +166,19 @@ export const Routes = [
 
     // ------------------//ROUTES FOR AUTHORIZATION------------------------------
     {
-        method: "get", // Récupération de toutes les authorisations d'une target
-        route: "/auths", //
-        controller: AuthController,
-        action: "all"
-    }, {
         method: "get", // Récupération d'une authorisation par son id
         route: "/auth/:id", // :id = authorisation.id
-        controller: AuthController,
-        action: "getOne"
+        controller: ShareController,
+        action: "getShareById"
     }, {
         method: "post", // Enregistrer une nouvelle authorisation
         route: "/auth",
-        controller: AuthController,
-        action: "createAuthorization"
+        controller: ShareController,
+        action: "createShare"
     }, {
         method: "delete", // Supprimer une authorisation
         route: "/auth/:id", // :id = authorization.id
-        controller: AuthController,
-        action: "remove"
+        controller: ShareController,
+        action: "removeShare"
     }
 ]

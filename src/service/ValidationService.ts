@@ -9,8 +9,7 @@ export class ValidationService{
         try{
             const newValidation = this.ValidationRepostiory.create({
                 user_id: userId,
-                contact_id: contactId,
-                validation: status
+                contact_id: contactId
             });
             return await this.ValidationRepostiory.save(newValidation);
         }
@@ -88,15 +87,15 @@ export class ValidationService{
     }
 
     //MaJ d'une validation (répondre à celle-ci)
-    async update(id: number, status: number): Promise<Validation | {success: string; message: string}>{
-        try{
-            await this.ValidationRepostiory.update(id, {validation: status});
-            const validation = await this.oneById(id);
-            return validation;           
-        }
-        catch(error){
-            console.log("🚀 ~ file: ValidationService.ts:98 ~ ValidationService ~ update ~ error:", error);
-            throw new Error(error)
-        }
-    }
+    // async update(id: number, status: number): Promise<Validation | {success: string; message: string}>{
+    //     try{
+    //         await this.ValidationRepostiory.update(id, {validation: status});
+    //         const validation = await this.oneById(id);
+    //         return validation;           
+    //     }
+    //     catch(error){
+    //         console.log("🚀 ~ file: ValidationService.ts:98 ~ ValidationService ~ update ~ error:", error);
+    //         throw new Error(error)
+    //     }
+    // }
 }

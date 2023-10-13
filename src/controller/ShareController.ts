@@ -1,25 +1,25 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthService } from "../service/AuthService";
+import { ShareService } from "../service/ShareService";
 import { DataService } from "../service/DataService";
 import { GroupService } from "../service/GroupService";
 import { UserService } from "../service/UserService";
 
-export class AuthController{
+export class ShareController{
 
 // Services
-    private authService = new AuthService()
+    private shareService = new ShareService()
     private dataService = new DataService()
     private groupService = new GroupService()
     private userService = new UserService()
 
-// Récupération de toutes les authorisations d'une target (BODY : target = "group" ou "user" / id = target_id)
+// Récupération de tout les partages d'une target (BODY : target = "group" ou "user" / id = target_id)
 
-// Récupération d'une authorisation par son id
-    async getAuthById(request: Request, response: Response, next: NextFunction) {
+// Récupération d'un partage par son id
+    async getShareById(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id
-            const authorisation = await this.authService.getAuthById(id)
-            return authorisation
+            const share = await this.shareService.getShareById(id)
+            return share
         }
         catch (error) {
             console.log("🚀 ~ file: AuthController.ts:23 ~ AuthController ~ getAuthById ~ error:", error)
@@ -27,8 +27,8 @@ export class AuthController{
 
     }
 
-// Enregistrer une nouvelle authorisation
-    async createAuthorization(request: Request, response: Response, next: NextFunction){
+// Enregistrer une nouvelle share
+    async createShare(request: Request, response: Response, next: NextFunction){
         //Récupérer les variables du corps de la reqête
         const data_id = request.body.data_id;
         const target = request.body.target;
@@ -49,7 +49,7 @@ export class AuthController{
                     }
                     else{
                         //Execution de la fonction
-                        const authorization = await this.authService.create(target, target_id);
+                        const authorization = await this.shareService.create(target, target_id);
                         if(!authorization){
                             response.status(400).send("Bad request")
                         }
@@ -69,7 +69,7 @@ export class AuthController{
                 }
                 else{
                     //Éxecution de la fonction
-                    const authorization = await this.authService.create(target, target_id);
+                    const authorization = await this.shareService.create(target, target_id);
                     if(!authorization){
                         response.status(400).send("Bad request")
                     }
@@ -88,15 +88,15 @@ export class AuthController{
         }
     }
 
-    //Supprimer une authorisation
-    async remove(request: Request, response: Response, next: NextFunction) {
+    //Supprimer une share
+    async removeShare(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id
-            let authToRemove = await this.authService.getAuthById(id)
+            let authToRemove = await this.shareService.getShareById(id)
 
             if (!authToRemove) return "this authorization not exist"
 
-            await this.authService.remove(id)
+            await this.shareService.remove(id)
             return "auth has been removed"
         }
         catch (error) {

@@ -21,13 +21,7 @@ export class Validation {
     @JoinColumn({name: "contact_id"})
     contact: User
 
-    @Column({type: "tinyint", default: 0})
-    validation: number
-
     @CreateDateColumn()
     created_at: Date
-
-    @UpdateDateColumn()
-    updated_at: Date
 
 }

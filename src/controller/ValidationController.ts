@@ -83,35 +83,35 @@ export class ValidationController{
     }
 
 //Maj de la validation
-    async update(request: Request, response: Response, next: NextFunction){
-        //Récupération de l'id de l'user qui a reçu la requête et de sa réponse
-        const contactId = parseInt(request.body.contactId); //Récupérer du token
-        const id = parseInt(request.params.id); //id de la validation
-        const status = parseInt(request.body.status); //nouveau statut de la validation (1 acceptée, 2 refusée)
-        try{
-            //Vérifier que la validation existe
-            const targetValidation = await this.validationService.oneById(id)
-            if(!targetValidation){
-                throw new Error("Unauthorized.")
-            }
-            //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
-            //Verifier que l'user qui update la demande correspond à le destinataire de la demande
-            const targetContact = targetValidation.contact_id;
-            if(contactId !== targetContact){
-                throw new Error("Unauthorized.")
-            }
-            //execution de la fonction
-            const updatedValidation = await this.validationService.update(id, status);
-            if (!updatedValidation){
-                throw new Error("An error ocurred while updating the validation")
-            }
-            return this.responseMaker.responseSuccess("Contact request updated",updatedValidation)
-        }
-        catch(error){
-            console.log("🚀 ~ file: ValidationController.ts:111 ~ ValidationController ~ update ~ error:", error);
-            response.status(500).json({error :error.message, date : new Date()})
-        }    
-    }
+    // async update(request: Request, response: Response, next: NextFunction){
+    //     //Récupération de l'id de l'user qui a reçu la requête et de sa réponse
+    //     const contactId = parseInt(request.body.contactId); //Récupérer du token
+    //     const id = parseInt(request.params.id); //id de la validation
+    //     const status = parseInt(request.body.status); //nouveau statut de la validation (1 acceptée, 2 refusée)
+    //     try{
+    //         //Vérifier que la validation existe
+    //         const targetValidation = await this.validationService.oneById(id)
+    //         if(!targetValidation){
+    //             throw new Error("Unauthorized.")
+    //         }
+    //         //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
+    //         //Verifier que l'user qui update la demande correspond à le destinataire de la demande
+    //          const targetContact = targetValidation.contact_id;
+    //          if(contactId !== targetContact){
+    //              throw new Error("Unauthorized.")
+    //          }
+    //         //execution de la fonction
+    //         const updatedValidation = await this.validationService.update(id, status);
+    //         if (!updatedValidation){
+    //             throw new Error("An error ocurred while updating the validation")
+    //         }
+    //         return this.responseMaker.responseSuccess("Contact request updated",updatedValidation)
+    //     }
+    //     catch(error){
+    //         console.log("🚀 ~ file: ValidationController.ts:111 ~ ValidationController ~ update ~ error:", error);
+    //         response.status(500).json({error :error.message, date : new Date()})
+    //     }    
+    // }
 
 //Supprimer une validation
     async remove(request: Request, response: Response, next: NextFunction){
