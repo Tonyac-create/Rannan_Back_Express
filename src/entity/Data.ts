@@ -27,6 +27,9 @@ export class Data {
     @Column({type: "varchar", length: 250})
     value: string
 
+    @Column()
+    user_id: number
+
     @CreateDateColumn()
     created_at: Date
 

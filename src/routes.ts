@@ -34,11 +34,6 @@ export const Routes = [
         route: "/user/:id", // :id = user.id
         controller: UserController,
         action: "remove"
-    }, {
-        method: "post", // Créer une data d'un user
-        route: "/user/:id/data", // :id = user.id
-        controller: DataController,
-        action: "save"
     },
 
 
@@ -138,8 +133,13 @@ export const Routes = [
 
     // ------------------//ROUTES FOR DATA------------------------------
     {
+        method: "get", // Récupération de toutes les datas
+        route: "/datas",
+        controller: DataController,
+        action: "all"
+    }, {
         method: "get", // Récupération de toutes les datas d'un user par son id
-        route: "/datas/:id",  // :id = user.id
+        route: "/datas/:user_id",  // :id = data.user_id
         controller: DataController,
         action: "getDatasInUser"
     }, {
@@ -147,14 +147,12 @@ export const Routes = [
         route: "/data/:id", // :id = data.id
         controller: DataController,
         action: "getOne"
-    }, 
-    // {
-    //     method: "post", // Enregistrer une nouvelle data
-    //     route: "/data",
-    //     controller: DataController,
-    //     action: "save"
-    // }, 
-    {
+    }, {
+        method: "post", // Créer une data d'un user
+        route: "/user/:id/data", // :id = user.id
+        controller: DataController,
+        action: "save"
+    }, {
         method: "put", // Mettre a jour une data
         route: "/data/:id", // :id = data.id
         controller: DataController,

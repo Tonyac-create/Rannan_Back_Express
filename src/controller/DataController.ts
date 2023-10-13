@@ -46,7 +46,7 @@ export class DataController {
 
     // Création d'une data par userid
     async save(request: Request, response: Response, next: NextFunction) {
-        const { id, type, name, value } = request.body
+        const { id, type, name, value, user_id } = request.body
         try {
             const id = +request.params.id
 

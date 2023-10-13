@@ -7,50 +7,54 @@ export class DataService {
     private dataRepository = AppDataSource.getRepository(Data)
     private userService = new UserService()
 
+    // Récupération de toutes les datas crées
+    async all() {
+        try {
+            return this.dataRepository.find();
+        }
+        catch (error) {
+            throw new Error(error)
+        }
+    }
 
     // Récupération d'une data par son id
     async getOneById(id: number) {
         try {
-            return await this.dataRepository.findOne({ where: { id } })
+            return this.dataRepository.findOne({ where: { id } })
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
         }
     }
 
     // Récupération de toute les datas d'un user_id
-    async getDatasInUser(userId: number) {
+    async getDatasInUser(user_id: number) {
         try {
-            const user = await this.userService.findOne("id", userId, true)
-            if (!user) return 'User not found'
-            return user
+            const datas = await this.dataRepository.find({ where: { user_id }})
+            return datas
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
         }
     }
 
     // Création d'une data pour un utilisateur
-    async createDataOneUser(id: number, type: any, name: string, value: string) {
+    async createDataOneUser(id: number, type: any, name: string, value: string, user_id: number) {
         try {
-            const user = await this.userService.findOne("id", id, false
-            //     {
-            //     where: {id}
-            // }
-            )
-            console.log("🚀 ~ file: DataService.ts:58 ~ DataService ~ createDataOneUser ~ user:", user)
+            const user = await this.userService.findOne("id", id, false)
+            
             if (!user) return 'User not found'
             const newData = new Data()
-            newData.user = user
             newData.type = type
             newData.name = name
             newData.value = value
+            newData.user_id = id
             
             await this.dataRepository.save(newData)
             return newData
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
         }
     }
 
@@ -60,7 +64,7 @@ export class DataService {
             await this.dataRepository.delete(id)
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
         }
     }
 
@@ -83,7 +87,7 @@ export class DataService {
             return this.dataRepository.save(updateData)
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
         }
     }
 
