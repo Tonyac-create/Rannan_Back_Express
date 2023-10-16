@@ -21,6 +21,9 @@ export class User {
     @Column({default: 0})
     avatar_id: number
 
+    @Column({type: "varchar", nullable: true})
+    refreshToken: string
+
     @CreateDateColumn()
     created_at: Date
 

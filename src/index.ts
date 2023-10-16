@@ -1,14 +1,22 @@
-import express, { ErrorRequestHandler } from "express"
+import express from "express"
 import * as bodyParser from "body-parser"
 import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
 import dotenv from "dotenv"
+import { jwtMiddleware } from "./middleware/jwtMiddleware"
+import { jwtRefreshMiddleware } from "./middleware/jwtRefreshMiddleware"
 dotenv.config()
+
+
 AppDataSource.initialize().then(async () => {
     // create express app
     const app = express()
     app.use(bodyParser.json())
+
+    // Intercept for Token check
+    app.use("/api", jwtMiddleware)
+    app.use("/auth/refreshToken", jwtRefreshMiddleware)
 
     // register express routes from defined application routes
     Routes.forEach(route => {

@@ -1,12 +1,12 @@
 import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
-import { UserCreateInterface } from "../interface/UserInterface"
+import { UserCreateInterface } from "../interface/UserCreateInterface"
 
 export class UserService {
 
     private userRepository = AppDataSource.getRepository(User)
 
-// Find and Return all users
+// Trouve et renvoi tout les users
     async all() {
         try {
             return this.userRepository.find()
@@ -16,7 +16,7 @@ export class UserService {
         }
     }
 
-// Find a User by field and value
+// Trouve un user par une valeur de champs (value of field)
     async findOne(field: string, value: number | string, populate: boolean) {
         try {
             if (populate === true) {
@@ -34,7 +34,7 @@ export class UserService {
         }
     }
 
-// Create New User
+// Créer un nouveau user
     async saveUser(body: UserCreateInterface) {
         try {
             return this.userRepository.save(body)
@@ -44,17 +44,19 @@ export class UserService {
         }
     }
 
-// Update user
+// Update un user
     async update(id: number, body: any) {
         try {
-            return await this.userRepository.update(id, body)
+            await this.userRepository.update(id, body)
+            const updated = await this.userRepository.findOne({where: {id: id}})
+            return updated
         }
         catch (error) {
-            throw error.message
+            console.log("🐼 ~ file: UserService.ts:54 ~ update ~ error:", error)
         }
     }
 
-// Delete user by ID
+// Supprime un user par sont id
     async remove(id: number) {
         try {
             return await this.userRepository.delete(id)
