@@ -75,11 +75,11 @@ export class GroupService {
             if (!user) {
                 throw new Error("User not found")
             }
-            const groups = user.groups.map(group => {
+            const userGroups = user.groups.map(group => {
                 const { name, id, limited_at, creator_id } = group
                 return { name, id, limited_at, creator_id }
             })
-            return groups
+            return userGroups
         } catch (error) {
             throw error.message
         }
@@ -116,6 +116,17 @@ export class GroupService {
             const removedGroup = user.groups.splice(groupToDelete, 1)[0]
             await this.userService.saveUser(user)
             return `Utilisateur ${user.nickname} retiré du groupe ${removedGroup.name}`
+        } catch (error) {
+            throw error.message
+        }
+    }
+
+    async allGroupMember(groupId: number) {
+        try {
+            return this.groupRepository.findOne({
+                where: { id: groupId },
+                relations: ['users']
+            })
         } catch (error) {
             throw error.message
         }

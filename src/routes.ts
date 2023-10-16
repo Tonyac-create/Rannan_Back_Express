@@ -139,27 +139,27 @@ export const Routes = [
         method: "get",
         route: "/api/groups/user", 
         controller: GroupController,
-        action: ""
+        action: "myGroupList"
     },{
         method: "get",
         route: "/api/groups/creator", 
         controller: GroupController,
-        action: ""
+        action: "creatorGroupList"
     },{
         method: "get",
         route: "/api/group/:id", // :id = group.id
         controller: GroupController,
-        action: ""
+        action: "getGroupDetail" //! => A VOIR AVEC ANGELIQUE POUR DATA
     },{
         method: "delete",
-        route: "/api/group/:id", 
+        route: "/api/group/:id", //:id = group.id
         controller: GroupController,
-        action: ""
+        action: "remove"
     },{
         method: "get",
         route: "/api/group/:id/setting", 
         controller: GroupController,
-        action: ""
+        action: "getGroupDetailForSetting" //! => A VOIR AVEC CAYE POUR CONTACT
     },{
         method: "put",
         route: "/api/group/:id", 

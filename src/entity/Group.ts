@@ -25,4 +25,12 @@ export class Group {
     @JoinColumn({name: "creator_id"})
     creator: User
 
+    @ManyToMany( () => User)
+    @JoinTable({
+        name: "user_has_groups",
+        joinColumn: { name: "group_id" },
+        inverseJoinColumn: { name: "user_id" }
+    })
+    users : User[]
+
 }
