@@ -9,17 +9,17 @@ export const Routes = [
 
 // ROUTES FOR AUTH------------------------------
     {
-        method: "post", // Enregistrement et authentification d'un user
+        method: "post",
         route: "/auth/register",
         controller: AuthController,
         action: "register"
     },{
-        method: "post", // Authentification d'un user
+        method: "post",
         route: "/auth/login",
         controller: AuthController,
         action: "login"
     },{
-        method: "get", // Refresh du token user
+        method: "get",
         route: "/auth/refreshToken",
         controller: AuthController,
         action: "refreshToken"
@@ -27,27 +27,27 @@ export const Routes = [
 
 // ROUTES FOR USER------------------------------
     {
-        method: "get", // route d'interception Middleware
+        method: "get",
         route: "/api",
         controller: UserController,
         action: "userConnected"
     },{
-        method: "get", // Envoi d'un input "email" pour vérification + Envoi d'un mail pour reset password
+        method: "get",
         route: "/user/reset",
         controller: UserController,
         action: "resetPassword"
     },{
-        method: "put", // Envoi d'inputs pour update user
+        method: "put",
         route: "/api/user/account",
         controller: UserController,
         action: "updateUser"
     },{
-        method: "get", // Récupération de l'avatar & nickname d'un user
+        method: "get",
         route: "/api/user/profile/:id", // :id = user.id
         controller: UserController,
         action: "getProfile"
     },{
-        method: "get", // Envoi d'un input pour Récupération d'un user dont le nickname est similaire.
+        method: "get",
         route: "/api/user/search",
         controller: UserController,
         action: ""
@@ -55,47 +55,47 @@ export const Routes = [
 
 // ROUTES FOR DATA------------------------------
     {
-        method: "get", // Récupération le liste de toutes les datas que le user a enregistré
+        method: "get",
         route: "/api/datas",
         controller: DataController,
         action: ""
     },{
-        method: "get", // Récupération une data via sont id
+        method: "get",
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
         action: ""
     },{
-        method: "put", // Envoi des inputs pour update une data
+        method: "put",
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
         action: ""
     },{
-        method: "delete", // Suppression d'une data via sont id
+        method: "delete",
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
         action: ""
     },{
-        method: "post", // Envoi des inputs pour pour create une data
+        method: "post",
         route: "/api/data",
         controller: DataController,
         action: ""
     },{
-        method: "get", // Récupération de la liste des target(user/group) a qui le user partage une data
+        method: "get",
         route: "/api/datas/shares",
         controller: DataController,
         action: ""
     },{
-        method: "get", // Récupération de la liste des data partagé a une target(user/group) par le user
+        method: "get",
         route: "/api/data/target",
         controller: DataController,
         action: ""
     },{
-        method: "get", // Récupération de la liste des datas que le user concerné partage avec le user token
+        method: "get",
         route: "/api/data/profile",
         controller: DataController,
         action: ""
     },{
-        method: "post", // Envoi un target et une liste de data id pour créer les shares pour les datas entre le user Token et le Target
+        method: "post",
         route: "/api/shares",
         controller: DataController,
         action: ""
@@ -103,32 +103,32 @@ export const Routes = [
 
 // ROUTES FOR CONTACT------------------------------
     {
-        method: "get", // Récupération de tout les contacts d'un user par son id
+        method: "get",
         route: "/api/contacts", 
         controller: ContactController,
         action: ""
     },{
-        method: "delete", // Suppression d'un contact via sont id
+        method: "delete",
         route: "/api/contact/:id", // :id = contact.id
         controller: ContactController,
         action: ""
     },{
-        method: "post", // Création d'un contact entre 2 users + supprime la validation concerné
+        method: "post",
         route: "/api/contact", 
         controller: ContactController,
         action: ""
     },{
-        method: "delete", // Suppression de la validation via son id
+        method: "delete",
         route: "/api/validation/:id", // :id = validation.id
         controller: ContactController,
         action: ""
     },{
-        method: "post", // Création d'une validation entre 2 users
+        method: "post",
         route: "/api/validation",
         controller: ContactController,
         action: ""
     },{
-        method: "get", // Récupération de la liste des validations reçues et envoyées par le user
+        method: "get",
         route: "/api/validations/user",
         controller: ContactController,
         action: ""
@@ -136,32 +136,32 @@ export const Routes = [
 
 // ROUTES FOR GROUPS------------------------------
     {
-        method: "get", // Récupération d'une liste des groupes dont le user est membre
+        method: "get",
         route: "/api/groups/user", 
         controller: GroupController,
         action: ""
     },{
-        method: "get", // Récupération d'une liste des groupes dont le user est le créateur
+        method: "get",
         route: "/api/groups/creator", 
         controller: GroupController,
         action: ""
     },{
-        method: "get", // Récupération d'un groupe via sont id
+        method: "get",
         route: "/api/group/:id", // :id = group.id
         controller: GroupController,
         action: ""
     },{
-        method: "delete", // Suppression d'un groupe via sont id
+        method: "delete",
         route: "/api/group/:id", 
         controller: GroupController,
         action: ""
     },{
-        method: "get", // Récupération d'un groupe, de ces membres et des contacts du user via leurs id
+        method: "get",
         route: "/api/group/:id/setting", 
         controller: GroupController,
         action: ""
     },{
-        method: "put", // Envoi d'inputs et d'une liste des membres pour update un groupe via sont id
+        method: "put",
         route: "/api/group/:id", 
         controller: GroupController,
         action: ""
