@@ -154,7 +154,7 @@ export const Routes = [
         method: "get",
         route: "/api/group/:id", // :id = group.id
         controller: GroupController,
-        action: "getGroupDetail" //! => A VOIR AVEC ANGELIQUE POUR DATA
+        action: "getGroupDetail" //! => NEED dataService
     },{
         method: "delete",
         route: "/api/group/:id", //:id = group.id
@@ -164,7 +164,7 @@ export const Routes = [
         method: "get",
         route: "/api/group/:id/setting", 
         controller: GroupController,
-        action: "getGroupDetailForSetting" //! => A VOIR AVEC CAYE POUR CONTACT
+        action: "getGroupDetailForSetting" //! => NEED contactService
     },{
         method: "put",
         route: "/api/group/:id", 

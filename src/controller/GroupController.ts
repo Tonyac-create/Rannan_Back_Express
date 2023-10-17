@@ -27,35 +27,40 @@ export class GroupController {
                     this.groupService.addUserToGroup(user, savedGroup)
                 }
             })
+
             return this.responseMaker.responseSuccess(`The group was saved`, savedGroup)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
     }
 
 // Récupérer la liste des groupes dont le user est membre
-    async memberGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< Object[] >{
+    async memberGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
             if (!request.user) {
                 throw new Error("User undefined in request")
             }
+        // Vérification de l'existence du user
             const user = await this.userService.findOne("id", request.user.user_id, true)
             if (!user) {
                 throw new Error("User not found")
             }
+        // Filtre les fields envoyé
             const userGroups = user.groups.map(group => {
                 const { id, name } = group
                 return { id, name }
             })
-            return userGroups
-            
+
+            return this.responseMaker.responseSuccess(`Group how user is a member`, userGroups)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
     }
 
     // Récupérer la liste des groupes dont le user est créateur
-    async creatorGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< Object[] > {
+    async creatorGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
             
             if (!request.user) {
@@ -70,15 +75,16 @@ export class GroupController {
                 const { id, name} = group
                 return { id, name}
             })
-            return foundGroups
-            
+
+            return this.responseMaker.responseSuccess(`Group how user is the creator`, foundGroups)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
     }
 
 // Récupérer les détails d'un groupe
-    async getGroupDetail (request: Request, response: Response, next: NextFunction): Promise< Object > {
+    async getGroupDetail (request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
             const foundGroup = await this.groupService.oneGroup(+request.params.id)
             if (!foundGroup) {
@@ -96,7 +102,8 @@ export class GroupController {
             console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", dataList)
 
 
-            return { group, memberList, dataList }
+            return this.responseMaker.responseSuccess(`Group Details`, { group, memberList, dataList })
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -123,7 +130,8 @@ export class GroupController {
             console.log("🐼 ~ file: GroupController.ts:122 ~ getGroupDetailForSetting ~ contactList:", contactList)
 
 
-            return { group, memberList, contactList }
+            return this.responseMaker.responseSuccess(`Group Details for Settings`, { group, memberList, contactList })
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -137,7 +145,9 @@ export class GroupController {
                 throw new Error("Group not found")
             }
             const removedGroup =  await this.groupService.removeGroup(group.id)
+
             return this.responseMaker.responseSuccess(`Group ${group.name} was deleted`, removedGroup)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -153,7 +163,9 @@ export class GroupController {
             }
         // Update des informations du groupe
             const updatedGroup = await this.groupService.updateGroup(group, request.body)
+
             return this.responseMaker.responseSuccess(`Group was saved`, updatedGroup)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -171,7 +183,9 @@ export class GroupController {
                 throw new Error("Group not found")
             }
             const addedUser = await this.groupService.addUserToGroup(user, group)
+
             return this.responseMaker.responseSuccess(`User ${user.nickname} as been add to the group ${group.name}`, addedUser)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -189,7 +203,9 @@ export class GroupController {
                 throw new Error("Group not found")
             }
             const deletedUser = await this.groupService.deleteUserToGroup(user, group.id)
+
             return this.responseMaker.responseSuccess(`User ${user.nickname} has been deleted from group ${group.name}`, deletedUser)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
