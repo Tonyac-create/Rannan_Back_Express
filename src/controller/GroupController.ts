@@ -5,6 +5,7 @@ import { UserService } from "../service/UserService"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ContactService } from "../service/ContactService"
+import { Contact } from "../entity/Contact"
 
 export class GroupController {
 
@@ -124,11 +125,23 @@ export class GroupController {
                 const { id, nickname } = member
                 return { id, nickname }
             })
-
-        //! => A VOIR AVEC CAYE POUR CONTACT
-            const contactList = await this.contactService.allByUserId(+request.user.user_id)
-            console.log("🐼 ~ file: GroupController.ts:122 ~ getGroupDetailForSetting ~ contactList:", contactList)
-
+        // Récupération de la liste de contact du user
+            const contactList = []
+            const getContactList = await this.contactService.allByUserId(+request.user.user_id)
+            await Promise.all(
+                getContactList.map(async (contact: Contact) => {
+                    if (contact.user1_id === +request.user.user_id) {
+                        const findContact = await this.userService.findOne("id", contact.user2_id, false)
+                        const nickname = findContact.nickname
+                        contactList.push({id: findContact.id, nickname: nickname})
+                    }
+                    if (contact.user2_id === +request.user.user_id) {
+                        const findContact = await this.userService.findOne("id", contact.user1_id, false)
+                        const nickname = findContact.nickname
+                        contactList.push({id: findContact.id, nickname: nickname})
+                    }
+                })
+            )
 
             return this.responseMaker.responseSuccess(`Group Details for Settings`, { group, memberList, contactList })
 

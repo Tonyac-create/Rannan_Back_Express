@@ -50,11 +50,11 @@ export class UserService {
     async update(id: number, body: any) {
         try {
             await this.userRepository.update(id, body)
-            const updated = await this.userRepository.findOne({where: {id: id}})
-            return updated
+            await this.userRepository.findOne({where: {id: id}})
+            return body
         }
         catch (error) {
-            console.log("🐼 ~ file: UserService.ts:54 ~ update ~ error:", error)
+            throw error.message
         }
     }
 
@@ -67,4 +67,21 @@ export class UserService {
             throw error.message
         }
     }
-}
+
+// Trouve un user depuis un input
+    async searchOne(input: string): Promise< User[] | null > {
+        try {
+            const users = []
+            const getUsers = await this.userRepository.find()
+            getUsers.map((user: User) => {
+                const {nickname, id} = user
+                return users.push({id: id, nickname: nickname.toLowerCase()})
+            })
+            const search = input.toLowerCase()
+            return users.filter(user => user.nickname.includes(search))
+        }
+        catch (error) {
+            throw error.message
+        }
+    }
+    }

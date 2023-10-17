@@ -50,7 +50,12 @@ export const Routes = [
         method: "get",
         route: "/api/user/search",
         controller: UserController,
-        action: ""
+        action: "userSearch"
+    },{
+        method: "delete",
+        route: "/api/user",
+        controller: UserController,
+        action: "removeUser"
     }, 
 
 // ROUTES FOR DATA------------------------------
