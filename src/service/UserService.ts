@@ -20,14 +20,16 @@ export class UserService {
     async findOne(field: string, value: number | string, populate: boolean) {
         try {
             if (populate === true) {
-                return this.userRepository.findOne({
+                const user = await this.userRepository.findOne({
                     where: { [field]: value },
                     relations: ['groups']
                 })
+                return user
             } else {
-                return this.userRepository.findOne({
+                const user = await this.userRepository.findOne({
                     where: { [field]: value }
                 })
+                return user
             }
         } catch (error) {
             throw error.message

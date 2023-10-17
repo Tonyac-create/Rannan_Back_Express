@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { Group } from "../entity/Group"
-import { GroupCreateInterface } from "../interface/GroupInterface"
+import { User } from "../entity/User"
+import { GroupCreateInterface } from "../interface/GroupCreateInterface"
 import { UserService } from "./UserService"
 
 export class GroupService {
@@ -24,29 +25,30 @@ export class GroupService {
         }
     }
 
-    async oneGroup(groupId: number): Promise<Group | undefined> {
+    async oneGroup(group_id: number): Promise<Group | undefined> {
         try {
-            return await this.groupRepository.findOneBy({id: groupId})
+            return await this.groupRepository.findOneBy({id: group_id})
         } catch (error) {
             throw error.message
         }
     }
 
-    async saveGroup(body: GroupCreateInterface): Promise<Group | { success: string; message: string }> {
+    async saveGroup(body: GroupCreateInterface, creator_id: number): Promise< Group > {
         try {
-            return await this.groupRepository.save(body)
-        } catch (error) {
-            throw error.message
-        }
-    }
-
-    async updateGroup(id: number, body: GroupCreateInterface): Promise<string | undefined> {
-        try {
-            const group = await this.groupRepository.findOneBy({ id: id })
-            if (!group) {
-                throw new Error("Group not found")
+            const newGroup = {
+                name: body.name,
+                limited_at: new Date(body.limited_at),
+                creator_id: creator_id
             }
-            const groupToUpdate = await this.groupRepository.update(id, body)
+            return await this.groupRepository.save(newGroup)
+        } catch (error) {
+            throw error.message
+        }
+    }
+
+    async updateGroup(group: Group, body: GroupCreateInterface): Promise<string | undefined> {
+        try {
+            const groupToUpdate = await this.groupRepository.update(group.id, body)
             if (groupToUpdate.affected === 0) {
                 throw new Error("Group not updated")
             }
@@ -56,22 +58,22 @@ export class GroupService {
         }
     }
 
-    async removeGroup(id: number): Promise<string> {
+    async removeGroup(id: number): Promise< Group > {
         try {
             const group = await this.groupRepository.findOneBy({ id: id })
             if (!group) {
                 throw new Error("Group not found")
             }
             await this.groupRepository.remove(group)
-            return `Group ${group.name} has deleted`
+            return group
         } catch (error) {
             throw error.message
         }
     }
 
-    async allUserGroups(userId: number): Promise<Object[] | undefined> {
+    async allUserGroups(user_id: number): Promise<Object[] | undefined> {
         try {
-            const user = await this.userService.findOne("id", userId, true)
+            const user = await this.userService.findOne("id", user_id, true)
             if (!user) {
                 throw new Error("User not found")
             }
@@ -85,16 +87,13 @@ export class GroupService {
         }
     }
 
-    async addUserToGroup(userId: number, groupId: number): Promise<string> {
+    async addUserToGroup(user: User, group: Group): Promise<string> {
         try {
-            const user = await this.userService.findOne("id", userId, true)
-            if (!user) {
-                throw new Error("User not found")
-            }
-            const group = await this.groupRepository.findOneBy({ id: groupId })
-            if (!group) {
-                throw new Error("Group not found")
-            }
+            user.groups.map((el) => {
+                if (el.id === group.id) {
+                    throw new Error("User already in group")
+                }
+            })
             user.groups.push(group)
             await this.userService.saveUser(user)
             return `Utilisateur ${user.nickname} ajouté au groupe ${group.name}`
@@ -103,13 +102,9 @@ export class GroupService {
         }
     }
 
-    async deleteUserToGroup(userId: number, groupId: number): Promise<string> {
+    async deleteUserToGroup(user: User, group_id: number): Promise<string> {
         try {
-            const user = await this.userService.findOne("id", userId, true)
-            if (!user) {
-                throw new Error("User not found")
-            }
-            const groupToDelete = user.groups.findIndex(group => group.id === groupId)
+            const groupToDelete = user.groups.findIndex(group => group.id === group_id)
             if (!groupToDelete || groupToDelete < 0) {
                 throw new Error("This user is not a member of this group")
             }
@@ -121,7 +116,7 @@ export class GroupService {
         }
     }
 
-    async allGroupMember(groupId: number) {
+    async allGroupMember(groupId: number): Promise< Group > {
         try {
             return this.groupRepository.findOne({
                 where: { id: groupId },

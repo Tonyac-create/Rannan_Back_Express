@@ -136,10 +136,15 @@ export const Routes = [
 
 // ROUTES FOR GROUPS------------------------------
     {
-        method: "get",
-        route: "/api/groups/user", 
+        method: "post",
+        route: "/api/group", 
         controller: GroupController,
-        action: "myGroupList"
+        action: "save"
+    },{
+        method: "get",
+        route: "/api/groups/member", 
+        controller: GroupController,
+        action: "memberGroupList"
     },{
         method: "get",
         route: "/api/groups/creator", 
@@ -164,7 +169,17 @@ export const Routes = [
         method: "put",
         route: "/api/group/:id", 
         controller: GroupController,
-        action: ""
+        action: "update"
+    },{
+        method: "put",
+        route: "/api/group/:id/add", 
+        controller: GroupController,
+        action: "addMember"
+    },{
+        method: "delete",
+        route: "/api/group/:id/remove", 
+        controller: GroupController,
+        action: "removeMember"
     }
 
 ]
