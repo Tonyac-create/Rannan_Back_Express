@@ -3,6 +3,7 @@ import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { AuthController } from "./controller/AuthController"
+import { ShareController } from "./controller/ShareController"
 
 
 export const Routes = [
@@ -54,33 +55,39 @@ export const Routes = [
     }, 
 
 // ROUTES FOR DATA------------------------------
+    // {
+    //     method: "get", // Récupérer toutes les datas
+    //     route: "/api/datas",
+    //     controller: DataController,
+    //     action: "all"
+    // },
     {
-        method: "get",
-        route: "/api/datas",
-        controller: DataController,
-        action: ""
-    },{
-        method: "get",
+        method: "get", // Récupère une data par son id
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "getOne"
     },{
-        method: "put",
+        method: "get", // Récupère des datas avec user_id
+        route: "/api/datas", // :id = user.id
+        controller: DataController,
+        action: "getDatasInUser"
+    },{
+        method: "put", // Update d'une data
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "update"
     },{
-        method: "delete",
+        method: "delete", // Suppression d'une data
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "remove"
     },{
-        method: "post",
+        method: "post", // Création d'une data pour un user
         route: "/api/data",
         controller: DataController,
-        action: ""
+        action: "save"
     },{
-        method: "get",
+        method: "get", 
         route: "/api/datas/shares",
         controller: DataController,
         action: ""
@@ -93,12 +100,17 @@ export const Routes = [
         method: "get",
         route: "/api/data/profile",
         controller: DataController,
-        action: ""
+        action: "getShare"
     },{
-        method: "post",
+        method: "post", // Création d'un partage
         route: "/api/shares",
         controller: DataController,
-        action: ""
+        action: "createShare"
+    },{
+        method: "delete", // Supprimer un partage
+        route: "/api/share/:id", // :id = share.id
+        controller: DataController,
+        action: "removeShare"
     },
 
 // ROUTES FOR CONTACT------------------------------
