@@ -49,8 +49,6 @@ export class DataService {
             const user = await this.userService.findOne("id", id, true)
 
             if (!user) return 'User not found'
-            // const newData = { type, name, value, user_id }
-            // console.log(newData);
             const newData = new Data()
             newData.type = type
             newData.name = name
@@ -58,8 +56,6 @@ export class DataService {
             newData.user_id = token
             console.log(newData);
 
-            // Utilisation du token
-            // console.log(`Token d'authentification : ${token}`)
 
             await this.dataRepository.save(newData)
             return newData

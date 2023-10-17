@@ -8,6 +8,7 @@ import { ResponseMaker } from "../utils/ResponseMaker"
 import { ShareService } from "../service/ShareService"
 import { UserService } from "../service/UserService"
 import { GroupService } from "../service/GroupService"
+import { Share } from "../entity/Share"
 
 export class DataController {
 
@@ -57,23 +58,22 @@ export class DataController {
             console.log("🚀 ~ file: AuthController.ts:103 ~ AuthController ~ remove ~ error:", error)
         }
     }
-    
+
     // Création d'une share
     async createShare(request: Request, response: Response, next: NextFunction) {
         try {
-            const data_id = request.body.data_id;
-            const target = request.body.target;
-            const target_id = +request.body.target_id;
-            const owner_id = +request.body.owner_id;
-
+            const data_id = request.body.data_id
+            const target = request.body.target
+            const target_id = +request.body.target_id
+            const owner_id = +request.body.owner_id
+           
             // Récupération de la data
             const data = await this.dataService.getOneById(data_id)
-            console.log("🚀 ~ file: DataController.ts:47 ~ DataController ~ createShare ~ data:", data)
+
             // Si data n'existe pas
             if (!data) {
                 throw new Error("data not fund")
-            } else {
-                console.log("target: ", target);
+            } else { // si data existe
                 // target = group
                 if (target === "group") {
                     const targetGroup = await this.groupService.oneGroup(target_id);
@@ -81,6 +81,7 @@ export class DataController {
                         throw new Error("Group don't exist")
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
+                        
                         return this.responseMaker.responseSuccess("share ok", share)
                     }
 
@@ -90,6 +91,7 @@ export class DataController {
                         throw new Error("User don't exist")
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
+                        
                         return this.responseMaker.responseSuccess("share ok", share)
                     }
                 }
@@ -144,9 +146,6 @@ export class DataController {
     async save(request: Request, response: Response, next: NextFunction) {
         const { id, type, name, value, user_id } = request.body
         try {
-
-            // const id = +request.params.id
-            // console.log("🚀 ~ file: DataController.ts:52 ~ DataController ~ save ~ id:", id)
 
             // Récupération du token
             const token = request.header('Authorization').split(' ')[1]

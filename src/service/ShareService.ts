@@ -1,12 +1,20 @@
 import { AppDataSource } from "../data-source";
 import { Share } from "../entity/Share";
+import { DataService } from "./DataService";
+import { UserService } from "./UserService";
+
 
 export class ShareService {
 
     private ShareRepository = AppDataSource.getRepository(Share)
+    private dataService= new DataService()
+    private userService= new UserService()
 
     // Récupération de toutes les shares d'une target (BODY : target = "group" ou "user" / id = target_id)
+    async shareTarget() {
 
+    }
+    
 
     // Récupération d'une share par son id
     async getShareById(id: number) {
@@ -15,10 +23,7 @@ export class ShareService {
             return share
         }
         catch (error) {
-            return {
-                success: 'ko',
-                message: error.message
-            };
+            throw error.message
         }
     }
 
@@ -29,8 +34,7 @@ export class ShareService {
                 target: target,
                 target_id: target_id,
                 owner_id: owner_id
-            });
-            console.log("🚀 ~ file: ShareService.ts:32 ~ ShareService ~ create ~ newShare:", newShare)
+            })
             return await this.ShareRepository.save(newShare);
         }
         catch (error) {
@@ -39,17 +43,7 @@ export class ShareService {
     }
 
     //Lier la data et l'share
-    // async linkDataToShare(data_id: number, share_id: number): Promise<Share> {
-    //     try {
-    //         const dataShare = this.ShareRepository.create({
-    //             data_id: data_id,
-    //             share_id: share_id
-    //         })
-    //         return await this.ShareRepository.save(dataShare)
-    //     } catch (error) {
-    //         throw new Error(error)
-    //     }
-    // }
+    
 
     //Supprimer une share
     async remove(id: number) {
