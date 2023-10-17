@@ -55,12 +55,12 @@ export const Routes = [
     }, 
 
 // ROUTES FOR DATA------------------------------
-    // {
-    //     method: "get", // Récupérer toutes les datas
-    //     route: "/api/datas",
-    //     controller: DataController,
-    //     action: "all"
-    // },
+    {
+        method: "get", // Récupérer toutes les datas
+        route: "/api/datas",
+        controller: DataController,
+        action: "all"
+    },
     {
         method: "get", // Récupère une data par son id
         route: "/api/data/:id", // :id = data.id
@@ -87,15 +87,15 @@ export const Routes = [
         controller: DataController,
         action: "save"
     },{
-        method: "get", 
+        method: "get", // Récupération de liste users ou groups
         route: "/api/datas/shares",
-        controller: DataController,
-        action: ""
+        controller: ShareController,
+        action: "getListUsers"
     },{
         method: "get",
         route: "/api/data/target",
-        controller: DataController,
-        action: ""
+        controller: ShareController,
+        action: "getShares"
     },{
         method: "get",
         route: "/api/data/profile",
@@ -111,6 +111,13 @@ export const Routes = [
         route: "/api/share/:id", // :id = share.id
         controller: DataController,
         action: "removeShare"
+    },
+    // Pour test
+    {
+        method: "get", // Récupérer tous les partages
+        route: "/api/allshares", 
+        controller: ShareController,
+        action: "allShares"
     },
 
 // ROUTES FOR CONTACT------------------------------

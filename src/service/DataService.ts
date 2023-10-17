@@ -11,14 +11,14 @@ export class DataService {
 
 //!!!!! A VOIR PR SUPPRIMER
     // Récupération de toutes les datas crées
-    // async all() {
-    //     try {
-    //         return this.dataRepository.find();
-    //     }
-    //     catch (error) {
-    //         throw new Error(error)
-    //     }
-    // }
+    async all() {
+        try {
+            return this.dataRepository.find();
+        }
+        catch (error) {
+            throw new Error(error)
+        }
+    }
 //!!!!! A VOIR PR SUPPRIMER
 
 

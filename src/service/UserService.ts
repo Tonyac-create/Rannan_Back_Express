@@ -17,7 +17,8 @@ export class UserService {
     }
 
 // Trouve un user par une valeur de champs (value of field)
-    async findOne(field: string, value: number | string, populate: boolean) {
+    async findOne(field: string, value: number | string, populate: boolean)
+    : Promise<User> {
         try {
             if (populate === true) {
                 return this.userRepository.findOne({

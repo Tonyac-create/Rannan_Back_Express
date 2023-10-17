@@ -7,12 +7,22 @@ import { UserService } from "./UserService";
 export class ShareService {
 
     private ShareRepository = AppDataSource.getRepository(Share)
-    private dataService= new DataService()
-    private userService= new UserService()
+    // private dataService= new DataService()
+    // private userService= new UserService()
+
+    // Récupération de toutes les shares
+    async allShares() {
+        try {
+            return this.ShareRepository.find()
+        } catch (error) {
+            throw error.message
+        }
+    }
+
 
     // Récupération de toutes les shares d'une target (BODY : target = "group" ou "user" / id = target_id)
     async shareTarget() {
-
+        
     }
     
 
@@ -23,7 +33,8 @@ export class ShareService {
             return share
         }
         catch (error) {
-            throw error.message
+            throw new Error(error)
+
         }
     }
 

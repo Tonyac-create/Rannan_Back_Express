@@ -22,22 +22,22 @@ export class DataController {
 
 //!!!!! A VOIR PR SUPPRIMER
     // Récupération de toute les datas 
-    // async all(request: Request, response: Response, next: NextFunction)
-    //     : Promise<ResponseInterface>
-    //      {
-    //     try {
-    //         const id = +request.params.user_id
-    //         const datas = await this.dataService.all()
-    //         if (!datas) 
-    //         {
-    //             throw new Error("No datas")
-    //         }
-    //         return this.responseMaker.responseSuccess("datas found", datas)
-    //     }
-    //     catch (error) {
-    //         response.status(400).json({ error: error.message })
-    //     }
-    // }
+    async all(request: Request, response: Response, next: NextFunction)
+        : Promise<ResponseInterface>
+         {
+        try {
+            const id = +request.params.user_id
+            const datas = await this.dataService.all()
+            if (!datas) 
+            {
+                throw new Error("No datas")
+            }
+            return this.responseMaker.responseSuccess("datas found", datas)
+        }
+        catch (error) {
+            response.status(400).json({ error: error.message })
+        }
+    }
 //!!!!! A VOIR PR SUPPRIMER
 
 
@@ -55,7 +55,7 @@ export class DataController {
             return "share has been removed"
         }
         catch (error) {
-            console.log("🚀 ~ file: AuthController.ts:103 ~ AuthController ~ remove ~ error:", error)
+            response.status(400).json({ error: error.message })
         }
     }
 
@@ -69,6 +69,7 @@ export class DataController {
            
             // Récupération de la data
             const data = await this.dataService.getOneById(data_id)
+            console.log("🚀 ~ file: DataController.ts:72 ~ DataController ~ createShare ~ data:", data)
 
             // Si data n'existe pas
             if (!data) {
