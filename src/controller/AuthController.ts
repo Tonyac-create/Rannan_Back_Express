@@ -46,6 +46,19 @@ export class AuthController {
     }
   }
 
+  async disconnect(request: RequestWithUser, response: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.findOne("email", request.body.email, false)
+      if (!user) {
+        throw new Error("User not find")
+      }
+      user.refreshToken = null
+      return "User Disconnect"
+    } catch (error) {
+      response.status(500).json({error :error.message, date : new Date()})
+    }
+  }
+
   async refreshToken(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       // Vérifie si l'email enregistré correspond a un email enregistré

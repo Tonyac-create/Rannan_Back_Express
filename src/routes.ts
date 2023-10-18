@@ -24,7 +24,12 @@ export const Routes = [
         route: "/auth/refreshToken",
         controller: AuthController,
         action: "refreshToken"
-    }, 
+    },{
+        method: "put",
+        route: "/auth/disconnect",
+        controller: AuthController,
+        action: "disconnect"
+    },
 
 // ROUTES FOR USER------------------------------
     {
@@ -43,6 +48,11 @@ export const Routes = [
         controller: UserController,
         action: "updateUser"
     },{
+        method: "put",
+        route: "/api/user/password",
+        controller: UserController,
+        action: "updatePassword"
+    },{
         method: "get",
         route: "/api/user/profile/:id", // :id = user.id
         controller: UserController,
@@ -51,7 +61,12 @@ export const Routes = [
         method: "get",
         route: "/api/user/search",
         controller: UserController,
-        action: ""
+        action: "userSearch"
+    },{
+        method: "delete",
+        route: "/api/user",
+        controller: UserController,
+        action: "removeUser"
     }, 
 
 // ROUTES FOR DATA------------------------------
@@ -137,35 +152,50 @@ export const Routes = [
 
 // ROUTES FOR GROUPS------------------------------
     {
-        method: "get",
-        route: "/api/groups/user", 
+        method: "post",
+        route: "/api/group", 
         controller: GroupController,
-        action: ""
+        action: "save"
+    },{
+        method: "get",
+        route: "/api/groups/member", 
+        controller: GroupController,
+        action: "memberGroupList"
     },{
         method: "get",
         route: "/api/groups/creator", 
         controller: GroupController,
-        action: ""
+        action: "creatorGroupList"
     },{
         method: "get",
         route: "/api/group/:id", // :id = group.id
         controller: GroupController,
-        action: ""
+        action: "getGroupDetail" //! => NEED dataService
     },{
         method: "delete",
-        route: "/api/group/:id", 
+        route: "/api/group/:id", //:id = group.id
         controller: GroupController,
-        action: ""
+        action: "remove"
     },{
         method: "get",
         route: "/api/group/:id/setting", 
         controller: GroupController,
-        action: ""
+        action: "getGroupDetailForSetting" //! => NEED contactService
     },{
         method: "put",
         route: "/api/group/:id", 
         controller: GroupController,
-        action: ""
+        action: "update"
+    },{
+        method: "put",
+        route: "/api/group/:id/add", 
+        controller: GroupController,
+        action: "addMember"
+    },{
+        method: "delete",
+        route: "/api/group/:id/remove", 
+        controller: GroupController,
+        action: "removeMember"
     }
 
 ]
