@@ -46,6 +46,6 @@ export class Data {
         joinColumn: { name: "data_id" },
         inverseJoinColumn: { name: "share_id" }
     })
-    authorizations : Share[]
+    shares : Share[]
 
 }
