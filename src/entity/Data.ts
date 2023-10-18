@@ -42,9 +42,9 @@ export class Data {
 
     @ManyToMany( () => Share)
     @JoinTable({
-        name: "data_has_authorizations",
+        name: "data_has_share",
         joinColumn: { name: "data_id" },
-        inverseJoinColumn: { name: "authorization_id" }
+        inverseJoinColumn: { name: "share_id" }
     })
     authorizations : Share[]
 

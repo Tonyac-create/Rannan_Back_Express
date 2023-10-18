@@ -3,7 +3,7 @@ import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { AuthController } from "./controller/AuthController"
-import { ValidationController } from "./controller/ValidationController"
+import { ShareController } from "./controller/ShareController"
 
 
 export const Routes = [
@@ -71,50 +71,68 @@ export const Routes = [
 
 // ROUTES FOR DATA------------------------------
     {
-        method: "get",
+        method: "get", // Récupérer toutes les datas
         route: "/api/datas",
         controller: DataController,
-        action: ""
-    },{
-        method: "get",
+        action: "all"
+    },
+    {
+        method: "get", // Récupère une data par son id
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "getOne"
     },{
-        method: "put",
+        method: "get", // Récupère des datas avec user_id
+        route: "/api/datas", // :id = user.id
+        controller: DataController,
+        action: "getDatasInUser"
+    },{
+        method: "put", // Update d'une data
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "update"
     },{
-        method: "delete",
+        method: "delete", // Suppression d'une data
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
-        action: ""
+        action: "remove"
     },{
-        method: "post",
+        method: "post", // Création d'une data pour un user
         route: "/api/data",
         controller: DataController,
-        action: ""
+        action: "save"
     },{
-        method: "get",
+        method: "get", // Récupération de liste users ou groups
         route: "/api/datas/shares",
-        controller: DataController,
-        action: ""
+        controller: ShareController,
+        action: "getListUsers"
+    },{
+        method: "get", // Récupérer une liste des datas partagé avec l’utilisateur ou le groupe lié
+        route: "/api/datas/target",
+        controller: ShareController,
+        action: "getShares"
     },{
         method: "get",
-        route: "/api/data/target",
-        controller: DataController,
-        action: ""
+        route: "/api/datas/profile",
+        controller: ShareController,
+        action: "getSharesBetweenUsers"
     },{
-        method: "get",
-        route: "/api/data/profile",
-        controller: DataController,
-        action: ""
-    },{
-        method: "post",
+        method: "post", // Création d'un partage
         route: "/api/shares",
         controller: DataController,
-        action: ""
+        action: "createShare"
+    },{
+        method: "delete", // Supprimer un partage
+        route: "/api/share/:id", // :id = share.id
+        controller: DataController,
+        action: "removeShare"
+    },
+    // Pour test
+    {
+        method: "get", // Récupérer tous les partages
+        route: "/api/allshares", 
+        controller: ShareController,
+        action: "allShares"
     },
 
 // ROUTES FOR CONTACT & VALIDATIONS------------------------------

@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn,CreateDateColumn, UpdateDateColumn, Column, ManyToMany, JoinTable } from "typeorm"
+import { Data } from "./Data"
+
 
 export enum TargetFormat {
     GROUP = "group",
@@ -25,4 +27,11 @@ export class Share {
     @CreateDateColumn()
     created_at: Date
 
+    @ManyToMany( () => Data)
+    @JoinTable({
+        name: "data_has_share",
+        joinColumn: { name: "share_id" },
+        inverseJoinColumn: { name: "data_id" }
+    })
+    datas : Data[]
 }

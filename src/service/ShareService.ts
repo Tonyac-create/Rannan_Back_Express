@@ -1,12 +1,42 @@
 import { AppDataSource } from "../data-source";
 import { Share } from "../entity/Share";
+import { DataService } from "./DataService";
+import { UserService } from "./UserService";
+
 
 export class ShareService {
 
     private ShareRepository = AppDataSource.getRepository(Share)
+    // private dataService= new DataService()
+    // private userService= new UserService()
+
+    // Récupération de toutes les shares
+    async allShares() {
+        try {
+            return this.ShareRepository.find()
+        } catch (error) {
+            throw error.message
+        }
+    }
+
+    async allByDatas(field: string, value: string | number) {
+        try {
+            return this.ShareRepository.find({
+                where: { [field]: value },
+                relations: ['datas']
+            });
+        }
+        catch (error) {
+            throw new Error(error)
+        }
+    }
+
 
     // Récupération de toutes les shares d'une target (BODY : target = "group" ou "user" / id = target_id)
-
+    async shareTarget() {
+        
+    }
+    
 
     // Récupération d'une share par son id
     async getShareById(id: number) {
@@ -15,27 +45,23 @@ export class ShareService {
             return share
         }
         catch (error) {
-            return {
-                success: 'ko',
-                message: error.message
-            };
+            throw new Error(error)
+
         }
     }
 
     //Création d'une autorisation
-    async create(target: string, target_id: number): Promise<Share | { success: string; message: string }> {
+    async create(target: string, target_id: number, owner_id: number): Promise<Share | { success: string; message: string }> {
         try {
             const newShare = this.ShareRepository.create({
                 target: target,
-                target_id: target_id
-            });
+                target_id: target_id,
+                owner_id: owner_id
+            })
             return await this.ShareRepository.save(newShare);
         }
         catch (error) {
-            return {
-                success: 'ko',
-                message: error.message
-            };
+                throw new Error(error)
         }
     }
 
