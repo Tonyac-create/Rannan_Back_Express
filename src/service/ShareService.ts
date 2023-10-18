@@ -19,6 +19,18 @@ export class ShareService {
         }
     }
 
+    async allByDatas(field: string, value: string | number) {
+        try {
+            return this.ShareRepository.find({
+                where: { [field]: value },
+                relations: ['datas']
+            });
+        }
+        catch (error) {
+            throw new Error(error)
+        }
+    }
+
 
     // Récupération de toutes les shares d'une target (BODY : target = "group" ou "user" / id = target_id)
     async shareTarget() {

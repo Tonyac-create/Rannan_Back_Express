@@ -2,24 +2,30 @@ import { request } from "express";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 import { UserService } from "./UserService";
+import { Share } from "../entity/Share";
+import { DataCreateInterface } from "../interface/DataInterface";
 
 export class DataService {
 
     private dataRepository = AppDataSource.getRepository(Data)
     private userService = new UserService()
+    private shareRepository = AppDataSource.getRepository(Share);
 
+    // async all()
 
-//!!!!! A VOIR PR SUPPRIMER
     // Récupération de toutes les datas crées
-    async all() {
+    async allByShare(field: string, value: number) {
         try {
-            return this.dataRepository.find();
+            return this.dataRepository.findOne({
+                where: { [field]: value },
+                relations: ['authorizations']
+            });
         }
         catch (error) {
             throw new Error(error)
         }
     }
-//!!!!! A VOIR PR SUPPRIMER
+
 
 
     // Récupération d'une data par son id
@@ -33,7 +39,7 @@ export class DataService {
     }
 
     // Récupération de toute les datas d'un user_id
-    async getDatasInUser(user_id: string) {
+    async getDatasInUser(user_id: number) {
         try {
             const datas = await this.dataRepository.find({ where: { user_id } })
             return datas
@@ -44,21 +50,24 @@ export class DataService {
     }
 
     // Création d'une data pour un utilisateur
-    async createDataOneUser(id: number, type: any, name: string, value: string, user_id: string, token: string) {
+    async createDataOneUser( type: any, name: string, value: string, user_id: number ) { //type: any, name: string, value: string, user_id: number
         try {
-            const user = await this.userService.findOne("id", id, true)
+            // const user = await this.userService.findOne("id", id, true)
+            // console.log("🚀 ~ file: DataService.ts:52 ~ DataService ~ createDataOneUser ~ user:", user)
 
-            if (!user) return 'User not found'
+            // if (!user) return 'User not found'
             const newData = new Data()
             newData.type = type
             newData.name = name
             newData.value = value
-            newData.user_id = token
-            console.log(newData);
+            // // newData.id = id 
+            newData.user_id = user_id
+            console.log("🚀 ~ file: DataService.ts:55 ~ DataService ~ createDataOneUser ~ newData:", newData)
 
 
-            await this.dataRepository.save(newData)
-            return newData
+            return this.dataRepository.save(newData)
+            // return newData
+
         }
         catch (error) {
             throw new Error(error)

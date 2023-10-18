@@ -92,15 +92,15 @@ export const Routes = [
         controller: ShareController,
         action: "getListUsers"
     },{
-        method: "get",
-        route: "/api/data/target",
+        method: "get", // Récupérer une liste des datas partagé avec l’utilisateur ou le groupe lié
+        route: "/api/datas/target",
         controller: ShareController,
         action: "getShares"
     },{
         method: "get",
-        route: "/api/data/profile",
-        controller: DataController,
-        action: "getShare"
+        route: "/api/datas/profile",
+        controller: ShareController,
+        action: "getSharesBetweenUsers"
     },{
         method: "post", // Création d'un partage
         route: "/api/shares",

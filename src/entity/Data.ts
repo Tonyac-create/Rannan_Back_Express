@@ -28,7 +28,7 @@ export class Data {
     value: string
 
     @Column()
-    user_id: string
+    user_id: number
 
     @CreateDateColumn()
     created_at: Date
