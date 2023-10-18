@@ -23,7 +23,12 @@ export const Routes = [
         route: "/auth/refreshToken",
         controller: AuthController,
         action: "refreshToken"
-    }, 
+    },{
+        method: "put",
+        route: "/auth/disconnect",
+        controller: AuthController,
+        action: "disconnect"
+    },
 
 // ROUTES FOR USER------------------------------
     {
