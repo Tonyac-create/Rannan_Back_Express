@@ -4,6 +4,7 @@ import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { AuthController } from "./controller/AuthController"
 import { ShareController } from "./controller/ShareController"
+import { ValidationController } from "./controller/ValidationController"
 
 
 export const Routes = [
