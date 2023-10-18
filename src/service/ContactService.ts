@@ -1,9 +1,11 @@
 import { AppDataSource } from "../data-source";
 import { Contact } from "../entity/Contact";
+import { UserService } from "./UserService";
 
 export class ContactService{
 
-    private ContactRepository = AppDataSource.getRepository(Contact)
+    private ContactRepository = AppDataSource.getRepository(Contact);
+    private userService = new UserService();
 
     //Création d'un lien de contact entre 2 users
     async create(user1Id: number, user2Id: number) : Promise<Contact> {
@@ -22,34 +24,47 @@ export class ContactService{
         }
     }
 
-    //récupérer tous le contacts
-    async all(){
-        try{
-            return await this.ContactRepository.find();
-        }
-        catch (error){
-            console.log("🚀 ~ file: ContactService.ts:31 ~ ContactService ~ all ~ error:", error);
-            throw new Error(error); 
-        }
-    }
-
-    //récupérer tous les contacts d'un user
-    async allByUserId(id: any){
+    //récupérer tous les contacts d'un user d'un coup
+    async allByUserId(id: any): Promise<Contact[]>{
         try{
             const allUserOne = await this.ContactRepository.find({where: {user1_id: id}})
             const allUserTwo = await this.ContactRepository.find({where: {user2_id: id}})
             return [...allUserOne, ...allUserTwo]
         }
         catch (error){
-            console.log("🚀 ~ file: ContactService.ts:43 ~ ContactService ~ allByUserId ~ error:", error);
+            console.log("🚀 ~ file: ContactService.ts:33 ~ ContactService ~ allByUserId ~ error:", error);
             throw new Error(error)
         }
     }
 
-    //récupérer un contact par id contact
-    async one(id: number): Promise<Contact[]> {
+    //Récupérer tous les contacts d'un user par son role dans celuici (user1 ou user2)
+    async allByUserRole(role: string, id: number): Promise<Contact[]>{
         try{
-            const contact = await this.ContactRepository.findBy({id});
+            const allUserRole = await this.ContactRepository.find({where: {[role]: id}})
+            return allUserRole
+        }
+        catch(error){
+            throw new Error(error)
+        }
+    }
+    
+    //Formater l'objet user dans contact
+    user1Formated(user: any){
+        const targetUser1 = user;
+        const user1 = {user1_id: targetUser1.id, nickname: targetUser1.nickname};
+        return user1;
+    }
+
+    user2Formated(user: any){
+        const targetUser2 = user;
+        const user2 = {user2_id: targetUser2.id, nickname: targetUser2.nickname};
+        return user2;
+    }
+
+    //récupérer un contact par id contact
+    async oneById(id: number): Promise<Contact> {
+        try{
+            const contact = await this.ContactRepository.findOneBy({id});
             return contact;  
         }
         catch(error){
@@ -59,7 +74,7 @@ export class ContactService{
     }
 
     //Récupérer un contact spécifique entre 2 users
-    async oneByUsers(user1Id: number, user2Id: number): Promise<Contact> { // à verifier que user1 ne peut pas être user2 
+    async oneByUsers(user1Id: number, user2Id: number): Promise<Contact> { // à verifier que user1 ne peut pas être user2  
         try{
             return this.ContactRepository.findOne({
                 where:{
@@ -76,13 +91,16 @@ export class ContactService{
     }
 
     //Eliminer un contact
-    async remove(contact: any){
-        try{
-            this.ContactRepository.delete(contact);
-        }
-        catch(error) {
-            console.log("🚀 ~ file: ContactService.ts:75 ~ ContactService ~ remove ~ error:", error);
-            throw new Error(error)
+    async remove(id: number): Promise<string> {
+        try {
+            const contact = await this.ContactRepository.findOneBy({ id: id })
+            if (!contact) {
+                throw new Error("contact not found")
+            }
+            await this.ContactRepository.remove(contact)
+            return `contact ${contact.id} was deleted`
+        } catch (error) {
+            throw error.message
         }
     }
 }
