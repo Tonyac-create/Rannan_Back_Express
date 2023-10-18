@@ -27,16 +27,17 @@ export class Data {
     @Column({type: "varchar", length: 250})
     value: string
 
-    @Column()
-    user_id: number
-
     @CreateDateColumn()
     created_at: Date
 
     @UpdateDateColumn()
     updated_at: Date
 
+    @Column()
+    user_id: number
+
     @ManyToOne(() => User, (user) => user.datas)
+    @JoinColumn({name: "user_id"})
     user: User
 
     @ManyToMany( () => Share)
