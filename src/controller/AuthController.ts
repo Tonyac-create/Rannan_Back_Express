@@ -20,8 +20,10 @@ export class AuthController {
       request.body.password = await bcrypt.hash(request.body.password, 10)
       // Créer le user dans la db
       const user = await this.userService.saveUser(request.body)
+
       // Créer les Token & refreshToken et les enregistrements
       return await this.authService.tokenFunctions(user.id, user.email)
+
     } catch (error) {
       response.status(500).json({error :error.message, date : new Date()})
     }
@@ -39,8 +41,25 @@ export class AuthController {
       if (!isPasswordMatched) {
         throw new Error("Unauthotized (password not matched)")
       }
+
       // Créer les Token & refreshToken et les enregistrements
       return await this.authService.tokenFunctions(user.id, user.email)
+
+    } catch (error) {
+      response.status(500).json({error :error.message, date : new Date()})
+    }
+  }
+
+  async disconnect(request: RequestWithUser, response: Response, next: NextFunction) {
+    try {
+      const user = await this.userService.findOne("email", request.body.email, false)
+      if (!user) {
+        throw new Error("User not find")
+      }
+      user.refreshToken = null
+
+      return "User Disconnect"
+
     } catch (error) {
       response.status(500).json({error :error.message, date : new Date()})
     }
@@ -57,8 +76,10 @@ export class AuthController {
       if (user.refreshToken !== request.refreshToken) {
         throw new Error("refresh token not admit")
       }
+
       // Recréer les Token & refreshToken
       return await this.authService.tokenFunctions(user.id, user.email)
+
     } catch (error) {
       response.status(500).json({error :error.message, date : new Date()})
     }

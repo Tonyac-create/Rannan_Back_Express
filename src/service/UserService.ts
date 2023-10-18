@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
 import { UserCreateInterface } from "../interface/UserCreateInterface"
+const bcrypt = require('bcrypt')
 
 export class UserService {
 
@@ -21,14 +22,16 @@ export class UserService {
     : Promise<User> {
         try {
             if (populate === true) {
-                return this.userRepository.findOne({
+                const user = await this.userRepository.findOne({
                     where: { [field]: value },
                     relations: ['groups']
                 })
+                return user
             } else {
-                return this.userRepository.findOne({
+                const user = await this.userRepository.findOne({
                     where: { [field]: value }
                 })
+                return user
             }
         } catch (error) {
             throw error.message
@@ -49,11 +52,24 @@ export class UserService {
     async update(id: number, body: any) {
         try {
             await this.userRepository.update(id, body)
-            const updated = await this.userRepository.findOne({where: {id: id}})
-            return updated
+            await this.userRepository.findOne({where: {id: id}})
+            return body
         }
         catch (error) {
-            console.log("🐼 ~ file: UserService.ts:54 ~ update ~ error:", error)
+            throw error.message
+        }
+    }
+
+// Update un user
+    async updatePassword(id: number, body: any) {
+        try {
+            const password = await bcrypt.hash(body, 10)
+            await this.userRepository.update(id, {password: password})
+            await this.userRepository.findOne({where: {id: id}})
+            return body
+        }
+        catch (error) {
+            throw error.message
         }
     }
 
@@ -66,4 +82,21 @@ export class UserService {
             throw error.message
         }
     }
-}
+
+// Trouve un user depuis un input
+    async searchOne(input: string): Promise< User[] | null > {
+        try {
+            const users = []
+            const getUsers = await this.userRepository.find()
+            getUsers.map((user: User) => {
+                const {nickname, id} = user
+                return users.push({id: id, nickname: nickname.toLowerCase()})
+            })
+            const search = input.toLowerCase()
+            return users.filter((user: User) => user.nickname.includes(search))
+        }
+        catch (error) {
+            throw error.message
+        }
+    }
+    }
