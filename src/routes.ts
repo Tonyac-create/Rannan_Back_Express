@@ -42,6 +42,11 @@ export const Routes = [
         controller: UserController,
         action: "updateUser"
     },{
+        method: "put",
+        route: "/api/user/password",
+        controller: UserController,
+        action: "updatePassword"
+    },{
         method: "get",
         route: "/api/user/profile/:id", // :id = user.id
         controller: UserController,

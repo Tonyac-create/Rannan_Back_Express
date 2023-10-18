@@ -1,6 +1,7 @@
 import { AppDataSource } from "../data-source"
 import { User } from "../entity/User"
 import { UserCreateInterface } from "../interface/UserCreateInterface"
+const bcrypt = require('bcrypt')
 
 export class UserService {
 
@@ -50,6 +51,19 @@ export class UserService {
     async update(id: number, body: any) {
         try {
             await this.userRepository.update(id, body)
+            await this.userRepository.findOne({where: {id: id}})
+            return body
+        }
+        catch (error) {
+            throw error.message
+        }
+    }
+
+// Update un user
+    async updatePassword(id: number, body: any) {
+        try {
+            const password = await bcrypt.hash(body, 10)
+            await this.userRepository.update(id, {password: password})
             await this.userRepository.findOne({where: {id: id}})
             return body
         }

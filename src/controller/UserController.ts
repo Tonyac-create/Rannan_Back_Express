@@ -54,6 +54,27 @@ export class UserController {
         }
     }
 
+// Mettre a jour un user par son id
+    async updatePassword(request: RequestWithUser, response: Response, next: NextFunction) {
+        try {
+        // Vérification de l'existance du user
+            const user = await this.userService.findOne("id", request.user.user_id, false)
+            if (!user) {
+                throw new Error("User not found")
+            }
+        // Vérification du mot de passe
+            const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
+            if (!isPasswordMatched) {
+                throw new Error("Unauthotized (password not matched)")
+            }
+        // update et return du user
+            const updatedUser = await this.userService.updatePassword(user.id, request.body.newpassword)
+            return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
+        } catch (error) {
+            response.status(500).json({ error: error.message })
+        }
+    }
+
 // Récupération de l'avatar & nickname d'un user
     async getProfile(request: Request, response: Response, next: NextFunction) {
         try {
