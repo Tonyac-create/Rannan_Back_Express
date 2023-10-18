@@ -26,8 +26,10 @@ export class UserController {
             if (!emailExist) {
                 throw new Error("Email not found")
             }
+
         // A AJOUTER => MS mailing
             return "Reset mail send"
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -48,7 +50,9 @@ export class UserController {
             }
         // update et return du user
             const updatedUser = await this.userService.update(user.id, request.body.update)
+
             return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -69,7 +73,9 @@ export class UserController {
             }
         // update et return du user
             const updatedUser = await this.userService.updatePassword(user.id, request.body.newpassword)
+
             return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -83,8 +89,10 @@ export class UserController {
             if (!user) {
                 throw new Error ("User not found")
             }
+
         // return avatar_id et nickname
             return {avatar: user.avatar_id, nickname: user.nickname}
+            
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -98,7 +106,9 @@ export class UserController {
             if (!users || users.length <= 0) {
                 return "No user found"
             }
+
             return users
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -116,7 +126,9 @@ export class UserController {
             const userName = user.nickname
         // suppression du user par sont id
             await this.userService.remove(user.id)
+
             return this.responseMaker.responseSuccess(`User ${userName} has been deleted`, user)
+
         } catch (error) {
             response.status(500).json({ error: error.message })
         }

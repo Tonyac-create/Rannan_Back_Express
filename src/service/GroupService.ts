@@ -17,7 +17,7 @@ export class GroupService {
                 throw new Error("No groups found with specified creator")
             }
         // Filtre le renvoi des informations des groups
-            const groupsFound = groups.map(group => {
+            const groupsFound = groups.map((group: Group) => {
                 const { name, id, limited_at, creator_id } = group
                 return { name, id, limited_at, creator_id }
             })
@@ -130,7 +130,7 @@ export class GroupService {
     async deleteUserToGroup(user: User, group_id: number): Promise<string> {
         try {
         // Trouve l'index du groupe dans le tableau des groupes du user
-            const groupToDelete = user.groups.findIndex(group => group.id === group_id)
+            const groupToDelete = user.groups.findIndex((group: Group) => group.id === group_id)
             if (!groupToDelete || groupToDelete < 0) {
                 throw new Error("This user is not a member of this group")
             }

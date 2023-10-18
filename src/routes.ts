@@ -170,7 +170,7 @@ export const Routes = [
         method: "get",
         route: "/api/group/:id", // :id = group.id
         controller: GroupController,
-        action: "getGroupDetail" //! => NEED dataService
+        action: "getGroupDetail"
     },{
         method: "delete",
         route: "/api/group/:id", //:id = group.id
@@ -180,7 +180,7 @@ export const Routes = [
         method: "get",
         route: "/api/group/:id/setting", 
         controller: GroupController,
-        action: "getGroupDetailForSetting" //! => NEED contactService
+        action: "getGroupDetailForSetting"
     },{
         method: "put",
         route: "/api/group/:id", 

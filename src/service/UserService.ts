@@ -92,7 +92,7 @@ export class UserService {
                 return users.push({id: id, nickname: nickname.toLowerCase()})
             })
             const search = input.toLowerCase()
-            return users.filter(user => user.nickname.includes(search))
+            return users.filter((user: User) => user.nickname.includes(search))
         }
         catch (error) {
             throw error.message

@@ -22,7 +22,7 @@ export class GroupController {
         // Création du groupe
             const savedGroup = await this.groupService.saveGroup(request.body, +request.user.user_id)
         // Ajout des users en membres
-            request.body.memberList.map(async (id) => {
+            request.body.memberList.map(async (id: number) => {
                 const user = await this.userService.findOne("id", id, false)
                 if (user) {
                     this.groupService.addUserToGroup(user, savedGroup)
@@ -48,7 +48,7 @@ export class GroupController {
                 throw new Error("User not found")
             }
         // Filtre les fields envoyé
-            const userGroups = user.groups.map(group => {
+            const userGroups = user.groups.map((group: {name: string, id: number, limited_at: Date | null, creator_id: number}) => {
                 const { id, name } = group
                 return { id, name }
             })
@@ -72,7 +72,7 @@ export class GroupController {
                 throw new Error("User not found")
             }
             const creatorGroups = await this.groupService.allGroupsBy("creator_id", user.id)
-            const foundGroups = creatorGroups.map((group: {name: string, id: number, limited_at: any, creator_id: number}) => {
+            const foundGroups = creatorGroups.map((group: {name: string, id: number, limited_at: Date | null, creator_id: number}) => {
                 const { id, name} = group
                 return { id, name}
             })
@@ -93,7 +93,7 @@ export class GroupController {
             }
             const group = { name: foundGroup.name, limited_at: foundGroup.limited_at, creator_id: foundGroup.creator_id }
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
-            const memberList = getMemberList.users.map(member => {
+            const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             })
@@ -121,7 +121,7 @@ export class GroupController {
             }
             const group = { name: foundGroup.name, limited_at: foundGroup.limited_at }
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
-            const memberList = getMemberList.users.map(member => {
+            const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             })
