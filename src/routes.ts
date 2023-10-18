@@ -3,6 +3,7 @@ import { GroupController } from "./controller/GroupController"
 import { DataController } from "./controller/DataController"
 import { ContactController } from "./controller/ContactController"
 import { AuthController } from "./controller/AuthController"
+import { ValidationController } from "./controller/ValidationController"
 
 
 export const Routes = [
@@ -101,37 +102,37 @@ export const Routes = [
         action: ""
     },
 
-// ROUTES FOR CONTACT------------------------------
+// ROUTES FOR CONTACT & VALIDATIONS------------------------------
     {
         method: "get",
         route: "/api/contacts", 
         controller: ContactController,
-        action: ""
+        action: "all"
     },{
         method: "delete",
         route: "/api/contact/:id", // :id = contact.id
         controller: ContactController,
-        action: ""
+        action: "remove"
     },{
         method: "post",
         route: "/api/contact", 
         controller: ContactController,
-        action: ""
+        action: "save"
     },{
         method: "delete",
         route: "/api/validation/:id", // :id = validation.id
-        controller: ContactController,
-        action: ""
+        controller: ValidationController,
+        action: "remove"
     },{
         method: "post",
         route: "/api/validation",
-        controller: ContactController,
-        action: ""
+        controller: ValidationController,
+        action: "save"
     },{
         method: "get",
         route: "/api/validations/user",
-        controller: ContactController,
-        action: ""
+        controller: ValidationController,
+        action: "all"
     },
 
 // ROUTES FOR GROUPS------------------------------

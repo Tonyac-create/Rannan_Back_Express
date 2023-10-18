@@ -2,54 +2,74 @@ import { NextFunction, Request, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
 import { UserService } from "../service/UserService";
 import { ResponseMaker } from "../utils/ResponseMaker";
+import { RequestWithUser } from "../interface/RequestWithUser.interface";
+import { ResponseInterface } from "../interface/ResponseInterface";
 
 export class ValidationController{
 
 // Services
     private validationService = new ValidationService();
     private userService = new UserService();
-    private responseMaker = new ResponseMaker();;
+    private responseMaker = new ResponseMaker();
 
-//Récupérer toutes les demandes envoyées par un user
-    async allByUser(request: Request, response: Response, next: NextFunction){
-        //Récupérer l'id de l'user à partir du token (attendre)
+//Récupérer toutes les demandes de l'user reçues et envoyées
+    async all(request: RequestWithUser, response: Response, next: NextFunction): Promise<ResponseInterface>{
         try{
-            const validations = await this.validationService.allByUserId(+request.params.id);
-            if(!validations || validations.length === 0){
-                throw new Error("no validations found");
+            //Récupérer les requÊtes envoyées
+            const sentValidations = await this.validationService.allByUserId(+request.user.user_id);
+            let sentIsEmpty;
+            if(!sentValidations || sentValidations.length === 0){
+                sentIsEmpty = true
             }
-            else{
-                return this.responseMaker.responseSuccess("Validations found", validations)
+            let allSent = [];
+            await Promise.all(sentValidations.map(async(element) => {
+                const targetUser = await this.userService.findOne("id", element.contact_id, false);
+                const contact = this.validationService.contactFormated(targetUser);
+                const validation = {
+                    id: element.id,
+                    user_id: element.user_id,
+                    contact : contact
+                }    
+                allSent.push(validation);
+            }))
+
+            //Récupérer les requÊtes reçues
+            const recievedValidations = await this.validationService.allByContactId(+request.user.user_id);
+            let recievedIsEmpty;
+            if(!recievedValidations || recievedValidations.length === 0){
+                 recievedIsEmpty = true
             }
+            let allRecieved = [];
+            await Promise.all(recievedValidations.map(async(element) => {
+                const targetUser = await this.userService.findOne("id", element.user_id, false);
+                const user = this.validationService.userFormated(targetUser);
+                const validation = {
+                    id: element.id,
+                    user: user,
+                    contact_id : element.contact_id
+                }    
+                allRecieved.push(validation);
+            }))
+
+            //Mettre les 2 objets dans un tableau
+            let validations = [allSent, allRecieved];
+
+            if(!validations || validations.length === 0 || sentIsEmpty === true && recievedIsEmpty === true){
+                throw new Error("no validations found")
+            }
+            return this.responseMaker.responseSuccess("Validations found", validations);
         }
         catch(error){
-            response.status(500).json({error :error.message, date : new Date()})
-        }
-    }
-
-//Récupérer toutes les demandes envoyées reçues par un user
-    async allByContact(request: Request, response: Response, next: NextFunction){
-        //Récupérer l'id de l'user à partir du token (attendre)
-        try{
-            const validations = await this.validationService.allByContactId(+request.params.id);
-            if(!validations || validations.length === 0){
-                throw new Error("no validations found");
-            }
-            else{
-                return this.responseMaker.responseSuccess("Validations found", validations)
-            }
-        }
-        catch(error){
-            response.status(500).json({error :error.message, date : new Date()})
+            console.log("🚀 ~ file: ValidationController.ts:31 ~ ValidationController ~ all ~ error:", error);
+            response.status(500).json({error :error.message, date : new Date()});
         }
     }
 
 //Création d'une demande de mise en contact entre 2 users
-    async save(request: Request, response: Response, next: NextFunction){
+    async save(request: RequestWithUser, response: Response, next: NextFunction): Promise<ResponseInterface>{
         //Récupération des id des users
-        const userId = parseInt(request.body.userId); //Quand token crée modifier pour l'obtenir depuis le token
+        const userId = parseInt(request.user.user_id);
         const contactId = parseInt(request.body.contactId);
-        const status = 0;
         try{
             //Verification que les users existent
             const userOk = await this.userService.findOne("id", userId, false);
@@ -71,60 +91,37 @@ export class ValidationController{
                 throw new Error("A contact request exists already")
             }
             //Execution de la fonction
-            const validation = await this.validationService.create(userId, contactId, status);
+            const validation = await this.validationService.create(userId, contactId);
             if (!validation){
                 throw new Error("Bad request")
             }
             return this.responseMaker.responseSuccess("Contact request sent", validation) 
         }
         catch(error){
+            console.log("🚀 ~ file: ValidationController.ts:69 ~ ValidationController ~ save ~ error:", error)
             response.status(500).json({error :error.message, date : new Date()})
         }
     }
-
-//Maj de la validation
-    // async update(request: Request, response: Response, next: NextFunction){
-    //     //Récupération de l'id de l'user qui a reçu la requête et de sa réponse
-    //     const contactId = parseInt(request.body.contactId); //Récupérer du token
-    //     const id = parseInt(request.params.id); //id de la validation
-    //     const status = parseInt(request.body.status); //nouveau statut de la validation (1 acceptée, 2 refusée)
-    //     try{
-    //         //Vérifier que la validation existe
-    //         const targetValidation = await this.validationService.oneById(id)
-    //         if(!targetValidation){
-    //             throw new Error("Unauthorized.")
-    //         }
-    //         //Verifier que l'id du token correspond à l'id du contact de la requete (en attente token) 401 unauthorized
-    //         //Verifier que l'user qui update la demande correspond à le destinataire de la demande
-    //          const targetContact = targetValidation.contact_id;
-    //          if(contactId !== targetContact){
-    //              throw new Error("Unauthorized.")
-    //          }
-    //         //execution de la fonction
-    //         const updatedValidation = await this.validationService.update(id, status);
-    //         if (!updatedValidation){
-    //             throw new Error("An error ocurred while updating the validation")
-    //         }
-    //         return this.responseMaker.responseSuccess("Contact request updated",updatedValidation)
-    //     }
-    //     catch(error){
-    //         console.log("🚀 ~ file: ValidationController.ts:111 ~ ValidationController ~ update ~ error:", error);
-    //         response.status(500).json({error :error.message, date : new Date()})
-    //     }    
-    // }
 
 //Supprimer une validation
-    async remove(request: Request, response: Response, next: NextFunction){
-        //Récupérer l'id de l'user depuis le token et verifier qu'il correspond à celui de contact (Attendre token auth)
-        //401 pour non authorisé
+    async remove(request: RequestWithUser, response: Response, next: NextFunction) {
         try{
+            //Verifier que la validation existe
             const validation = await this.validationService.oneById(+request.params.id)
-            await this.validationService.remove(validation);
-            return this.responseMaker.responseSuccess("Validation deleted", validation)
+            if (!validation){
+                throw new Error("validation not found")
+            }
+            //verifier que le user qui suprime est bien le destinataire de la demande
+            const userId = parseInt(request.user.user_id);
+            if(validation.contact_id !== userId){
+                throw new Error("Unauthorized")
+            }
+            const removedvalidation =  await this.validationService.remove(validation.id)
+            return this.responseMaker.responseSuccess(`validation was deleted`, removedvalidation)
         }
-        catch(error){
-            response.status(500).json({error :error.message, date : new Date()})
-        } 
+        catch (error){
+            console.log("🚀 ~ file: ValidationController.ts:91 ~ ValidationController ~ remove ~ error:", error)
+            response.status(500).json({ error: error.message })
+        }
     }
-
 }

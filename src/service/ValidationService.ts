@@ -5,7 +5,7 @@ export class ValidationService{
     private ValidationRepostiory = AppDataSource.getRepository(Validation)
 
     //Création d'une validation entre 2 users (demande pour ajouter l'user à nos contact)
-    async create(userId: number, contactId: number, status: number) : Promise<Validation>{
+    async create(userId: number, contactId: number) : Promise<Validation>{
         try{
             const newValidation = this.ValidationRepostiory.create({
                 user_id: userId,
@@ -75,27 +75,30 @@ export class ValidationService{
         }
     }
 
-    //Éliminer une demande de mise en contact
-    async remove(validation: any){
-        try{
-            this.ValidationRepostiory.delete(validation);
-        }
-        catch(error){
-            console.log("🚀 ~ file: ValidationService.ts:86 ~ ValidationService ~ remove ~ error:", error);
-            throw new Error(error)          
-        }
+    //Formater l'objet user dans validation
+    userFormated(user: any){
+        const targetUser = user;
+        const FormatedUser = {user_id: targetUser.id, nickname: targetUser.nickname};
+        return FormatedUser;
     }
 
-    //MaJ d'une validation (répondre à celle-ci)
-    // async update(id: number, status: number): Promise<Validation | {success: string; message: string}>{
-    //     try{
-    //         await this.ValidationRepostiory.update(id, {validation: status});
-    //         const validation = await this.oneById(id);
-    //         return validation;           
-    //     }
-    //     catch(error){
-    //         console.log("🚀 ~ file: ValidationService.ts:98 ~ ValidationService ~ update ~ error:", error);
-    //         throw new Error(error)
-    //     }
-    // }
+    contactFormated(user: any){
+        const targetContact = user;
+        const contact = {contact_id: targetContact.id, nickname: targetContact.nickname};
+        return contact;
+    }
+
+    //Éliminer une demande de mise en contact
+    async remove(id: number): Promise<string> {
+        try {
+            const validation = await this.ValidationRepostiory.findOneBy({ id: id })
+            if (!validation) {
+                throw new Error("validation not found")
+            }
+            await this.ValidationRepostiory.remove(validation)
+            return `validation ${validation.id} was deleted`
+        } catch (error) {
+            throw error.message
+        }
+    }
 }
