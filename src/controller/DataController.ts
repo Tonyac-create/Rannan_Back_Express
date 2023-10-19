@@ -1,14 +1,10 @@
-import { AppDataSource } from "../data-source"
 import { NextFunction, Request, Response } from "express"
-import { Data } from "../entity/Data"
-import { User } from "../entity/User"
 import { DataService } from "../service/DataService"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { ShareService } from "../service/ShareService"
 import { UserService } from "../service/UserService"
 import { GroupService } from "../service/GroupService"
-import { Share } from "../entity/Share"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 
 export class DataController {
@@ -19,27 +15,6 @@ export class DataController {
     private groupService = new GroupService()
     private responseMaker = new ResponseMaker()
     private shareService = new ShareService()
-
-
-
-    // Récupération de toute les datas 
-    // async all(request: Request, response: Response, next: NextFunction)
-    //     : Promise<ResponseInterface>
-    //      {
-    //     try {
-    //         const id = +request.params.user_id
-    //         const datas = await this.dataService.all()
-    //         if (!datas) 
-    //         {
-    //             throw new Error("No datas")
-    //         }
-    //         return this.responseMaker.responseSuccess("datas found", datas)
-    //     }
-    //     catch (error) {
-    //         response.status(400).json({ error: error.message })
-    //     }
-    // }
-
 
     //Supprimer une share
     async removeShare(request: Request, response: Response, next: NextFunction) {

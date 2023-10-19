@@ -72,12 +72,6 @@ export const Routes = [
 
 // ROUTES FOR DATA------------------------------
     {
-        method: "get", // Récupérer toutes les datas
-        route: "/api/datas",
-        controller: DataController,
-        action: "all"
-    },
-    {
         method: "get", // Récupère une data par son id
         route: "/api/data/:id", // :id = data.id
         controller: DataController,
