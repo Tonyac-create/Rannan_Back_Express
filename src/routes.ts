@@ -122,7 +122,6 @@ export const Routes = [
         controller: DataController,
         action: "removeShare"
     },
-    // Pour test
     {
         method: "get", // Récupérer tous les partages
         route: "/api/allshares", 
