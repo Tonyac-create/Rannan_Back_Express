@@ -4,15 +4,18 @@ import { Request, Response } from "express"
 import { AppDataSource } from "./data-source"
 import { Routes } from "./routes"
 import dotenv from "dotenv"
+dotenv.config()
 import { jwtMiddleware } from "./middleware/jwtMiddleware"
 import { jwtRefreshMiddleware } from "./middleware/jwtRefreshMiddleware"
-dotenv.config()
-
+import cors from "cors"
 
 AppDataSource.initialize().then(async () => {
     // create express app
     const app = express()
     app.use(bodyParser.json())
+
+    // Middlewate cors
+    app.use(cors())
 
     // Intercept for Token check
     app.use("/api", jwtMiddleware)

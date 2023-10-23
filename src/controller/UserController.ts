@@ -91,7 +91,7 @@ export class UserController {
             }
 
         // return avatar_id et nickname
-            return {avatar: user.avatar_id, nickname: user.nickname}
+            return {avatar_id: user.avatar_id, nickname: user.nickname}
             
         } catch (error) {
             response.status(500).json({ error: error.message })

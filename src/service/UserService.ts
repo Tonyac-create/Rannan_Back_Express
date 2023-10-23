@@ -52,8 +52,7 @@ export class UserService {
     async update(id: number, body: any) {
         try {
             await this.userRepository.update(id, body)
-            await this.userRepository.findOne({where: {id: id}})
-            return body
+            return await this.userRepository.findOne({where: {id: id}})
         }
         catch (error) {
             throw error.message
