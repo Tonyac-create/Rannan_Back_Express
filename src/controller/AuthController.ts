@@ -52,7 +52,7 @@ export class AuthController {
 
   async disconnect(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
-      const user = await this.userService.findOne("email", request.user.email, false)
+      const user = await this.userService.findOne("id", request.user.user_id, false)
       if (!user) {
         throw new Error("User not find")
       }

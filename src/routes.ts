@@ -22,12 +22,12 @@ export const Routes = [
         action: "login"
     },{
         method: "get",
-        route: "/auth/refreshToken",
+        route: "/api/auth/refreshToken",
         controller: AuthController,
         action: "refreshToken"
     },{
         method: "put",
-        route: "/auth/disconnect",
+        route: "/api/auth/disconnect",
         controller: AuthController,
         action: "disconnect"
     },
