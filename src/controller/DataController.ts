@@ -23,7 +23,7 @@ export class DataController {
             let authToRemove = await this.shareService.getShareById(id)
 
             if (!authToRemove) {
-                throw new Error ("this authorization not exist")
+                throw new Error("this authorization not exist")
             }
 
             await this.shareService.remove(id)
@@ -41,7 +41,7 @@ export class DataController {
             const target = request.body.target
             const target_id = +request.body.target_id
             const owner_id = +request.body.owner_id
-           
+
             // Récupération de la data
             const data = await this.dataService.getOneById(data_id)
             console.log("🚀 ~ file: DataController.ts:72 ~ DataController ~ createShare ~ data:", data)
@@ -57,7 +57,7 @@ export class DataController {
                         throw new Error("Group don't exist")
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
-                        
+
                         return this.responseMaker.responseSuccess("share ok", share)
                     }
 
@@ -67,7 +67,7 @@ export class DataController {
                         throw new Error("User don't exist")
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
-                        
+
                         return this.responseMaker.responseSuccess("share ok", share)
                     }
                 }
@@ -85,13 +85,12 @@ export class DataController {
     }
 
     // Récupération de toute les datas d'un user_id
-    async getDatasInUser(request: Request, response: Response, next: NextFunction)
+    async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
         : Promise<ResponseInterface> {
         try {
 
-            const id = +request.params.user_id
-            // const token = request.header('Authorization').split(' ')[1]
-
+            const id = +request.user.user_id
+            
             const datas = await this.dataService.getDatasInUser(id)
             if (!datas) {
                 throw new Error("No datas")
@@ -103,7 +102,6 @@ export class DataController {
             response.status(400).json({ error: error.message })
         }
     }
-
 
     // Récupération d'une data par son id
     async getOne(request: Request, response: Response, next: NextFunction) {
@@ -125,8 +123,7 @@ export class DataController {
 
             // Récupération du token
             const user_id = request.user
-            console.log("🚀 ~ file: DataController.ts:154 ~ DataController ~ save ~ user_id:", user_id)
-            
+
             if (!user_id) {
                 throw new Error("user inexistant")
             }

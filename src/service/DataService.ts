@@ -52,9 +52,7 @@ export class DataService {
     // Création d'une data pour un utilisateur
     async createDataOneUser( type: any, name: string, value: string, user_id: number ) { //type: any, name: string, value: string, user_id: number
         try {
-            // const user = await this.userService.findOne("id", id, true)
-            // console.log("🚀 ~ file: DataService.ts:52 ~ DataService ~ createDataOneUser ~ user:", user)
-
+            
             // if (!user) return 'User not found'
             const newData = new Data()
             newData.type = type
@@ -62,7 +60,6 @@ export class DataService {
             newData.value = value
             // // newData.id = id 
             newData.user_id = user_id
-            console.log("🚀 ~ file: DataService.ts:55 ~ DataService ~ createDataOneUser ~ newData:", newData)
 
 
             return this.dataRepository.save(newData)

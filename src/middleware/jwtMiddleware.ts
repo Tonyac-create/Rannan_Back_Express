@@ -9,6 +9,7 @@ function __extractTokenFromHeader(request: Request) {
 
 export async function jwtMiddleware(request: Request, response: Response, next: NextFunction) {
   try {
+    
 // Vérification de la présence d'une authorisation (Token)
     if (!request.headers.authorization) {
       throw new Error("Authorization Undefined")
