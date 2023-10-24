@@ -52,7 +52,9 @@ export class UserService {
     async update(id: number, body: any) {
         try {
             await this.userRepository.update(id, body)
-            return await this.userRepository.findOne({where: {id: id}})
+            const updatedUser =  await this.userRepository.findOne({where: {id: id}})
+            const {nickname, avatar_id} = updatedUser
+            return {nickname, avatar_id}
         }
         catch (error) {
             throw error.message

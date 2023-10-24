@@ -39,19 +39,19 @@ export class UserController {
     async updateUser(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de l'existance du user
-            const user = await this.userService.findOne("id", request.user.user_id, false)
-            if (!user) {
+            const userToUpdate = await this.userService.findOne("id", request.user.user_id, false)
+            if (!userToUpdate) {
                 throw new Error("User not found")
             }
         // Vérification du mot de passe
-            const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
+            const isPasswordMatched = await bcrypt.compare(request.body.password, userToUpdate.password)
             if (!isPasswordMatched) {
                 throw new Error("Unauthotized (password not matched)")
             }
         // update et return du user
-            const updatedUser = await this.userService.update(user.id, request.body.update)
+            const user = await this.userService.update(userToUpdate.id, request.body.update)
 
-            return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
+            return this.responseMaker.responseSuccess('User updated successfully', user)
 
         } catch (error) {
             response.status(500).json({ error: error.message })

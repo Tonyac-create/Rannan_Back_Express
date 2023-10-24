@@ -32,8 +32,8 @@ export class AuthService {
   async tokenFunctions(user_id: number, email: string) {
     const token = await this.createToken(user_id, email)
     const refreshToken = await this.createRefreshToken(user_id, email)
-    const updatedUser = await this.userService.update(user_id, {refreshToken})
-    return {updatedUser, token, refreshToken}
+    const user = await this.userService.update(user_id, {refreshToken})
+    return {user, token, refreshToken}
   }
 
 }
