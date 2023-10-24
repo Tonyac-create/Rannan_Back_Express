@@ -46,8 +46,10 @@ export class ContactController{
                 }    
                 allUserTwo.push(contact);
             }))
-            const contacts = [...allUserOne, ...allUserTwo]
-            if(contacts === null || contacts.length === 0){
+            // const contacts = [...allUserOne, ...allUserTwo]
+            const contacts = {allUserOne, allUserTwo}
+            // if(contacts === null || contacts.length === 0){
+            if(contacts === null){
                 throw new Error("Contacts not found")
             }
             return this.responseMaker.responseSuccess("Contacts found for the user", contacts);
