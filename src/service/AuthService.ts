@@ -33,7 +33,8 @@ export class AuthService {
     const token = await this.createToken(user_id, email)
     const refreshToken = await this.createRefreshToken(user_id, email)
     const updatedUser = await this.userService.update(user_id, {refreshToken})
-    return {updatedUser, token, refreshToken}
+    const user = {nickname: updatedUser.nickname, avatar_id: updatedUser.avatar_id}
+    return {user, token, refreshToken}
   }
 
 }
