@@ -19,6 +19,15 @@ export class UserController {
         }
     }
 
+// Envoyer l'email de l'utilisateur
+    async getEmail(request: RequestWithUser, response: Response, next: NextFunction) {
+        try {
+            return {email: request.user.email}
+        } catch (error) {
+            response.status(500).json({ error: error.message })
+        }
+    }
+
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {
@@ -27,7 +36,7 @@ export class UserController {
                 throw new Error("Email not found")
             }
 
-        // A AJOUTER => MS mailing
+        //! A AJOUTER => MS mailing
             return "Reset mail send"
 
         } catch (error) {
@@ -72,7 +81,7 @@ export class UserController {
                 throw new Error("Unauthotized (password not matched)")
             }
         // update et return du user
-            const updatedUser = await this.userService.updatePassword(user.id, request.body.newpassword)
+            const updatedUser = await this.userService.updatePassword(user.id, request.body.update.newpassword)
 
             return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
 
