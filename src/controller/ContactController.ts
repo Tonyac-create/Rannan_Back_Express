@@ -41,8 +41,8 @@ export class ContactController{
                 const user1 = this.contactService.user1Formated(targetUser);
                 const contact = {
                     id: element.id,
-                    user1_id: user1,
-                    user2 : element.user2_id
+                    user1: user1,
+                    user2_id: element.user2_id
                 }    
                 allUserTwo.push(contact);
             }))
