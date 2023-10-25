@@ -52,9 +52,10 @@ export class ValidationController{
             }))
 
             //Mettre les 2 objets dans un tableau
-            let validations = [allSent, allRecieved];
+            // let validations = [allSent, allRecieved];
+            let validations = {allSent, allRecieved};
 
-            if(!validations || validations.length === 0 || sentIsEmpty === true && recievedIsEmpty === true){
+            if(!validations || validations === null || sentIsEmpty === true && recievedIsEmpty === true){
                 throw new Error("no validations found")
             }
             return this.responseMaker.responseSuccess("Validations found", validations);
