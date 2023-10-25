@@ -130,7 +130,6 @@ export class DataController {
 
 
             const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id) //, user_id
-            console.log("🚀 ~ file: DataController.ts:161 ~ DataController ~ save ~ data:", data)
             return this.responseMaker.responseSuccess("data created", data)
         }
         catch (error) {
@@ -174,12 +173,3 @@ export class DataController {
 
 
 }
-
-
-
-
-
-
-
-
-// const token = request.header('Authorization').split(' ')[1]
