@@ -16,7 +16,7 @@ export class ShareController {
     private groupService = new GroupService()
     private userService = new UserService()
 
-    // Récupération de tout les partages pour test
+    // Récupération de tout les partages
     async allShares(request: Request, response: Response, next: NextFunction) {
         try {
             const shares = await this.shareService.allShares()

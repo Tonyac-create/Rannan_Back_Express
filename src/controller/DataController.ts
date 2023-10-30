@@ -78,12 +78,6 @@ export class DataController {
         }
     }
 
-    // Récupére la liste des datas que le user concerné partage avec le user Token
-    async getShare(request: Request, response: Response, next: NextFunction) {
-        const token = request.header('Authorization').split(' ')[1]
-
-    }
-
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
         : Promise<ResponseInterface> {
@@ -171,5 +165,5 @@ export class DataController {
         }
     }
 
-
 }
+
