@@ -5,24 +5,21 @@ import { GroupService } from "../service/GroupService";
 import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { Share } from "../entity/Share";
-import { log } from "console";
-// const jwt = require('jsonwebtoken');
+import { ResponseMaker } from "../utils/ResponseMaker"
 
 export class ShareController {
 
     // Services
-    private shareService = new ShareService()
-    private dataService = new DataService()
-    private groupService = new GroupService()
+    private shareService = new ShareService() 
+    private responseMaker = new ResponseMaker()
     private userService = new UserService()
 
     // Récupération de tout les partages
     async allShares(request: Request, response: Response, next: NextFunction) {
         try {
             const shares = await this.shareService.allShares()
-            // console.log("🚀 ~ file: ShareController.ts:19 ~ ShareController ~ allshares ~ shares:", shares)
         } catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(400, error.message)
         }
     }
 
@@ -30,7 +27,6 @@ export class ShareController {
     async getListUsers(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
             const user = request.user
-            // console.log("🚀 ~ file: ShareController.ts:32 ~ ShareController ~ getListUsers ~ user:", user)
             let list = []
             let userList = []
             if (!request.body.target) {
@@ -63,7 +59,7 @@ export class ShareController {
             return list
 
         } catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
 
 
@@ -99,7 +95,7 @@ export class ShareController {
             return list
 
         } catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(400, error.message)
         }
     }
 
@@ -118,7 +114,6 @@ export class ShareController {
 
             // Tri par target user
             const filterListByUser = shareData.filter((data) => data.target === "user")
-            // console.log("🚀 ~ file: ShareController.ts:116 ~ ShareController ~ getSharesBetweenUsers ~ filterList:", filterListByUser)
 
             filterListByUser.map((share) => {
                 list.push(...share.datas)
@@ -131,14 +126,11 @@ export class ShareController {
                 const value = data.value
                 return shareList.push({ id, name, value })
             })
-            
-            
-            // console.log("🚀 ~ file: ShareController.ts:136 ~ ShareController ~ list.map ~ list:", list)
 
             return shareList
 
         } catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(400, error.message)
         }
     }
 
@@ -151,7 +143,7 @@ export class ShareController {
             return share
         }
         catch (error) {
-            console.log("🚀 ~ file: AuthController.ts:23 ~ AuthController ~ getAuthById ~ error:", error)
+            return this.responseMaker.responseError(400, error.message)
         }
     }
 

@@ -20,17 +20,17 @@ export class DataController {
     async removeShare(request: Request, response: Response, next: NextFunction) {
         try {
             const id = +request.params.id
-            let authToRemove = await this.shareService.getShareById(id)
+            let shareToRemove = await this.shareService.getShareById(id)
 
-            if (!authToRemove) {
+            if (!shareToRemove) {
                 throw new Error("this authorization not exist")
             }
 
-            await this.shareService.remove(id)
-            return "share has been removed"
+            const removeShare = await this.shareService.remove(id)
+            return this.responseMaker.responseSuccess(200, "share has been removed", removeShare) 
         }
         catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -44,7 +44,6 @@ export class DataController {
 
             // Récupération de la data
             const data = await this.dataService.getOneById(data_id)
-            console.log("🚀 ~ file: DataController.ts:72 ~ DataController ~ createShare ~ data:", data)
 
             // Si data n'existe pas
             if (!data) {
@@ -74,7 +73,7 @@ export class DataController {
             }
 
         } catch (error) {
-            response.status(404).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -90,10 +89,10 @@ export class DataController {
                 throw new Error("No datas")
             }
 
-            return this.responseMaker.responseSuccess(201, "datas found", datas)
+            return this.responseMaker.responseSuccess(200, "datas found", datas)
         }
         catch (error) {
-            response.status(400).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -104,9 +103,9 @@ export class DataController {
             const id = +request.params.id
             const data = await this.dataService.getOneById(id)
             if (!data) { return "data not fund" }
-            return this.responseMaker.responseSuccess(201, "data found", data)
+            return this.responseMaker.responseSuccess(200, "data found", data)
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -122,12 +121,11 @@ export class DataController {
                 throw new Error("user inexistant")
             }
 
-
             const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id) //, user_id
             return this.responseMaker.responseSuccess(201, "data created", data)
         }
         catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -139,10 +137,11 @@ export class DataController {
             if (!data) {
                 throw new Error("data not found")
             }
-            return this.dataService.update(data.id, request.body)
+            const dataUpdated = await this.dataService.update(data.id, request.body)
+            return this.responseMaker.responseSuccess(201, "data update", dataUpdated)
         }
         catch (error) {
-            response.status(404).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
 
     };
@@ -157,11 +156,11 @@ export class DataController {
                 throw new Error("data not exist")
             }
 
-            await this.dataService.remove(id)
-            return "data has been removed"
+            const dataDelete = await this.dataService.remove(id)
+            return this.responseMaker.responseSuccess(200, "data delete", dataDelete)
         }
         catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
