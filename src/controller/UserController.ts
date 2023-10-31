@@ -13,18 +13,18 @@ export class UserController {
 // Vérifier la connection d'un user
     async userConnected(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
-            return {message: "Connected user informations :", user: request.user}
+            return this.responseMaker.responseSuccess(200, "Connected user informations.", request.user)
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
 // Envoyer l'email de l'utilisateur
     async getEmail(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
-            return {email: request.user.email}
+            return this.responseMaker.responseSuccess(200, "User email", request.user.email)
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -37,10 +37,10 @@ export class UserController {
             }
 
         //! A AJOUTER => MS mailing
-            return "Reset mail send"
+            return this.responseMaker.responseSuccess(200, "Validation mail send", request.body.email)
 
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -60,10 +60,10 @@ export class UserController {
         // update et return du user
             const user = await this.userService.update(userToUpdate.id, request.body.update)
 
-            return this.responseMaker.responseSuccess('User updated successfully', user)
+            return this.responseMaker.responseSuccess(200, 'User updated', user)
 
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -83,10 +83,10 @@ export class UserController {
         // update et return du user
             const updatedUser = await this.userService.updatePassword(user.id, request.body.update.newpassword)
 
-            return this.responseMaker.responseSuccess('User updated successfully', updatedUser)
+            return this.responseMaker.responseSuccess(200, 'User password updated', updatedUser)
 
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -100,10 +100,10 @@ export class UserController {
             }
 
         // return avatar_id et nickname
-            return {avatar_id: user.avatar_id, nickname: user.nickname}
-            
+            return this.responseMaker.responseSuccess(200, 'User profile found', {avatar_id: user.avatar_id, nickname: user.nickname})
+
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -116,10 +116,10 @@ export class UserController {
                 return "No user found"
             }
 
-            return users
+            return this.responseMaker.responseSuccess(200, 'Users found', users)
 
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 
@@ -136,10 +136,10 @@ export class UserController {
         // suppression du user par sont id
             await this.userService.remove(user.id)
 
-            return this.responseMaker.responseSuccess(`User ${userName} has been deleted`, user)
+            return this.responseMaker.responseSuccess(200, `User ${userName} has been deleted`, user)
 
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message)
         }
     }
 

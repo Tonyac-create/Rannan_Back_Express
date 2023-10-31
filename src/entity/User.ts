@@ -24,6 +24,9 @@ export class User {
     @Column({type: "varchar", nullable: true})
     refreshToken: string
 
+    @Column({type: "int", nullable: false, default: 0})
+    status: number
+
     @CreateDateColumn()
     created_at: Date
 
