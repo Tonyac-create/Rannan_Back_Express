@@ -7,24 +7,22 @@ export class AuthService {
 
   createToken(user_id: number, email: string) {
     let date = new Date()
-    date.getHours()+3
     return jwt.sign( 
       {user_id, email, date},
       process.env.SECRET_KEY, 
       {
-        expiresIn: "1w"
+        expiresIn: "4w"
       }
     )
   }
 
   createRefreshToken(user_id: number, email: string) {
     let date = new Date()
-    date.getDay()+7
     return jwt.sign( 
       {user_id, email, date},
       process.env.SECRET_KEY_REFRESH, 
       {
-        expiresIn: "1w"
+        expiresIn: "4w"
       }
     )
   }

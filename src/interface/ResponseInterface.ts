@@ -1,5 +1,5 @@
 export interface ResponseInterface{
     status : number, 
-    message ? : string,
-    data ? : any,
+    message? : string,
+    data? : any,
 }

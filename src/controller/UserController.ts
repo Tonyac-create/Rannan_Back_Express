@@ -13,6 +13,10 @@ export class UserController {
 // Vérifier la connection d'un user
     async userConnected(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
+            const user = await this.userService.checkUser(request.user.user_id, request.user.email)
+            if (!user) {
+                throw new Error("User check failed")
+            }
             return this.responseMaker.responseSuccess(200, "Connected user informations.", request.user)
         } catch (error) {
             return this.responseMaker.responseError(500, error.message)
@@ -22,6 +26,10 @@ export class UserController {
 // Envoyer l'email de l'utilisateur
     async getEmail(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
+            const user = await this.userService.checkUser(request.user.user_id, request.user.email)
+            if (!user) {
+                throw new Error("User check failed")
+            }
             return this.responseMaker.responseSuccess(200, "User email", request.user.email)
         } catch (error) {
             return this.responseMaker.responseError(500, error.message)
@@ -48,14 +56,14 @@ export class UserController {
     async updateUser(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de l'existance du user
-            const userToUpdate = await this.userService.findOne("id", request.user.user_id, false)
+            const userToUpdate = await this.userService.checkUser(request.user.user_id, request.user.email)
             if (!userToUpdate) {
-                throw new Error("User not found")
+                throw new Error("User check failed")
             }
         // Vérification du mot de passe
             const isPasswordMatched = await bcrypt.compare(request.body.password, userToUpdate.password)
             if (!isPasswordMatched) {
-                throw new Error("Unauthotized (password not matched)")
+                throw new Error("Unauthorized (password not matched)")
             }
         // update et return du user
             const user = await this.userService.update(userToUpdate.id, request.body.update)
@@ -71,9 +79,9 @@ export class UserController {
     async updatePassword(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de l'existance du user
-            const user = await this.userService.findOne("id", request.user.user_id, false)
+            const user = await this.userService.checkUser(request.user.user_id, request.user.email)
             if (!user) {
-                throw new Error("User not found")
+                throw new Error("User check failed")
             }
         // Vérification du mot de passe
             const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
@@ -127,16 +135,14 @@ export class UserController {
     async removeUser(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de l'existance du user
-            const user = await this.userService.findOne("id", +request.user.user_id, false)
+            const user = await this.userService.checkUser(request.user.user_id, request.user.email)
             if (!user) {
-                throw new Error ("User not found")
+                throw new Error("User check failed")
             }
-        // sauvegarde du nickname pour return
-            const userName = user.nickname
         // suppression du user par sont id
             await this.userService.remove(user.id)
 
-            return this.responseMaker.responseSuccess(200, `User ${userName} has been deleted`, user)
+            return this.responseMaker.responseSuccess(200, `User has been deleted`)
 
         } catch (error) {
             return this.responseMaker.responseError(500, error.message)

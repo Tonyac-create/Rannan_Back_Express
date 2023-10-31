@@ -23,6 +23,12 @@ export async function jwtMiddleware(request: Request, response: Response, next: 
 // Vérification du Token
     const payload = jwt.verify(token, process.env.SECRET_KEY)
 
+// Vérification de l'existence du user qui envoi le token
+    const user = this.UserService.findOne("id", payload.user_id, false)
+    if (user.email !== payload.email) {
+      throw new Error("Token user.id not exist")
+    }
+
 // Ajout tu token dans la valeur 'user' de la request
     request['user'] = payload
     next()
