@@ -52,7 +52,7 @@ export class ContactController{
             if(contacts === null){
                 throw new Error("Contacts not found")
             }
-            return this.responseMaker.responseSuccess("Contacts found for the user", contacts);
+            return this.responseMaker.responseSuccess(201, "Contacts found for the user", contacts);
         }
         catch (error){
             console.log("🚀 ~ file: ContactController.ts:29 ~ ContactController ~ all ~ error:", error);
@@ -92,7 +92,7 @@ export class ContactController{
             await this.validationService.remove(validationId);
             const removedValidation = await this.validationService.oneById(validationId);
             if(removedValidation === null){
-                return this.responseMaker.responseSuccess("users are now contacts", contact)
+                return this.responseMaker.responseSuccess(201, "users are now contacts", contact)
             }
             else{
                 throw new Error("Error while deleting the validation")
@@ -116,7 +116,7 @@ export class ContactController{
                 throw new Error("Unauthorized")
             }
             const removedcontact =  await this.contactService.remove(contact.id)
-            return this.responseMaker.responseSuccess(`contact was deleted`, removedcontact)
+            return this.responseMaker.responseSuccess(201, `contact was deleted`, removedcontact)
         }
         catch (error){
             response.status(500).json({ error: error.message })

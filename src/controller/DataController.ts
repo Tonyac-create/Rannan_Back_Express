@@ -58,7 +58,7 @@ export class DataController {
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
 
-                        return this.responseMaker.responseSuccess("share ok", share)
+                        return this.responseMaker.responseSuccess(201, "share ok", share)
                     }
 
                 } else if (target === "user") {
@@ -68,7 +68,7 @@ export class DataController {
                     } else {
                         const share = await this.shareService.create(target, target_id, owner_id)
 
-                        return this.responseMaker.responseSuccess("share ok", share)
+                        return this.responseMaker.responseSuccess(201, "share ok", share)
                     }
                 }
             }
@@ -90,7 +90,7 @@ export class DataController {
                 throw new Error("No datas")
             }
 
-            return this.responseMaker.responseSuccess("datas found", datas)
+            return this.responseMaker.responseSuccess(201, "datas found", datas)
         }
         catch (error) {
             response.status(400).json({ error: error.message })
@@ -104,7 +104,7 @@ export class DataController {
             const id = +request.params.id
             const data = await this.dataService.getOneById(id)
             if (!data) { return "data not fund" }
-            return this.responseMaker.responseSuccess("data found", data)
+            return this.responseMaker.responseSuccess(201, "data found", data)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -124,7 +124,7 @@ export class DataController {
 
 
             const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id) //, user_id
-            return this.responseMaker.responseSuccess("data created", data)
+            return this.responseMaker.responseSuccess(201, "data created", data)
         }
         catch (error) {
             response.status(500).json({ error: error.message })

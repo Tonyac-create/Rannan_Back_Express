@@ -58,7 +58,7 @@ export class ValidationController{
             if(!validations || validations === null || sentIsEmpty === true && recievedIsEmpty === true){
                 throw new Error("no validations found")
             }
-            return this.responseMaker.responseSuccess("Validations found", validations);
+            return this.responseMaker.responseSuccess(201, "Validations found", validations);
         }
         catch(error){
             console.log("🚀 ~ file: ValidationController.ts:31 ~ ValidationController ~ all ~ error:", error);
@@ -96,7 +96,7 @@ export class ValidationController{
             if (!validation){
                 throw new Error("Bad request")
             }
-            return this.responseMaker.responseSuccess("Contact request sent", validation) 
+            return this.responseMaker.responseSuccess(201, "Contact request sent", validation) 
         }
         catch(error){
             console.log("🚀 ~ file: ValidationController.ts:69 ~ ValidationController ~ save ~ error:", error)
@@ -118,7 +118,7 @@ export class ValidationController{
                 throw new Error("Unauthorized")
             }
             const removedvalidation =  await this.validationService.remove(validation.id)
-            return this.responseMaker.responseSuccess(`validation was deleted`, removedvalidation)
+            return this.responseMaker.responseSuccess(201, `validation was deleted`, removedvalidation)
         }
         catch (error){
             console.log("🚀 ~ file: ValidationController.ts:91 ~ ValidationController ~ remove ~ error:", error)

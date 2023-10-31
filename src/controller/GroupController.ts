@@ -29,7 +29,7 @@ export class GroupController {
                 }
             })
 
-            return this.responseMaker.responseSuccess(`The group was saved`, savedGroup)
+            return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -53,7 +53,7 @@ export class GroupController {
                 return { id, name }
             })
 
-            return this.responseMaker.responseSuccess(`Group how user is a member`, userGroups)
+            return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -77,7 +77,7 @@ export class GroupController {
                 return { id, name}
             })
 
-            return this.responseMaker.responseSuccess(`Group how user is the creator`, foundGroups)
+            return this.responseMaker.responseSuccess(201, `Group how user is the creator`, foundGroups)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -103,7 +103,7 @@ export class GroupController {
             console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", dataList)
 
 
-            return this.responseMaker.responseSuccess(`Group Details`, { group, memberList, dataList })
+            return this.responseMaker.responseSuccess(201, `Group Details`, { group, memberList, dataList })
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -143,7 +143,7 @@ export class GroupController {
                 })
             )
 
-            return this.responseMaker.responseSuccess(`Group Details for Settings`, { group, memberList, contactList })
+            return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { group, memberList, contactList })
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -159,7 +159,7 @@ export class GroupController {
             }
             const removedGroup =  await this.groupService.removeGroup(group.id)
 
-            return this.responseMaker.responseSuccess(`Group ${group.name} was deleted`, removedGroup)
+            return this.responseMaker.responseSuccess(201, `Group ${group.name} was deleted`, removedGroup)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -177,7 +177,7 @@ export class GroupController {
         // Update des informations du groupe
             const updatedGroup = await this.groupService.updateGroup(group, request.body)
 
-            return this.responseMaker.responseSuccess(`Group was saved`, updatedGroup)
+            return this.responseMaker.responseSuccess(201, `Group was saved`, updatedGroup)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -197,7 +197,7 @@ export class GroupController {
             }
             const addedUser = await this.groupService.addUserToGroup(user, group)
 
-            return this.responseMaker.responseSuccess(`User ${user.nickname} as been add to the group ${group.name}`, addedUser)
+            return this.responseMaker.responseSuccess(201, `User ${user.nickname} as been add to the group ${group.name}`, addedUser)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
@@ -217,7 +217,7 @@ export class GroupController {
             }
             const deletedUser = await this.groupService.deleteUserToGroup(user, group.id)
 
-            return this.responseMaker.responseSuccess(`User ${user.nickname} has been deleted from group ${group.name}`, deletedUser)
+            return this.responseMaker.responseSuccess(201, `User ${user.nickname} has been deleted from group ${group.name}`, deletedUser)
 
         } catch (error) {
             response.status(500).json({ error: error.message })
