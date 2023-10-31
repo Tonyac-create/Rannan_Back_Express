@@ -20,7 +20,7 @@ export class ShareController {
     async allShares(request: Request, response: Response, next: NextFunction) {
         try {
             const shares = await this.shareService.allShares()
-            console.log("🚀 ~ file: ShareController.ts:19 ~ ShareController ~ allshares ~ shares:", shares)
+            // console.log("🚀 ~ file: ShareController.ts:19 ~ ShareController ~ allshares ~ shares:", shares)
         } catch (error) {
             response.status(400).json({ error: error.message })
         }
@@ -152,24 +152,6 @@ export class ShareController {
         }
         catch (error) {
             console.log("🚀 ~ file: AuthController.ts:23 ~ AuthController ~ getAuthById ~ error:", error)
-        }
-    }
-
-    //Supprimer une share
-    async removeShare(request: Request, response: Response, next: NextFunction) {
-        try {
-            const id = +request.params.id
-            let authToRemove = await this.shareService.getShareById(id)
-
-            if (!authToRemove) {
-                throw new Error("this authorization not exist")
-            }
-
-            await this.shareService.remove(id)
-            return "share has been removed"
-        }
-        catch (error) {
-            console.log("🚀 ~ file: AuthController.ts:103 ~ AuthController ~ remove ~ error:", error)
         }
     }
 

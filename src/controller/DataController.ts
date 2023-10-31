@@ -74,7 +74,7 @@ export class DataController {
             }
 
         } catch (error) {
-            response.status(400).json({ error: error.message })
+            response.status(404).json({ error: error.message })
         }
     }
 
@@ -142,7 +142,7 @@ export class DataController {
             return this.dataService.update(data.id, request.body)
         }
         catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(404).json({ error: error.message })
         }
 
     };

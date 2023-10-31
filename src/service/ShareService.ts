@@ -7,8 +7,6 @@ import { UserService } from "./UserService";
 export class ShareService {
 
     private ShareRepository = AppDataSource.getRepository(Share)
-    // private dataService= new DataService()
-    // private userService= new UserService()
 
     // Récupération de toutes les shares
     async allShares() {
@@ -29,12 +27,6 @@ export class ShareService {
         catch (error) {
             throw new Error(error)
         }
-    }
-
-
-    // Récupération de toutes les shares d'une target (BODY : target = "group" ou "user" / id = target_id)
-    async shareTarget() {
-        
     }
     
 
@@ -71,7 +63,7 @@ export class ShareService {
     //Supprimer une share
     async remove(id: number) {
         try {
-            // Delete user by ID
+            // Delete share by ID
             await this.ShareRepository.delete(id)
         }
         catch (error) {
