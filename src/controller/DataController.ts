@@ -23,11 +23,11 @@ export class DataController {
             let shareToRemove = await this.shareService.getShareById(id)
 
             if (!shareToRemove) {
-                throw new Error("this authorization not exist")
+                throw new Error("this share not exist")
             }
 
             const removeShare = await this.shareService.remove(id)
-            return this.responseMaker.responseSuccess(200, "share has been removed", removeShare) 
+            return this.responseMaker.responseSuccess(200, "share has been removed", removeShare)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -83,12 +83,11 @@ export class DataController {
         try {
 
             const id = +request.user.user_id
-            
+
             const datas = await this.dataService.getDatasInUser(id)
             if (!datas) {
                 throw new Error("No datas")
             }
-
             return this.responseMaker.responseSuccess(200, "datas found", datas)
         }
         catch (error) {
@@ -102,7 +101,9 @@ export class DataController {
         try {
             const id = +request.params.id
             const data = await this.dataService.getOneById(id)
-            if (!data) { return "data not fund" }
+            if (!data) {
+                throw new Error("data not fund")
+            }
             return this.responseMaker.responseSuccess(200, "data found", data)
         } catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -125,7 +126,7 @@ export class DataController {
             return this.responseMaker.responseSuccess(201, "data created", data)
         }
         catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            return this.responseMaker.responseError(401, error.message)
         }
     }
 

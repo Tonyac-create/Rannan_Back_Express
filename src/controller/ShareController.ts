@@ -10,7 +10,7 @@ import { ResponseMaker } from "../utils/ResponseMaker"
 export class ShareController {
 
     // Services
-    private shareService = new ShareService() 
+    private shareService = new ShareService()
     private responseMaker = new ResponseMaker()
     private userService = new UserService()
 
@@ -39,12 +39,16 @@ export class ShareController {
 
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "user")
                 userList = filterList.filter((element: Share) => element.owner_id === +user.user_id)
+            } else {
+                throw new Error("don't have user with share")
             }
 
 
             if (request.body.target === "group") {
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "group")
                 userList = filterList.filter((element: Share) => element.owner_id === +user.user_id)
+            } else {
+                throw new Error("don't have group with share")
             }
 
             await Promise.all(
@@ -55,9 +59,7 @@ export class ShareController {
                     return list.push({ id, nickname })
                 })
             )
-
-            return list
-
+            return this.responseMaker.responseSuccess(201, "list ok", list)
         } catch (error) {
             return this.responseMaker.responseError(404, error.message)
         }
@@ -78,11 +80,15 @@ export class ShareController {
             if (request.body.target === "user") {
                 const filterList = shareData.filter((element: Share) => element.target === "user")
                 shareList = filterList[0].datas
+            } else {
+                throw new Error("don't have user with share")
             }
 
             if (request.body.target === "group") {
                 const filterList = shareData.filter((element: Share) => element.target === "group")
                 shareList = filterList[0].datas
+            } else {
+                throw new Error("don't have group with share")
             }
 
             shareList.map((data) => {
@@ -91,11 +97,9 @@ export class ShareController {
                 const value = data.value
                 return list.push({ id, name, value })
             })
-
-            return list
-
+            return this.responseMaker.responseSuccess(201, "list ok", list)
         } catch (error) {
-            return this.responseMaker.responseError(400, error.message)
+            return this.responseMaker.responseError(404, error.message)
         }
     }
 
@@ -126,9 +130,7 @@ export class ShareController {
                 const value = data.value
                 return shareList.push({ id, name, value })
             })
-
-            return shareList
-
+            return this.responseMaker.responseSuccess(201, "list ok", shareList)
         } catch (error) {
             return this.responseMaker.responseError(400, error.message)
         }
@@ -140,7 +142,7 @@ export class ShareController {
         try {
             const id = +request.params.id
             const share = await this.shareService.getShareById(id)
-            return share
+            return this.responseMaker.responseSuccess(201, "share ok", share)
         }
         catch (error) {
             return this.responseMaker.responseError(400, error.message)
