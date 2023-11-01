@@ -7,6 +7,19 @@ export class UserService {
 
     private userRepository = AppDataSource.getRepository(User)
 
+// Check l'existence de l'utilisateur
+    async checkUser(id: string, email: string) {
+        try {
+            const user = await this.userRepository.findOne({where: { id: +id }})
+            if (user.email === email) {
+                return user
+            }
+        }
+        catch (error) {
+            return error
+        }
+    }
+
 // Trouve et renvoi tout les users
     async all() {
         try {
