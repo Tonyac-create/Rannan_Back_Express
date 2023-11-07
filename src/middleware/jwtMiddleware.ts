@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express"
 import jwt from "jsonwebtoken"
 
+
+
 function __extractTokenFromHeader(request: Request) {
 // Split du préfixe et du token
   const [ type, token ] = request.headers.authorization.split(' ') ?? []
@@ -9,7 +11,7 @@ function __extractTokenFromHeader(request: Request) {
 
 export async function jwtMiddleware(request: Request, response: Response, next: NextFunction) {
   try {
-    
+
 // Vérification de la présence d'une authorisation (Token)
     if (!request.headers.authorization) {
       throw new Error("Authorization Undefined")
@@ -22,12 +24,6 @@ export async function jwtMiddleware(request: Request, response: Response, next: 
 
 // Vérification du Token
     const payload = jwt.verify(token, process.env.SECRET_KEY)
-
-// Vérification de l'existence du user qui envoi le token
-    const user = this.UserService.findOne("id", payload.user_id, false)
-    if (user.email !== payload.email) {
-      throw new Error("Token user.id not exist")
-    }
 
 // Ajout tu token dans la valeur 'user' de la request
     request['user'] = payload
