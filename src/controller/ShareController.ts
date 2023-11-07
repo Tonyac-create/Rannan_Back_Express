@@ -36,19 +36,19 @@ export class ShareController {
             const getAllSharesList = await this.shareService.allShares()
 
             if (request.body.target === "user") {
-
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "user")
+                if (filterList.length === 0) {
+                    throw new Error("don't have user with share")                    
+                }
                 userList = filterList.filter((element: Share) => element.owner_id === +user.user_id)
-            } else {
-                throw new Error("don't have user with share")
-            }
-
+            } 
 
             if (request.body.target === "group") {
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "group")
+                if (filterList.length === 0) {
+                    throw new Error("don't have group with share")                    
+                }
                 userList = filterList.filter((element: Share) => element.owner_id === +user.user_id)
-            } else {
-                throw new Error("don't have group with share")
             }
 
             await Promise.all(
@@ -79,16 +79,19 @@ export class ShareController {
 
             if (request.body.target === "user") {
                 const filterList = shareData.filter((element: Share) => element.target === "user")
+                console.log("🚀 ~ file: ShareController.ts:82 ~ ShareController ~ getShares ~ filterList:", filterList)
+                if (filterList.length === 0) {
+                    throw new Error("don't have user with share")                    
+                }
                 shareList = filterList[0].datas
-            } else {
-                throw new Error("don't have user with share")
             }
 
             if (request.body.target === "group") {
                 const filterList = shareData.filter((element: Share) => element.target === "group")
+                if (filterList.length === 0) {
+                    throw new Error("don't have group with share")                    
+                }
                 shareList = filterList[0].datas
-            } else {
-                throw new Error("don't have group with share")
             }
 
             shareList.map((data) => {
@@ -108,28 +111,28 @@ export class ShareController {
 
             let shareList = []
             let list = []
-
+            
             // Récupération des ids correspondants à la requête
             const useridProfile = await this.userService.findOne("id", +request.body.userId_profile, true)
             const useridToken = await this.userService.findOne("id", +request.user.user_id, true)
-
+            
             // Cherche les shares avec le target_id correspondant
             const shareData = await this.shareService.allByDatas("target_id", +request.body.userId_profile)
-
+            
             // Tri par target user
             const filterListByUser = shareData.filter((data) => data.target === "user")
-
+            
             filterListByUser.map((share) => {
                 list.push(...share.datas)
             })
-
-            console.log("🚀 ~ file: ShareController.ts:125 ~ ShareController ~ filterListByUser.map ~ list:", list)
+            
             list.map((data) => {
                 const id = data.id
                 const name = data.name
                 const value = data.value
                 return shareList.push({ id, name, value })
             })
+            
             return this.responseMaker.responseSuccess(201, "list ok", shareList)
         } catch (error) {
             return this.responseMaker.responseError(400, error.message)
