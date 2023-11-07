@@ -1,17 +1,11 @@
-import { request } from "express";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 import { UserService } from "./UserService";
 import { Share } from "../entity/Share";
-import { DataCreateInterface } from "../interface/DataInterface";
 
 export class DataService {
 
     private dataRepository = AppDataSource.getRepository(Data)
-    private userService = new UserService()
-    private shareRepository = AppDataSource.getRepository(Share);
-
-    // async all()
 
     // Récupération de toutes les datas crées
     async allByShare(field: string, value: number) {
@@ -25,8 +19,6 @@ export class DataService {
             throw new Error(error)
         }
     }
-
-
 
     // Récupération d'une data par son id
     async getOneById(id: number) {
@@ -50,21 +42,16 @@ export class DataService {
     }
 
     // Création d'une data pour un utilisateur
-    async createDataOneUser( type: any, name: string, value: string, user_id: number ) { //type: any, name: string, value: string, user_id: number
+    async createDataOneUser( type: any, name: string, value: string, user_id: number ) {
         try {
             
-            // if (!user) return 'User not found'
             const newData = new Data()
             newData.type = type
             newData.name = name
             newData.value = value
-            // // newData.id = id 
             newData.user_id = user_id
 
-
             return this.dataRepository.save(newData)
-            // return newData
-
         }
         catch (error) {
             throw new Error(error)
