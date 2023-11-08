@@ -21,9 +21,8 @@ export class GroupService {
                 const { name, id, limited_at, creator_id } = group
                 return { name, id, limited_at, creator_id }
             })
-
+        // Réponse
             return groupsFound
-
         } catch (error) {
             throw error
         }
@@ -45,10 +44,8 @@ export class GroupService {
                 limited_at: new Date(body.limited_at),
                 creator_id: creator_id
             }
-
-        // Enregistre le nouveau groupe
+        // Réponse
             return await this.groupRepository.save(newGroup)
-
         } catch (error) {
             throw error
         }
@@ -62,9 +59,8 @@ export class GroupService {
             if (groupToUpdate.affected === 0) {
                 throw new Error("Group not updated")
             }
-
+        // Réponse
             return `Group ${group.name} has updated`
-
         } catch (error) {
             throw error
         }
@@ -79,9 +75,8 @@ export class GroupService {
             }
         // Supprime le groupe
             await this.groupRepository.remove(group)
-
+        // Réponse
             return group
-
         } catch (error) {
             throw error
         }
@@ -99,9 +94,8 @@ export class GroupService {
                 const { name, id, limited_at, creator_id } = group
                 return { name, id, limited_at, creator_id }
             })
-
+        // Réponse
             return userGroups
-
         } catch (error) {
             throw error
         }
@@ -119,9 +113,8 @@ export class GroupService {
             user.groups.push(group)
         // Enregistre le user
             await this.userService.saveUser(user)
-
+        // Réponse
             return `Utilisateur ${user.nickname} ajouté au groupe ${group.name}`
-
         } catch (error) {
             throw error
         }
@@ -138,9 +131,8 @@ export class GroupService {
             const removedGroup = user.groups.splice(groupToDelete, 1)[0]
         // Enregistre le user
             await this.userService.saveUser(user)
-
+        // Réponse
             return `Utilisateur ${user.nickname} retiré du groupe ${removedGroup.name}`
-
         } catch (error) {
             throw error
         }
@@ -148,6 +140,7 @@ export class GroupService {
 
     async allGroupMember(groupId: number): Promise< Group > {
         try {
+        // Réponse
             return this.groupRepository.findOne({
                 where: { id: groupId },
                 relations: ['users']

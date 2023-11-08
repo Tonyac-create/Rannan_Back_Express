@@ -7,30 +7,17 @@ export class UserService {
 
     private userRepository = AppDataSource.getRepository(User)
 
-// Check l'existence de l'utilisateur
-    async checkUser(id: string, email: string) {
-        try {
-            const user = await this.userRepository.findOne({where: { id: +id }})
-            if (user.email === email) {
-                return user
-            }
-        }
-        catch (error) {
-            return error
-        }
-    }
-
 // Trouve et renvoi tout les users
     async all() {
         try {
             return this.userRepository.find()
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
 
-// Trouve un user par une valeur de champs (value of field)
+// Trouve un user par une valeur de champs (value of field) & inclus en retour la liste des groupes du user ou non (populate)
     async findOne(field: string, value: number | string, populate: boolean)
     : Promise<User> {
         try {
@@ -47,17 +34,17 @@ export class UserService {
                 return user
             }
         } catch (error) {
-            throw error.message
+            return error
         }
     }
 
-// Créer un nouveau user
+// Créer un nouvel user
     async saveUser(body: UserCreateInterface) {
         try {
             return this.userRepository.save(body)
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
 
@@ -70,20 +57,20 @@ export class UserService {
             return {nickname, avatar_id}
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
 
-// Update un user
+// Update le mot de passe d'un user
     async updatePassword(id: number, body: any) {
         try {
             const password = await bcrypt.hash(body, 10)
             await this.userRepository.update(id, {password: password})
-            await this.userRepository.findOne({where: {id: id}})
-            return body
+            const user = await this.userRepository.findOne({where: {id: id}})
+            return user
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
 
@@ -93,7 +80,7 @@ export class UserService {
             return await this.userRepository.delete(id)
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
 
@@ -110,7 +97,7 @@ export class UserService {
             return users.filter((user: User) => user.nickname.includes(search))
         }
         catch (error) {
-            throw error.message
+            return error
         }
     }
-    }
+}
