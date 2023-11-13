@@ -93,7 +93,7 @@ export class UserController {
     async updatePassword(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de la présence des champs requis
-            if (!request.body || !request.body.password || !request.body.newpassword) {
+            if (!request.body || !request.body.password || !request.body.update.newpassword) {
                 throw new Error("Received informations not complet")
             }
         // Récupération du user
@@ -107,7 +107,7 @@ export class UserController {
                 throw new Error("Unauthotized (password not matched)")
             }
         // update et return du user
-            const updatedUser = await this.userService.updatePassword(user.id, request.body.newpassword)
+            const updatedUser = await this.userService.updatePassword(user.id, request.body.update.newpassword)
         // Réponse
             return this.responseMaker.responseSuccess(200, 'User password updated', updatedUser)
         } catch (error) {

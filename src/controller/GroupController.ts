@@ -19,6 +19,7 @@ export class GroupController {
 // Enregistrer un nouveau groupe
     async save(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > { 
         try {
+            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
@@ -52,8 +53,17 @@ export class GroupController {
             }
         // Filtre les fields envoyé
             const userGroups = user.groups.map((group: {name: string, id: number, limited_at: Date | null, creator_id: number}) => {
-                const { id, name } = group
-                return { id, name }
+                const { id, name, creator_id } = group
+                return { id, name, creator_id }
+            })
+        // Ajout du nickname du creator
+            const users = await this.userService.all()
+            userGroups.map((group: {name: string, id: number, creator_id: number, creator?: string}) => {
+                users.map((user) => {
+                    if (group.creator_id === user.id) {
+                        group.creator = user.nickname
+                    }
+                })
             })
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups)
@@ -105,11 +115,11 @@ export class GroupController {
             })
 
         //! => A VOIR AVEC ANGELIQUE POUR DATA
-            const dataList = ["a voir coté dataService"]
-            console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", dataList)
+            const dataList = [{id: 1, name: "data", value: "value"}, {id: 2, name: "data2", value: "value2"}]
+            console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", ["a voir coté dataService"])
 
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group Details`, { group, memberList, dataList })
+            return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -208,11 +218,11 @@ export class GroupController {
                 throw new Error("Received informations not complet")
             }
         // 
-            const user = await this.userService.findOne("id", +request.body.user_id, false)
+            const user = await this.userService.findOne("id", +request.body.user_id, true)
             if (!user) {
                 throw new Error("User not found")
             }
-            const group = await this.groupService.oneGroup(+request.body.group_id)
+            const group = await this.groupService.oneGroup(+request.params.id)
             if (!group) {
                 throw new Error("Group not found")
             }
@@ -232,17 +242,17 @@ export class GroupController {
                 throw new Error("Received informations not complet")
             }
         // 
-            const user = await this.userService.findOne("id", +request.body.user_id, false)
+            const user = await this.userService.findOne("id", +request.body.user_id, true)
             if (!user) {
                 throw new Error("User not found")
             }
-            const group = await this.groupService.oneGroup(+request.body.group_id)
+            const group = await this.groupService.oneGroup(+request.params.id)
             if (!group) {
                 throw new Error("Group not found")
             }
             const deletedUser = await this.groupService.deleteUserToGroup(user, group.id)
         // Réponse
-            return this.responseMaker.responseSuccess(201, `User ${user.nickname} has been deleted from group ${group.name}`, deletedUser)
+            return this.responseMaker.responseSuccess(201, `User has been removed from group`, deletedUser)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
