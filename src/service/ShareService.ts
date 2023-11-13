@@ -1,4 +1,5 @@
 import { AppDataSource } from "../data-source";
+import { Data } from "../entity/Data";
 import { Share } from "../entity/Share";
 import { DataService } from "./DataService";
 import { UserService } from "./UserService";
@@ -42,7 +43,7 @@ export class ShareService {
         }
     }
 
-    //Création d'une autorisation
+    //Création d'un share
     async create(target: string, target_id: number, owner_id: number): Promise<Share | { success: string; message: string }> {
         try {
             const newShare = this.ShareRepository.create({
@@ -57,8 +58,15 @@ export class ShareService {
         }
     }
 
+            /* TEST */
     //Lier la data et l'share
+    async addDataToShare(share_id: number, data_id: number) {
+        // Ajouter 'data' à la liste 'datas' de 'share'
+        
     
+        // Enregistrer 'share' dans la base de données
+        // return await this.ShareRepository.save(share);
+    }
 
     //Supprimer une share
     async remove(id: number) {
