@@ -102,12 +102,12 @@ export const Routes = [
         controller: DataController,
         action: "save"
     },{
-        method: "get", // Récupération de liste users ou groups
+        method: "post", // Récupération de liste users ou groups
         route: "/api/datas/shares",
         controller: ShareController,
         action: "getListUsers"
     },{
-        method: "get", // Récupérer une liste des datas partagé avec l’utilisateur ou le groupe lié
+        method: "post", // Récupérer une liste des datas partagé avec l’utilisateur ou le groupe lié
         route: "/api/datas/target",
         controller: ShareController,
         action: "getShares"
@@ -132,6 +132,12 @@ export const Routes = [
         route: "/api/allshares", 
         controller: ShareController,
         action: "allShares"
+    },
+    {
+        method: "get", // Récupérer un partage
+        route: "/api/share/:id", 
+        controller: ShareController,
+        action: "getShareById"
     },
 
 // ROUTES FOR CONTACT & VALIDATIONS------------------------------
