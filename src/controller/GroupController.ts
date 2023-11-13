@@ -19,6 +19,10 @@ export class GroupController {
 // Enregistrer un nouveau groupe
     async save(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > { 
         try {
+        // Vérification de la présence des champs requis
+            if (!request.body) {
+                throw new Error("Received informations not complet")
+            }
         // Création du groupe
             const savedGroup = await this.groupService.saveGroup(request.body, +request.user.user_id)
         // Ajout des users en membres
@@ -28,9 +32,8 @@ export class GroupController {
                     this.groupService.addUserToGroup(user, savedGroup)
                 }
             })
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -52,9 +55,8 @@ export class GroupController {
                 const { id, name } = group
                 return { id, name }
             })
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -76,9 +78,8 @@ export class GroupController {
                 const { id, name} = group
                 return { id, name}
             })
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is the creator`, foundGroups)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -87,6 +88,11 @@ export class GroupController {
 // Récupérer les détails d'un groupe
     async getGroupDetail (request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.params.id) {
+                throw new Error("Received informations not complet")
+            }
+        // 
             const foundGroup = await this.groupService.oneGroup(+request.params.id)
             if (!foundGroup) {
                 throw new Error("Group not found")
@@ -102,9 +108,8 @@ export class GroupController {
             const dataList = ["a voir coté dataService"]
             console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", dataList)
 
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group Details`, { group, memberList, dataList })
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -113,6 +118,11 @@ export class GroupController {
 // Récupérer les informations (group details + member list + user contact list) pour groupSetting
     async getGroupDetailForSetting(request: RequestWithUser, response: Response, next: NextFunction): Promise< Object > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.params.id) {
+                throw new Error("Received informations not complet")
+            }
+        // 
             const foundGroup = await this.groupService.oneGroup(+request.params.id)
             if (!foundGroup) {
                 throw new Error("Group not found")
@@ -142,9 +152,8 @@ export class GroupController {
                     }
                 })
             )
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { group, memberList, contactList })
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -153,14 +162,18 @@ export class GroupController {
 // Supprimer un groupe par son id
     async remove(request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.params.id) {
+                throw new Error("Received informations not complet")
+            }
+        // 
             const group = await this.groupService.oneGroup(+request.params.id)
             if (!group) {
                 throw new Error("Group not found")
             }
             const removedGroup =  await this.groupService.removeGroup(group.id)
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group ${group.name} was deleted`, removedGroup)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -169,6 +182,10 @@ export class GroupController {
 // Mettre a jour un groupe par son id
     async update(request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.params.id || !request.body) {
+                throw new Error("Received informations not complet")
+            }
         // Vérification de l'existence du groupe
             const group = await this.groupService.oneGroup(+request.params.id)
             if (!group) {
@@ -176,9 +193,8 @@ export class GroupController {
             }
         // Update des informations du groupe
             const updatedGroup = await this.groupService.updateGroup(group, request.body)
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `Group was saved`, updatedGroup)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -187,6 +203,11 @@ export class GroupController {
 // Ajouter un user dans un groupe
     async addMember(request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.body) {
+                throw new Error("Received informations not complet")
+            }
+        // 
             const user = await this.userService.findOne("id", +request.body.user_id, false)
             if (!user) {
                 throw new Error("User not found")
@@ -196,9 +217,8 @@ export class GroupController {
                 throw new Error("Group not found")
             }
             const addedUser = await this.groupService.addUserToGroup(user, group)
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `User ${user.nickname} as been add to the group ${group.name}`, addedUser)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
@@ -207,6 +227,11 @@ export class GroupController {
 // Supprimer un user d'un groupe
     async removeMember(request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
+        // Vérification de la présence des champs requis
+            if (!request.body) {
+                throw new Error("Received informations not complet")
+            }
+        // 
             const user = await this.userService.findOne("id", +request.body.user_id, false)
             if (!user) {
                 throw new Error("User not found")
@@ -216,9 +241,8 @@ export class GroupController {
                 throw new Error("Group not found")
             }
             const deletedUser = await this.groupService.deleteUserToGroup(user, group.id)
-
+        // Réponse
             return this.responseMaker.responseSuccess(201, `User ${user.nickname} has been deleted from group ${group.name}`, deletedUser)
-
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
