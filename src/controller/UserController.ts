@@ -43,12 +43,13 @@ export class UserController {
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {
+            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body.email) {
                 throw new Error("Received informations not complet")
             }
         // Vérification de l'email
-            const emailExist = await this.userService.findOne("id", request.body.email, false)
+            const emailExist = await this.userService.findOne("email", request.body.email, false)
             if (!emailExist) {
                 throw new Error("Email not found")
             }

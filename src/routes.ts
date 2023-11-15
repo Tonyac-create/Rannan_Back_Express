@@ -44,7 +44,7 @@ export const Routes = [
         controller: UserController,
         action: "getEmail"
     },{
-        method: "get",
+        method: "post",
         route: "/user/reset",
         controller: UserController,
         action: "resetPassword"

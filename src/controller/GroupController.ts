@@ -19,20 +19,12 @@ export class GroupController {
 // Enregistrer un nouveau groupe
     async save(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > { 
         try {
-            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
             }
         // Création du groupe
             const savedGroup = await this.groupService.saveGroup(request.body, +request.user.user_id)
-        // Ajout des users en membres
-            request.body.memberList.map(async (id: number) => {
-                const user = await this.userService.findOne("id", id, false)
-                if (user) {
-                    this.groupService.addUserToGroup(user, savedGroup)
-                }
-            })
         // Réponse
             return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup)
         } catch (error) {

@@ -15,7 +15,10 @@ AppDataSource.initialize().then(async () => {
     app.use(bodyParser.json())
 
     // Middlewate cors
-    app.use(cors())
+    app.use(cors({
+        origin: 'http://localhost:5173',
+        credentials: true,
+    }))
 
     // Intercept for Token check
     app.use("/api", jwtMiddleware)
