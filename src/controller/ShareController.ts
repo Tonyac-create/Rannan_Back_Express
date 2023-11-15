@@ -54,13 +54,9 @@ export class ShareController {
                 
                 await Promise.all(
                     userList.map(async (el: Share) => {
-                        console.log("🚀 ~ file: ShareController.ts:57 ~ ShareController ~ userList.map ~ el:", el)
                         const id = el.target_id
-                        console.log("🚀 ~ file: ShareController.ts:58 ~ ShareController ~ userList.map ~ id:", id)
                         const user = await this.userService.findOne("id", id, false)
-                        // console.log("🚀 ~ file: ShareController.ts:60 ~ ShareController ~ userList.map ~ user:", user)
                         const nickname = user.nickname
-                        // console.log("🚀 ~ file: ShareController.ts:62 ~ ShareController ~ userList.map ~ nickname:", nickname)
                         return list.push({ id, nickname })
                     })
                 )
@@ -82,11 +78,8 @@ export class ShareController {
                 )
             }
             
-            console.log("list", list);
-            
             /* trier le tableau de ces doublons */
             const listSort = list.filter((value, index, array) => array.findIndex(el => (el.id === value.id && el.nickname === value.nickname)) === index)
-            console.log("🚀 ~ file: ShareController.ts:88 ~ ShareController ~ getListUsers ~ listSort:", listSort)
 
             return this.responseMaker.responseSuccess(201, "list ok", listSort)
         } catch (error) {
