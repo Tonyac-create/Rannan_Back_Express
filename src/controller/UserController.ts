@@ -43,12 +43,13 @@ export class UserController {
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {
+            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body.email) {
                 throw new Error("Received informations not complet")
             }
         // Vérification de l'email
-            const emailExist = await this.userService.findOne("id", request.body.email, false)
+            const emailExist = await this.userService.findOne("email", request.body.email, false)
             if (!emailExist) {
                 throw new Error("Email not found")
             }
@@ -93,7 +94,7 @@ export class UserController {
     async updatePassword(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Vérification de la présence des champs requis
-            if (!request.body || !request.body.password || !request.body.newpassword) {
+            if (!request.body || !request.body.password || !request.body.update.newpassword) {
                 throw new Error("Received informations not complet")
             }
         // Récupération du user
@@ -107,7 +108,7 @@ export class UserController {
                 throw new Error("Unauthotized (password not matched)")
             }
         // update et return du user
-            const updatedUser = await this.userService.updatePassword(user.id, request.body.newpassword)
+            const updatedUser = await this.userService.updatePassword(user.id, request.body.update.newpassword)
         // Réponse
             return this.responseMaker.responseSuccess(200, 'User password updated', updatedUser)
         } catch (error) {

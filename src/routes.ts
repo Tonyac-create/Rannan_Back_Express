@@ -44,7 +44,7 @@ export const Routes = [
         controller: UserController,
         action: "getEmail"
     },{
-        method: "get",
+        method: "post",
         route: "/user/reset",
         controller: UserController,
         action: "resetPassword"
@@ -215,7 +215,7 @@ export const Routes = [
         controller: GroupController,
         action: "addMember"
     },{
-        method: "delete",
+        method: "put",
         route: "/api/group/:id/remove", 
         controller: GroupController,
         action: "removeMember"

@@ -53,8 +53,7 @@ export class UserService {
         try {
             await this.userRepository.update(id, body)
             const updatedUser =  await this.userRepository.findOne({where: {id: id}})
-            const {nickname, avatar_id} = updatedUser
-            return {nickname, avatar_id}
+            return updatedUser
         }
         catch (error) {
             return error
