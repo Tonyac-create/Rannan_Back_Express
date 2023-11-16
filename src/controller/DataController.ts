@@ -35,12 +35,12 @@ export class DataController {
     }
 
     // Création d'une share
-    async createShare(request: Request, response: Response, next: NextFunction) {
+    async createShare(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
             const data_id = request.body.data_id
             const target = request.body.target
             const target_id = +request.body.target_id
-            const owner_id = +request.body.owner_id
+            const owner_id = request.user
 
             // Récupération de la data
             const data = await this.dataService.getOneById(data_id)
@@ -55,7 +55,7 @@ export class DataController {
                     if (!targetGroup) {
                         throw new Error("Group don't exist")
                     } else {
-                        const share = await this.shareService.create(target, target_id, owner_id)
+                        const share = await this.shareService.create(target, target_id, +owner_id.user_id)
 
                         return this.responseMaker.responseSuccess(201, "share ok", share)
                     }
@@ -65,7 +65,7 @@ export class DataController {
                     if (!targetUser) {
                         throw new Error("User don't exist")
                     } else {
-                        const share = await this.shareService.create(target, target_id, owner_id)
+                        const share = await this.shareService.create(target, target_id, +owner_id.user_id)
 
                         return this.responseMaker.responseSuccess(201, "share ok", share)
                     }

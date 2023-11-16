@@ -6,6 +6,8 @@ import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ContactService } from "../service/ContactService"
 import { Contact } from "../entity/Contact"
+import { DataService } from "../service/DataService"
+import { ShareService } from "../service/ShareService"
 
 export class GroupController {
 
@@ -13,26 +15,24 @@ export class GroupController {
     private groupService = new GroupService()
     private userService = new UserService()
     private contactService = new ContactService()
+    private shareService = new ShareService()
+    private dataService = new DataService()
     private responseMaker = new ResponseMaker()
 
 
 // Enregistrer un nouveau groupe
     async save(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > { 
         try {
-            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
             }
+        // Modification format de Date
+            const dateValue = request.body.limited_at
+            const parsedDate = dateValue ? new Date(dateValue) : null;
+            const newGroup = {name: request.body.name, limited_at: parsedDate}
         // Création du groupe
-            const savedGroup = await this.groupService.saveGroup(request.body, +request.user.user_id)
-        // Ajout des users en membres
-            request.body.memberList.map(async (id: number) => {
-                const user = await this.userService.findOne("id", id, false)
-                if (user) {
-                    this.groupService.addUserToGroup(user, savedGroup)
-                }
-            })
+            const savedGroup = await this.groupService.saveGroup(newGroup, +request.user.user_id)
         // Réponse
             return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup)
         } catch (error) {
@@ -46,24 +46,23 @@ export class GroupController {
             if (!request.user) {
                 throw new Error("User undefined in request")
             }
-        // Vérification de l'existence du user
+        // Récupération de la liste des groupes via populate "true"
             const user = await this.userService.findOne("id", request.user.user_id, true)
             if (!user) {
                 throw new Error("User not found")
             }
-        // Filtre les fields envoyé
-            const userGroups = user.groups.map((group: {name: string, id: number, limited_at: Date | null, creator_id: number}) => {
-                const { id, name, creator_id } = group
-                return { id, name, creator_id }
-            })
-        // Ajout du nickname du creator
-            const users = await this.userService.all()
-            userGroups.map((group: {name: string, id: number, creator_id: number, creator?: string}) => {
-                users.map((user) => {
-                    if (group.creator_id === user.id) {
-                        group.creator = user.nickname
-                    }
-                })
+        // Filtre les groupes pour que les groupes ou le user est creator n'apparaissent pas
+            const filteredList = user.groups.filter((el: any) => el.creator_id !== user.id )
+        // Filtre des fields envoyés et ajout du nickname du creator
+            const allUsers = await this.userService.all()
+            const userGroups = filteredList.map((element: any) => {
+                const creator = allUsers.find((OneUser: any) => element.creator_id === OneUser.id)
+                if (element.limited_at !== null) {
+                    const date = new Date(element.limited_at)
+                    const formattedDate = date.toISOString().split("T")[0]
+                    return element = {id: element.id, name: element.name, limited_at: formattedDate, creator_id: element.creator_id, creator_nickname: creator.nickname}
+                }
+                return element = {id: element.id, name: element.name, limited_at: null, creator_id: element.creator_id, creator_nickname: creator.nickname}
             })
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups)
@@ -75,7 +74,6 @@ export class GroupController {
     // Récupérer la liste des groupes dont le user est créateur
     async creatorGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
-            
             if (!request.user) {
                 throw new Error("User undefined in request")
             }
@@ -83,20 +81,27 @@ export class GroupController {
             if (!user) {
                 throw new Error("User not found")
             }
-            const creatorGroups = await this.groupService.allGroupsBy("creator_id", user.id)
-            const foundGroups = creatorGroups.map((group: {name: string, id: number, limited_at: Date | null, creator_id: number}) => {
+        // Récupération de la liste des groupes dont le user est creator
+            const groupList = await this.groupService.allGroupsBy("creator_id", user.id)
+        // Filtre des fields envoyés
+            const creatorGroups = groupList.map((group: any) => {
                 const { id, name} = group
-                return { id, name}
+                if (group.limited_at !== null) {
+                    const date = new Date(group.limited_at)
+                    const formattedDate = date.toISOString().split("T")[0]
+                    return group = { id: id, name: name, limited_at: formattedDate}
+                }
+                return group = { id: id, name: name, limited_at: null}
             })
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group how user is the creator`, foundGroups)
+            return this.responseMaker.responseSuccess(201, `Group how user is the creator`, creatorGroups)
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
     }
 
 // Récupérer les détails d'un groupe
-    async getGroupDetail (request: Request, response: Response, next: NextFunction): Promise< ResponseInterface > {
+    async getGroupDetail (request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
@@ -107,14 +112,13 @@ export class GroupController {
             if (!foundGroup) {
                 throw new Error("Group not found")
             }
-            const group = { name: foundGroup.name, limited_at: foundGroup.limited_at, creator_id: foundGroup.creator_id }
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             })
 
-        //! => A VOIR AVEC ANGELIQUE POUR DATA
+            
             const dataList = [{id: 1, name: "data", value: "value"}, {id: 2, name: "data2", value: "value2"}]
             console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", ["a voir coté dataService"])
 

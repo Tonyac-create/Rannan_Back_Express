@@ -36,7 +36,7 @@ export class GroupService {
         }
     }
 
-    async saveGroup(body: GroupCreateInterface, creator_id: number): Promise< Group > {
+    async saveGroup(body: any, creator_id: number): Promise< Group > {
         try {
         // Défini les valeurs de champs du nouveau groupe
             const newGroup = {
