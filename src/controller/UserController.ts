@@ -25,21 +25,6 @@ export class UserController {
         }
     }
 
-// Envoyer l'email de l'utilisateur
-    async getEmail(request: RequestWithUser, response: Response, next: NextFunction) {
-        try {
-        // Récupération du user
-            const user = await this.userService.findOne("id", request.user.user_id, false)
-            if (!user) {
-                throw new Error("User not found")
-            }
-        // Réponse
-            return this.responseMaker.responseSuccess(200, "User email", request.user.email)
-        } catch (error) {
-            return this.responseMaker.responseError(500, error.message)
-        }
-    }
-
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {

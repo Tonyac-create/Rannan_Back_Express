@@ -39,11 +39,6 @@ export const Routes = [
         controller: UserController,
         action: "userConnected"
     },{
-        method: "get",
-        route: "/api/user/account",
-        controller: UserController,
-        action: "getEmail"
-    },{
         method: "post",
         route: "/user/reset",
         controller: UserController,
