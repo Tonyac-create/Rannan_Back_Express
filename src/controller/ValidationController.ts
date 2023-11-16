@@ -4,12 +4,14 @@ import { UserService } from "../service/UserService";
 import { ResponseMaker } from "../utils/ResponseMaker";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseInterface } from "../interface/ResponseInterface";
+import { ContactService } from "../service/ContactService";
 
 export class ValidationController{
 
 // Services
     private validationService = new ValidationService();
     private userService = new UserService();
+    private contactService = new ContactService();
     private responseMaker = new ResponseMaker();
 
 //Récupérer toutes les demandes de l'user reçues et envoyées
@@ -72,16 +74,21 @@ export class ValidationController{
         const userId = parseInt(request.user.user_id);
         const contactId = parseInt(request.body.contactId);
         try{
-            //Verification que les users existent
-            const userOk = await this.userService.findOne("id", userId, false);
-            const contactOk = await this.userService.findOne("id", contactId, false);
-            if(!userOk || !contactOk || !userOk && !contactOk){
-                throw new Error("One of the users, or the two don't exist")
-            }
             //Verifier que user n'est pas le même qeu contact
-            if( userOk.id === contactOk.id){
+            if( userId === contactId){
                 throw new Error("User and Contact are the same user");
             }
+
+            //Verifier qu'il n'y a pas un contact entre les users
+            const testContact1 = await this.contactService.oneByUsers(userId, contactId);
+            if(testContact1){
+                throw new Error("Users are in contact");
+            }
+            const testContact2 = await this.contactService.oneByUsers(contactId, userId);
+            if(testContact2){
+                throw new Error("Users are in contact");
+            }
+
             //Verifier qu'il n'y a pas une demande entre ces users
             const testValidation1 = await this.validationService.oneByUsers(userId, contactId);
             if(testValidation1){
@@ -91,6 +98,14 @@ export class ValidationController{
             if(testValidation2){
                 throw new Error("A contact request exists already")
             }
+
+            //Verification que les users existent
+            const userOk = await this.userService.findOne("id", userId, false);
+            const contactOk = await this.userService.findOne("id", contactId, false);
+            if(!userOk || !contactOk || !userOk && !contactOk){
+                throw new Error("One of the users, or the two don't exist")
+            }
+            
             //Execution de la fonction
             const validation = await this.validationService.create(userId, contactId);
             if (!validation){
@@ -114,7 +129,8 @@ export class ValidationController{
             }
             //verifier que le user qui suprime est bien le destinataire de la demande
             const userId = parseInt(request.user.user_id);
-            if(validation.contact_id !== userId){
+            console.log("🚀 ~ file: ValidationController.ts:132 ~ ValidationController ~ remove ~ userId:", userId)
+            if(validation.contact_id !== userId && validation.user_id !== userId){
                 throw new Error("Unauthorized")
             }
             const removedvalidation =  await this.validationService.remove(validation.id)

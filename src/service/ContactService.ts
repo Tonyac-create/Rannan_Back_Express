@@ -49,6 +49,24 @@ export class ContactService{
     }
     
     //Formater l'objet user dans contact
+     returnContactList(list: any, currentUserId: string, otherUserId: string, otherUserRole: string){   //currentUserId && otherUserId = "user1_id" ou "user2_id" 
+        let returnList=[];
+         list.map(async(element) => {
+            const targetUser = await this.userService.findOne("id", element[otherUserId], false);
+            const otherUser = {[otherUserId]: targetUser.id, nickname: targetUser.nickname}
+            const contact = {
+                id: element.id,
+                [currentUserId]: element[currentUserId],
+                [otherUserRole] : otherUser
+            }    
+            returnList.push(contact);
+            console.log("🚀 ~ file: ContactService.ts:63 ~ ContactService ~ returnContactList ~ returnList:", returnList)
+
+        })
+        console.log("🚀 ~ file: ContactService.ts:66 ~ ContactService ~ returnContactList ~ returnList:", returnList);
+        return returnList;
+    }
+
     user1Formated(user: any){
         const targetUser1 = user;
         const user1 = {user1_id: targetUser1.id, nickname: targetUser1.nickname};

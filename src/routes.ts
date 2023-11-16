@@ -64,7 +64,7 @@ export const Routes = [
         controller: UserController,
         action: "getProfile"
     },{
-        method: "get",
+        method: "post",
         route: "/api/user/search",
         controller: UserController,
         action: "userSearch"
