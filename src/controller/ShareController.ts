@@ -19,6 +19,7 @@ export class ShareController {
     async allShares(request: Request, response: Response, next: NextFunction) {
         try {
             const shares = await this.shareService.allShares()
+            return this.responseMaker.responseSuccess(201, "shares ok", shares)
         } catch (error) {
             return this.responseMaker.responseError(400, error.message)
         }
