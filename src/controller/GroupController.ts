@@ -147,7 +147,7 @@ export class GroupController {
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
-                return { id, nickname }
+                return { id: id, nickname: nickname }
             })
         // Récupération de la liste de contact du user
             const contactList = []
@@ -166,8 +166,13 @@ export class GroupController {
                     }
                 })
             )
+        // Retrait des membres de la liste de contact
+        const filteredContactList = contactList.filter((contact) => {
+            // Vérifie si l'ID de l'élément ne correspond à aucun ID présent dans la liste des membres
+            return !memberList.some((member) => member.id === contact.id);
+        })
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { group, memberList, contactList })
+            return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { memberList: memberList, contactList: filteredContactList })
         } catch (error) {
             response.status(500).json({ error: error.message })
         }
