@@ -26,7 +26,8 @@ export class ShareService {
             });
         }
         catch (error) {
-            throw new Error(error)
+            return error
+            // throw new Error(error)
         }
     }
     

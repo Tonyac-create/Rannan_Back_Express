@@ -124,7 +124,8 @@ export class GroupService {
         try {
         // Trouve l'index du groupe dans le tableau des groupes du user
             const groupToDelete = user.groups.findIndex((group: Group) => group.id === group_id)
-            if (!groupToDelete || groupToDelete < 0) {
+            console.log(groupToDelete)
+            if (groupToDelete === -1) {
                 throw new Error("This user is not a member of this group")
             }
         // Retire le groupe du tableau des groupes du user

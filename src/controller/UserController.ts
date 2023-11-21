@@ -25,6 +25,29 @@ export class UserController {
         }
     }
 
+    async checkPassword(request: RequestWithUser, response: Response, next: NextFunction) {
+        try {
+        // Vérification de la présence des champs requis
+            const password = request.body.password
+            if (password === undefined) {
+                throw new Error("Received informations not complet")
+            }
+        // Récupération du user
+            const user = await this.userService.findOne("id", request.user.user_id, false)
+            if (!user) {
+                throw new Error("User not found")
+            }
+        // Vérification du mot de passe
+            const isPasswordMatched = await bcrypt.compare(password, user.password)
+            if (!isPasswordMatched) {
+                throw new Error("Password not matched)")
+            }
+            return this.responseMaker.responseSuccess(200, "Password Match")
+        } catch (error) {
+            return this.responseMaker.responseError(500, error.message)
+        }
+    }
+
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {
