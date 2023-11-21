@@ -38,6 +38,11 @@ export const Routes = [
         route: "/api",
         controller: UserController,
         action: "userConnected"
+    },    {
+        method: "put",
+        route: "/api/checkPassword",
+        controller: UserController,
+        action: "checkPassword"
     },{
         method: "post",
         route: "/user/reset",

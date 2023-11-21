@@ -108,19 +108,26 @@ export class GroupController {
                 throw new Error("Received informations not complet")
             }
         // 
-            const foundGroup = await this.groupService.oneGroup(+request.params.id)
-            if (!foundGroup) {
+            const group = await this.groupService.oneGroup(+request.params.id)
+            if (!group) {
                 throw new Error("Group not found")
             }
-            const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
+            const getMemberList = await this.groupService.allGroupMember(group.id)
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             })
 
-            
-            const dataList = [{id: 1, name: "data", value: "value"}, {id: 2, name: "data2", value: "value2"}]
-            console.log("🐼 ~ file: GroupController.ts:96 ~ getGroupDetail ~ dataList:", ["a voir coté dataService"])
+            let dataList = []
+            const shares = await this.shareService.allByDatas("target_id", group.id)
+            if ( shares.length === 0 ){
+                dataList = null
+                return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
+            }
+            const datas = shares.filter((share) => share.target === "group")[0].datas
+            datas.map((data) => {
+                dataList.push({id: data.id, name: data.name, value: data.value})
+            })
 
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
@@ -143,7 +150,6 @@ export class GroupController {
             } else if (foundGroup.creator_id !== +request.user.user_id) {
                 throw new Error("You are not Creator")
             }
-            const group = { name: foundGroup.name, limited_at: foundGroup.limited_at }
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
