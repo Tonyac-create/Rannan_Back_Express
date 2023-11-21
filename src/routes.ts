@@ -107,7 +107,7 @@ export const Routes = [
         controller: ShareController,
         action: "getShares"
     },{
-        method: "get",
+        method: "post",
         route: "/api/datas/profile",
         controller: ShareController,
         action: "getSharesBetweenUsers"

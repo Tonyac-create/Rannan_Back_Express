@@ -45,14 +45,14 @@ export class ShareController {
             if (targetValue === "user") {
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "user")
                 // OK console.log("🚀 ~ file: ShareController.ts:46 ~ ShareController ~ getListUsers ~ filterList:", filterList)
-                
+
                 if (filterList.length === 0) {
                     throw new Error("don't have user with share")
                 }
                 userList = filterList.filter((element: Share) => element.owner_id === +user.user_id)
                 //  OK console.log("🚀 ~ file: ShareController.ts:52 ~ ShareController ~ getListUsers ~ userList:", userList)
-                
-                
+
+
                 await Promise.all(
                     userList.map(async (el: Share) => {
                         const id = el.target_id
@@ -62,7 +62,7 @@ export class ShareController {
                     })
                 )
             }
-                
+
             if (targetValue === "group") {
                 const filterList = getAllSharesList.filter((element: Share) => element.target === "group")
                 if (filterList.length === 0) {
@@ -78,7 +78,7 @@ export class ShareController {
                     })
                 )
             }
-            
+
             /* trier le tableau de ces doublons */
             const listSort = list.filter((value, index, array) => array.findIndex(el => (el.id === value.id && el.nickname === value.nickname)) === index)
 
@@ -98,10 +98,9 @@ export class ShareController {
             let list = []
 
             const shareData = await this.shareService.allByDatas("target_id", +request.body.target_id)
-            shareData.filter((share) => share.owner_id === +request.user.user_id)
 
             if (request.body.target === "user") {
-                const filterList = shareData.filter((element: Share) => element.target === "user")
+                const filterList = shareData.filter((element: Share) => element.target === "user" && element.owner_id === +request.user.user_id)
                 if (filterList.length === 0) {
                     throw new Error("don't have user with share")
                 }
@@ -140,15 +139,16 @@ export class ShareController {
             const useridToken = await this.userService.findOne("id", +request.user.user_id, true)
 
             // Cherche les shares avec le target_id correspondant
-            const shareData = await this.shareService.allByDatas("target_id", +request.body.userId_profile)
+            const shareData = await this.shareService.allByDatas("target_id", +request.user.user_id)
 
             // Tri par target user
-            const filterListByUser = shareData.filter((data) => data.target === "user")
+            const filterListByUser = shareData.filter((data) => {
+                return data.target === "user" && (data.target_id === +request.user.user_id && data.owner_id === +request.body.userId_profile);
+            });
 
             filterListByUser.map((share) => {
                 list.push(...share.datas)
             })
-            console.log("🚀 ~ file: ShareController.ts:128 ~ ShareController ~ filterListByUser.map ~ filterListByUser:", filterListByUser)
 
             list.map((data) => {
                 const id = data.id
