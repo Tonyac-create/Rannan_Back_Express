@@ -166,22 +166,13 @@ export class UserController {
 // Supprimer un user par son id
     async removeUser(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
-        // Vérification de la présence des champs requis
-            if (!request.body || !request.body.password) {
-                throw new Error("Received informations not complet")
-            }
         // Récupération du user
-            const user = await this.userService.findOne("id", request.user.user_id, false)
-            if (!user) {
+            const userToDelete = await this.userService.findOne("id", request.user.user_id, false)
+            if (!userToDelete) {
                 throw new Error("User not found")
             }
-        // Vérification du mot de passe
-            const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
-            if (!isPasswordMatched) {
-                throw new Error("Password not matched)")
-            }
         // suppression du user par sont id
-            await this.userService.remove(user.id)
+            await this.userService.remove(userToDelete.id)
         // Réponse
             return this.responseMaker.responseSuccess(200, `User has been deleted`)
         } catch (error) {
