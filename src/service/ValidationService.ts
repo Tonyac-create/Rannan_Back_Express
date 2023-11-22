@@ -27,6 +27,10 @@ export class ValidationService{
                     user_id: userId,
                     contact_id: contactId
                 }}
+                /* {where:{
+                    user_id: contactId,
+                    contact_id: userId
+                }} */
             );
         }
         catch(error){

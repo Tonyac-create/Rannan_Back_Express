@@ -73,7 +73,13 @@ export const Routes = [
         route: "/api/user",
         controller: UserController,
         action: "removeUser"
-    }, 
+    },
+    {
+        method: "get",
+        route: "/api/user/relation/:id",
+        controller: UserController,
+        action: "getUserRelation"
+    },
 
 // ROUTES FOR DATA------------------------------
     {

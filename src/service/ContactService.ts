@@ -99,7 +99,10 @@ export class ContactService{
                     user1_id :user1Id,
                     user2_id: user2Id
                 }
-                //,orWhere { user1: { id: user1Id}, user2: { id: user2Id} }
+                /* where: {
+                    user1_id :user2Id,
+                    user2_id: user1Id
+                } */
             });
         }
         catch(error){

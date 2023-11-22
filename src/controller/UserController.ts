@@ -2,12 +2,16 @@ import { NextFunction, Request, Response } from "express"
 import { UserService } from "../service/UserService"
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
+import { ContactService } from "../service/ContactService"
+import { ValidationService } from "../service/ValidationService"
 const bcrypt = require('bcrypt')
 
 export class UserController {
 
 // Services
     private userService = new UserService()
+    private contactService = new ContactService()
+    private validationService = new ValidationService()
     private responseMaker = new ResponseMaker()
 
 // Vérifier la connection d'un user
@@ -172,6 +176,52 @@ export class UserController {
         // Réponse
             return this.responseMaker.responseSuccess(200, `User has been deleted`)
         } catch (error) {
+            return this.responseMaker.responseError(500, error.message)
+        }
+    }
+
+// Récupérer la relation(contact, validation, rien) avec un user
+    async getUserRelation(request: RequestWithUser, response: Response, next: NextFunction){
+        try{
+            //Variables
+            let relation_type;
+            let relation_id;
+
+            //Récupération des users
+            const currentUserId = parseInt(request.user.user_id);
+            const otherUserId = parseInt(request.params.id);
+
+            //Vérifier que currentUserId dfférent de otherUserId
+            if(currentUserId === otherUserId){
+                throw new Error("User1 and User2 are the same user")
+            }
+
+            //Vérifier si les users sont en contact
+            const testContact = await this.contactService.oneByUsers(currentUserId, otherUserId);
+            if(testContact){
+                relation_type = "contact";
+                relation_id = testContact.id
+            }
+
+            //Vérifier si les users ont une validation
+            const testValidation = await this.validationService.oneByUsers(currentUserId, otherUserId);
+            if(testValidation){
+                relation_type = "validation";
+                relation_id = testValidation.id;
+            }
+
+            //dans le cas où il n'y aie rien
+            if(!testContact && !testValidation){
+                throw new Error("No relations found")
+            }
+
+            //Réponse
+            const relation = {relation_type, relation_id}
+            return this.responseMaker.responseSuccess(200, "Relation found", relation)
+
+        }
+        catch(error){
+            console.log("🚀 ~ file: UserController.ts:185 ~ UserController ~ getUserRelation ~ error:", error);
             return this.responseMaker.responseError(500, error.message)
         }
     }
