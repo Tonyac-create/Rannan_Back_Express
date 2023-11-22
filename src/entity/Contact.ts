@@ -9,14 +9,14 @@ export class Contact {
     @Column()
     user1_id: number
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
     @JoinColumn({name: "user1_id"})
     user1: User
 
     @Column()
     user2_id: number
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
     @JoinColumn({name: "user2_id"})
     user2: User
 

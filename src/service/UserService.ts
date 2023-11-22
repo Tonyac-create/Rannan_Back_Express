@@ -34,7 +34,7 @@ export class UserService {
                 return user
             }
         } catch (error) {
-            return error
+            throw new Error("User not found")
         }
     }
 
@@ -74,12 +74,12 @@ export class UserService {
     }
 
 // Supprime un user par sont id
-    async remove(id: number) {
+    async remove(user: User) {
         try {
-            return await this.userRepository.delete(id)
+            await this.userRepository.remove(user)
         }
         catch (error) {
-            return error
+            throw new Error("Suppresion impossible")
         }
     }
 

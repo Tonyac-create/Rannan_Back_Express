@@ -51,7 +51,6 @@ export class UserController {
 // Vérification d'email + Envoi d'un mail pour reset password
     async resetPassword(request: Request, response: Response, next: NextFunction) {
         try {
-            console.log(request.body)
         // Vérification de la présence des champs requis
             if (!request.body.email) {
                 throw new Error("Received informations not complet")
@@ -167,12 +166,9 @@ export class UserController {
     async removeUser(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
         // Récupération du user
-            const userToDelete = await this.userService.findOne("id", request.user.user_id, false)
-            if (!userToDelete) {
-                throw new Error("User not found")
-            }
+            const userToDelete = await this.userService.findOne("id", request.user.user_id, true)
         // suppression du user par sont id
-            await this.userService.remove(userToDelete.id)
+            await this.userService.remove(userToDelete)
         // Réponse
             return this.responseMaker.responseSuccess(200, `User has been deleted`)
         } catch (error) {

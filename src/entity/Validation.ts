@@ -10,14 +10,14 @@ export class Validation {
     @Column()
     user_id: number
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
     @JoinColumn({name: "user_id"})
     user: User
 
     @Column()
     contact_id: number
 
-    @ManyToOne(() => User, (user) => user.id)
+    @ManyToOne(() => User, (user) => user.id, { onDelete: "CASCADE" })
     @JoinColumn({name: "contact_id"})
     contact: User
 
