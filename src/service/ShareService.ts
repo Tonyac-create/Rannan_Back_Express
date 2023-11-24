@@ -73,13 +73,31 @@ export class ShareService {
     async remove(id: number) {
         try {
             // Delete share by ID
-            await this.ShareRepository.delete(id)
+            await this.ShareRepository.delete(id);
+            return "share was removed" //Modif Caye à supprimer si ne convient pas
         }
         catch (error) {
             return {
                 success: 'ko',
                 message: error.message
             };
+        }
+    }
+
+    //Récupérer un sahre entre 2 users
+    async oneByUsersId(currentUser_id: number, otherUser_id: number): Promise<Share>{
+        try{
+            return this.ShareRepository.findOne({
+                where:{
+                    target: "user",
+                    target_id: otherUser_id,
+                    owner_id: currentUser_id
+                }
+            })
+        }
+        catch(error){
+            console.log("🚀 ~ file: ShareService.ts:92 ~ ShareService ~ getShareByUsersId ~ error:", error)
+            throw new Error(error)
         }
     }
 }

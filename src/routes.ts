@@ -145,6 +145,12 @@ export const Routes = [
         controller: ShareController,
         action: "getShareById"
     },
+    {
+        method: "delete", // supprimer partage entre 2 users
+        route: "/api/share/user/:id", 
+        controller: ShareController,
+        action: "deleteShareByUsers"
+    },
 
 // ROUTES FOR CONTACT & VALIDATIONS------------------------------
     {

@@ -185,4 +185,41 @@ export class ShareController {
         }
     }
 
+    //Récupérer un share entre 2 users et le supprimer
+    async deleteShareByUsers(request: RequestWithUser, response: Response, next: NextFunction){
+        try{
+            ///Récupération des users
+            const currentUserId = parseInt(request.user.user_id);
+            const otherUserId = parseInt(request.params.id);
+
+            //Vérifier que currentUserId dfférent de otherUserId
+            if(currentUserId === otherUserId){
+                throw new Error("User1 and User2 are the same user")
+            }
+
+            //Verifier que les users existent
+            const testCurrent = await this.userService.findOne("id", currentUserId, false);
+            const testOther = await this.userService.findOne("id", otherUserId, false);
+            if(!testCurrent || !testOther || !testCurrent && !testOther){
+                throw new Error("One of the users, or the two don't exist")
+            }
+
+            //Récupérer le share entre les users
+            const share = await this.shareService.oneByUsersId(currentUserId, otherUserId);
+            console.log("🚀 ~ file: ShareController.ts:209 ~ ShareController ~ deleteShareByUsers ~ share:", share)
+            console.log("sahre_id, l 210", share.id)
+            if(!share){
+                throw new Error("Share not found.")
+            }
+
+            //Supprimer le share
+            const removedShare = await this.shareService.remove(share.id);
+            return this.responseMaker.responseSuccess(200, `share was deleted`, removedShare)
+        }
+        catch(error){
+            console.log("🚀 ~ file: ShareController.ts:192 ~ ShareController ~ deleteShareByUsers ~ error:", error)
+            return this.responseMaker.responseError(500, error.message)
+        }
+    }
+
 }
