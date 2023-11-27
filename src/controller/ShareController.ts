@@ -218,7 +218,7 @@ export class ShareController {
         }
         catch(error){
             console.log("🚀 ~ file: ShareController.ts:192 ~ ShareController ~ deleteShareByUsers ~ error:", error)
-            return this.responseMaker.responseError(500, error.message)
+            response.status(500).json({error :error.message, date : new Date()})
         }
     }
 
