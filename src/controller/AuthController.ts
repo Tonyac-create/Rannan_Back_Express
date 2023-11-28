@@ -9,7 +9,7 @@ export class AuthController {
   private userService = new UserService()
   private authService = new AuthService()
 
-  async register(request: Request, response: Response, next: NextFunction) {
+  async register(request: Request, response: Response, next: NextFunction): Promise<{}> {
     try {
       // Vérifie si l'email envoyé correspond a un email enregistré
       const userAlreadyExist = await this.userService.findOne("email", request.body.email, false)

@@ -9,94 +9,57 @@ export class UserService {
 
 // Trouve et renvoi tout les users
     async all() {
-        try {
             return this.userRepository.find()
-        }
-        catch (error) {
-            return error
-        }
     }
 
 // Trouve un user par une valeur de champs (value of field) & inclus en retour la liste des groupes du user ou non (populate)
     async findOne(field: string, value: number | string, populate: boolean)
     : Promise<User> {
-        try {
             if (populate === true) {
-                const user = await this.userRepository.findOne({
+                return await this.userRepository.findOne({
                     where: { [field]: value },
                     relations: ['groups']
                 })
-                return user
             } else {
-                const user = await this.userRepository.findOne({
+                return await this.userRepository.findOne({
                     where: { [field]: value }
                 })
-                return user
             }
-        } catch (error) {
-            throw new Error("User not found")
-        }
     }
 
 // Créer un nouvel user
     async saveUser(body: UserCreateInterface) {
-        try {
             return this.userRepository.save(body)
-        }
-        catch (error) {
-            return error
-        }
     }
 
 // Update un user
     async update(id: number, body: any) {
-        try {
-            await this.userRepository.update(id, body)
-            const updatedUser =  await this.userRepository.findOne({where: {id: id}})
-            return updatedUser
-        }
-        catch (error) {
-            return error
-        }
+            return await this.userRepository.update(id, body)
     }
 
 // Update le mot de passe d'un user
     async updatePassword(id: number, body: any) {
-        try {
             const password = await bcrypt.hash(body, 10)
-            await this.userRepository.update(id, {password: password})
-            const user = await this.userRepository.findOne({where: {id: id}})
-            return user
-        }
-        catch (error) {
-            return error
-        }
+            return await this.userRepository.update(id, {password: password})
     }
 
 // Supprime un user par sont id
     async remove(user: User) {
-        try {
-            await this.userRepository.remove(user)
-        }
-        catch (error) {
-            throw new Error("Suppresion impossible")
-        }
+            return await this.userRepository.remove(user)
     }
 
 // Trouve un user depuis un input
     async searchOne(input: string): Promise< User[] | null > {
-        try {
             const users = []
+            const search = input.toLowerCase()
             const getUsers = await this.userRepository.find()
             getUsers.map((user: User) => {
-                const {nickname, id} = user
-                return users.push({id: id, nickname: nickname.toLowerCase()})
+                const lowNickname = user.nickname.toLocaleLowerCase()
+                if (lowNickname.includes(search)) {
+                    const {nickname, id} = user
+                    return users.push({id: id, nickname: nickname})
+                }
             })
-            const search = input.toLowerCase()
-            return users.filter((user: User) => user.nickname.includes(search))
-        }
-        catch (error) {
-            return error
-        }
+            return users
     }
 }

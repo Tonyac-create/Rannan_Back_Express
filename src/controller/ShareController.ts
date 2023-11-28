@@ -72,7 +72,7 @@ export class ShareController {
                 await Promise.all(
                     groupList.map(async (el: Share) => {
                         const id = el.target_id
-                        const group = await this.groupService.oneGroup(id)
+                        const group = await this.groupService.allGroupsBy("id", id)[0]
                         const name = group.name
                         return list.push({ id, name })
                     })

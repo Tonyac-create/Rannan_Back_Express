@@ -12,12 +12,12 @@ import { ShareService } from "../service/ShareService"
 export class GroupController {
 
 // Services
-    private groupService = new GroupService()
-    private userService = new UserService()
-    private contactService = new ContactService()
-    private shareService = new ShareService()
-    private dataService = new DataService()
-    private responseMaker = new ResponseMaker()
+    private groupService = new GroupService();
+    private userService = new UserService();
+    private contactService = new ContactService();
+    private shareService = new ShareService();
+    private dataService = new DataService();
+    private responseMaker = new ResponseMaker();
 
 
 // Enregistrer un nouveau groupe
@@ -26,17 +26,17 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // Modification format de Date
-            const dateValue = request.body.limited_at
+            const dateValue = request.body.limited_at;
             const parsedDate = dateValue ? new Date(dateValue) : null;
-            const newGroup = {name: request.body.name, limited_at: parsedDate}
+            const newGroup = {name: request.body.name, limited_at: parsedDate};
         // Création du groupe
-            const savedGroup = await this.groupService.saveGroup(newGroup, +request.user.user_id)
+            const savedGroup = await this.groupService.saveGroup(newGroup, +request.user.user_id);
         // Réponse
-            return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup)
+            return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message);
         }
     }
 
@@ -45,29 +45,41 @@ export class GroupController {
         try {
             if (!request.user) {
                 throw new Error("User undefined in request")
-            }
+            };
         // Récupération de la liste des groupes via populate "true"
-            const user = await this.userService.findOne("id", request.user.user_id, true)
+            const user = await this.userService.findOne("id", request.user.user_id, true);
             if (!user) {
                 throw new Error("User not found")
-            }
+            };
         // Filtre les groupes pour que les groupes ou le user est creator n'apparaissent pas
-            const filteredList = user.groups.filter((el: any) => el.creator_id !== user.id )
+            const filteredList = user.groups.filter((el: any) => el.creator_id !== user.id );
         // Filtre des fields envoyés et ajout du nickname du creator
-            const allUsers = await this.userService.all()
+            const allUsers = await this.userService.all();
             const userGroups = filteredList.map((element: any) => {
-                const creator = allUsers.find((OneUser: any) => element.creator_id === OneUser.id)
+                const creator = allUsers.find((OneUser: any) => element.creator_id === OneUser.id);
                 if (element.limited_at !== null) {
-                    const date = new Date(element.limited_at)
-                    const formattedDate = date.toISOString().split("T")[0]
-                    return element = {id: element.id, name: element.name, limited_at: formattedDate, creator_id: element.creator_id, creator_nickname: creator.nickname}
-                }
-                return element = {id: element.id, name: element.name, limited_at: null, creator_id: element.creator_id, creator_nickname: creator.nickname}
-            })
+                    const date = new Date(element.limited_at);
+                    const formattedDate = date.toISOString().split("T")[0];
+                    return element = {
+                        id: element.id, 
+                        name: element.name, 
+                        limited_at: formattedDate, 
+                        creator_id: element.creator_id, 
+                        creator_nickname: creator.nickname
+                    };
+                };
+                return element = {
+                    id: element.id, 
+                    name: element.name, 
+                    limited_at: null, 
+                    creator_id: element.creator_id, 
+                    creator_nickname: creator.nickname
+                };
+            });
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups)
+            return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message);
         }
     }
 
@@ -76,27 +88,27 @@ export class GroupController {
         try {
             if (!request.user) {
                 throw new Error("User undefined in request")
-            }
-            const user = await this.userService.findOne("id", request.user.user_id, true)
+            };
+            const user = await this.userService.findOne("id", request.user.user_id, true);
             if (!user) {
                 throw new Error("User not found")
-            }
+            };
         // Récupération de la liste des groupes dont le user est creator
-            const groupList = await this.groupService.allGroupsBy("creator_id", user.id)
+            const groupList = await this.groupService.allGroupsBy("creator_id", user.id);
         // Filtre des fields envoyés
             const creatorGroups = groupList.map((group: any) => {
-                const { id, name} = group
+                const { id, name} = group;
                 if (group.limited_at !== null) {
                     const date = new Date(group.limited_at)
                     const formattedDate = date.toISOString().split("T")[0]
                     return group = { id: id, name: name, limited_at: formattedDate}
-                }
-                return group = { id: id, name: name, limited_at: null}
-            })
+                };
+                return group = { id: id, name: name, limited_at: null};
+            });
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group how user is the creator`, creatorGroups)
+            return this.responseMaker.responseSuccess(201, `Group how user is the creator`, creatorGroups);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            return this.responseMaker.responseError(500, error.message);
         }
     }
 
@@ -106,33 +118,33 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // 
-            const group = await this.groupService.oneGroup(+request.params.id)
+            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
                 throw new Error("Group not found")
-            }
-            const getMemberList = await this.groupService.allGroupMember(group.id)
+            };
+            const getMemberList = await this.groupService.allGroupMember(group.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
-            })
+            });
 
-            let dataList = []
-            const shares = await this.shareService.allByDatas("target_id", group.id)
+            let dataList = [];
+            const shares = await this.shareService.allByDatas("target_id", group.id);
             if ( shares.length === 0 ){
                 dataList = null
                 return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
-            }
-            const datas = shares.filter((share) => share.target === "group")[0].datas
+            };
+            const datas = shares.filter((share) => share.target === "group")[0].datas;
             datas.map((data) => {
                 dataList.push({id: data.id, name: data.name, value: data.value})
-            })
+            });
 
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
+            return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList });
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 
@@ -142,45 +154,45 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // 
-            const foundGroup = await this.groupService.oneGroup(+request.params.id)
+            const foundGroup = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!foundGroup) {
                 throw new Error("Group not found")
             } else if (foundGroup.creator_id !== +request.user.user_id) {
                 throw new Error("You are not Creator")
-            }
-            const getMemberList = await this.groupService.allGroupMember(foundGroup.id)
+            };
+            const getMemberList = await this.groupService.allGroupMember(foundGroup.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id: id, nickname: nickname }
-            })
+            });
         // Récupération de la liste de contact du user
-            const contactList = []
-            const getContactList = await this.contactService.allByUserId(+request.user.user_id)
+            const contactList = [];
+            const getContactList = await this.contactService.allByUserId(+request.user.user_id);
             await Promise.all(
                 getContactList.map(async (contact: Contact) => {
                     if (contact.user1_id === +request.user.user_id) {
                         const findContact = await this.userService.findOne("id", contact.user2_id, false)
                         const nickname = findContact.nickname
                         contactList.push({id: findContact.id, nickname: nickname})
-                    }
+                    };
                     if (contact.user2_id === +request.user.user_id) {
                         const findContact = await this.userService.findOne("id", contact.user1_id, false)
                         const nickname = findContact.nickname
                         contactList.push({id: findContact.id, nickname: nickname})
-                    }
+                    };
                 })
-            )
+            );
         // Retrait des membres de la liste de contact
         const filteredContactList = contactList.filter((contact) => {
             // Vérifie si l'ID de l'élément ne correspond à aucun ID présent dans la liste des membres
             return !memberList.some((member) => member.id === contact.id);
-        })
+        });
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { memberList: memberList, contactList: filteredContactList })
+            return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { memberList: memberList, contactList: filteredContactList });
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 
@@ -190,17 +202,17 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // 
-            const group = await this.groupService.oneGroup(+request.params.id)
+            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
                 throw new Error("Group not found")
-            }
-            const removedGroup =  await this.groupService.removeGroup(group.id)
+            };
+            const removedGroup =  await this.groupService.removeGroup(group.id);
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group ${group.name} was deleted`, removedGroup)
+            return this.responseMaker.responseSuccess(201, `Group ${group.name} was deleted`, removedGroup);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 
@@ -210,18 +222,18 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.params.id || !request.body) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // Vérification de l'existence du groupe
-            const group = await this.groupService.oneGroup(+request.params.id)
+            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
                 throw new Error("Group not found")
-            }
+            };
         // Update des informations du groupe
-            const updatedGroup = await this.groupService.updateGroup(group, request.body)
+            const updatedGroup = await this.groupService.updateGroup(group, request.body);
         // Réponse
-            return this.responseMaker.responseSuccess(201, `Group was saved`, updatedGroup)
+            return this.responseMaker.responseSuccess(201, `Group was saved`, updatedGroup);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 
@@ -231,21 +243,21 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // 
-            const user = await this.userService.findOne("id", +request.body.user_id, true)
+            const user = await this.userService.findOne("id", +request.body.user_id, true);
             if (!user) {
                 throw new Error("User not found")
-            }
-            const group = await this.groupService.oneGroup(+request.params.id)
+            };
+            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
                 throw new Error("Group not found")
-            }
-            const addedUser = await this.groupService.addUserToGroup(user, group)
+            };
+            const addedUser = await this.groupService.addUserToGroup(user, group);
         // Réponse
-            return this.responseMaker.responseSuccess(201, `User ${user.nickname} as been add to the group ${group.name}`, addedUser)
+            return this.responseMaker.responseSuccess(201, `User ${user.nickname} as been add to the group ${group.name}`, addedUser);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 
@@ -255,21 +267,21 @@ export class GroupController {
         // Vérification de la présence des champs requis
             if (!request.body) {
                 throw new Error("Received informations not complet")
-            }
+            };
         // 
-            const user = await this.userService.findOne("id", +request.body.user_id, true)
+            const user = await this.userService.findOne("id", +request.body.user_id, true);
             if (!user) {
                 throw new Error("User not found")
-            }
-            const group = await this.groupService.oneGroup(+request.params.id)
+            };
+            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
                 throw new Error("Group not found")
-            }
-            const deletedUser = await this.groupService.deleteUserToGroup(user, group.id)
+            };
+            const deletedUser = await this.groupService.deleteUserToGroup(user, group.id);
         // Réponse
-            return this.responseMaker.responseSuccess(201, `User has been removed from group`, deletedUser)
+            return this.responseMaker.responseSuccess(201, `User has been removed from group`, deletedUser);
         } catch (error) {
-            response.status(500).json({ error: error.message })
+            response.status(500).json({ error: error.message });
         }
     }
 }

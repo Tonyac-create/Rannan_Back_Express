@@ -51,7 +51,7 @@ export class DataController {
             } else { // si data existe
                 // target = group
                 if (target === "group") {
-                    const targetGroup = await this.groupService.oneGroup(target_id);
+                    const targetGroup = await this.groupService.allGroupsBy("id", target_id)[0];
                     if (!targetGroup) {
                         throw new Error("Group don't exist")
                     } else {
