@@ -21,43 +21,6 @@ export class ContactController{
             const userId = parseInt(request.user.user_id);
             //Récupérer sa liste de contacts quand il est user1
             const listUserOne = await this.contactService.allByUserRole("user1_id", userId);
-            let allUserOne = [];
-            await Promise.all(listUserOne.map(async(element) => {
-                const targetUser = await this.userService.findOne("id", element.user2_id, false);
-                const user2 = this.contactService.user2Formated(targetUser);
-                const contact = {
-                    id: element.id,
-                    user1_id: element.user1_id,
-                    user2 : user2
-                }    
-                allUserOne.push(contact);
-            }))
-
-            //Récupérer sa liste de contacts quand il est user2
-            const listUserTwo = await this.contactService.allByUserRole("user2_id", userId);
-            let allUserTwo = [];
-            await Promise.all(listUserTwo.map(async(element) => {
-                const targetUser = await this.userService.findOne("id", element.user1_id, false);
-                const user1 = this.contactService.user1Formated(targetUser);
-                const contact = {
-                    id: element.id,
-                    user1: user1,
-                    user2_id: element.user2_id
-                }    
-                allUserTwo.push(contact);
-            }))
-            // const contacts = [...allUserOne, ...allUserTwo]
-            const contacts = {allUserOne, allUserTwo}
-            // if(contacts === null || contacts.length === 0){
-            if(contacts === null){
-                throw new Error("Contacts not found")
-            }
-            return this.responseMaker.responseSuccess(201, "Contacts found for the user", contacts);
-
- /*            // Récupérer le userId grace au token
-            const userId = parseInt(request.user.user_id);
-            //Récupérer sa liste de contacts quand il est user1
-            const listUserOne = await this.contactService.allByUserRole("user1_id", userId);
             //Vérifier qu'elle n'est pas vide
             let allUserOneEmpty = false;
             if(listUserOne.length === 0 || !listUserOne || listUserOne === null){
@@ -66,6 +29,7 @@ export class ContactController{
 
             //Récupérer sa liste de contacts quand il est user2
             const listUserTwo = await this.contactService.allByUserRole("user2_id", userId);
+            console.log("🚀 ~ file: ContactController.ts:69 ~ all ~ listUserTwo:", listUserTwo)
             //Vérifier qu'elle n'est pas vide
             let allUserTwoEmpty = false;
             if(listUserTwo.length === 0 || !listUserTwo || listUserTwo === null){
@@ -84,7 +48,7 @@ export class ContactController{
             }
             let allUserTwo=[];
             if(allUserTwoEmpty === false){
-                const allUserTwo = await this.contactService.returnContactList(listUserTwo, "user2_id", "user1_id", "user1");
+                allUserTwo = await this.contactService.returnContactList(listUserTwo, "user2_id", "user1_id", "user1");
             }
 
             //Renvoyer les contacts
@@ -92,7 +56,7 @@ export class ContactController{
             if(!contacts || contacts === null || contacts.allUserOne.length === 0 && contacts.allUserTwo.length === 0){
                 throw new Error("Error while fetching contacts.")
             }
-            return this.responseMaker.responseSuccess(200, "Contacts found for the user", contacts); */
+            return this.responseMaker.responseSuccess(200, "Contacts found for the user", contacts);
         }
         catch (error){
             console.log("🚀 ~ file: ContactController.ts:29 ~ ContactController ~ all ~ error:", error);

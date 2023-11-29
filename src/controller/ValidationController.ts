@@ -17,50 +17,45 @@ export class ValidationController{
 //Récupérer toutes les demandes de l'user reçues et envoyées
     async all(request: RequestWithUser, response: Response, next: NextFunction): Promise<ResponseInterface>{
         try{
-            //Récupérer les requÊtes envoyées
-            const sentValidations = await this.validationService.allByUserId(+request.user.user_id);
-            let sentIsEmpty;
-            if(!sentValidations || sentValidations.length === 0){
-                sentIsEmpty = true
+            // Récupérer le userId grace au token
+            const userId = parseInt(request.user.user_id);
+            //Récupérer la liste de validations envoyées
+            const sentValidations = await this.validationService.allByUserRole("user_id", userId);
+            //Vérifier qu'elle n'est pas vide
+            let sentIsEmpty = false;
+            if(sentValidations.length === 0 || !sentValidations || sentValidations === null){
+                sentIsEmpty = true;
             }
-            let allSent = [];
-            await Promise.all(sentValidations.map(async(element) => {
-                const targetUser = await this.userService.findOne("id", element.contact_id, false);
-                const contact = this.validationService.contactFormated(targetUser);
-                const validation = {
-                    id: element.id,
-                    user_id: element.user_id,
-                    contact : contact
-                }    
-                allSent.push(validation);
-            }))
 
-            //Récupérer les requÊtes reçues
-            const recievedValidations = await this.validationService.allByContactId(+request.user.user_id);
-            let recievedIsEmpty;
-            if(!recievedValidations || recievedValidations.length === 0){
-                 recievedIsEmpty = true
+            //Récupérer la liste de validations reçues
+            const recievedValidations = await this.validationService.allByUserRole("contact_id", userId)
+            //Verifier qu'elle n'est pas vide
+            let recievedIsEmpty = false;
+            if(recievedValidations.length === 0 || !recievedValidations || recievedValidations === null){
+                recievedIsEmpty = true;
+            }
+
+            //Tester qu'on a récupéré des contacts
+            if(sentIsEmpty === true && recievedIsEmpty === true){
+                throw new Error("Validations not found");
+            }
+
+            //Formater les validations
+            let allSent = [];
+            if(sentIsEmpty === false){
+                allSent = await this.validationService.returnValidationtList(sentValidations, "user_id", "contact_id", "contact");
             }
             let allRecieved = [];
-            await Promise.all(recievedValidations.map(async(element) => {
-                const targetUser = await this.userService.findOne("id", element.user_id, false);
-                const user = this.validationService.userFormated(targetUser);
-                const validation = {
-                    id: element.id,
-                    user: user,
-                    contact_id : element.contact_id
-                }    
-                allRecieved.push(validation);
-            }))
-
-            //Mettre les 2 objets dans un tableau
-            // let validations = [allSent, allRecieved];
-            let validations = {allSent, allRecieved};
-
-            if(!validations || validations === null || sentIsEmpty === true && recievedIsEmpty === true){
-                throw new Error("no validations found")
+            if(recievedIsEmpty === false){
+                allRecieved = await this.validationService.returnValidationtList(recievedValidations, "contact_id", "user_id", "user");
             }
-            return this.responseMaker.responseSuccess(201, "Validations found", validations);
+
+            //Renvoyer les validations
+            const validations = {allSent, allRecieved};
+            if(!validations || validations === null || validations.allSent.length === 0 && validations.allRecieved.length === 0){
+                throw new Error("Error while fetching validations.")
+            }
+            return this.responseMaker.responseSuccess(200, "Validations found", validations);
         }
         catch(error){
             console.log("🚀 ~ file: ValidationController.ts:31 ~ ValidationController ~ all ~ error:", error);
@@ -80,22 +75,14 @@ export class ValidationController{
             }
 
             //Verifier qu'il n'y a pas un contact entre les users
-            const testContact1 = await this.contactService.oneByUsers(userId, contactId);
-            if(testContact1){
+            const testContact = await this.contactService.oneByUsers(userId, contactId);
+            if(testContact){
                 throw new Error("Users are in contact");
             }
-            const testContact2 = await this.contactService.oneByUsers(contactId, userId);
-            if(testContact2){
-                throw new Error("Users are in contact");
-            }
-
+            
             //Verifier qu'il n'y a pas une demande entre ces users
-            const testValidation1 = await this.validationService.oneByUsers(userId, contactId);
-            if(testValidation1){
-                throw new Error("A contact request exists already")
-            }
-            const testValidation2 = await this.validationService.oneByUsers(contactId, userId);
-            if(testValidation2){
+            const testValidation = await this.validationService.oneByUsers(userId, contactId);
+            if(testValidation){
                 throw new Error("A contact request exists already")
             }
 
