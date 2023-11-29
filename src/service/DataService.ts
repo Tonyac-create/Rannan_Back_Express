@@ -1,7 +1,5 @@
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
-import { UserService } from "./UserService";
-import { Share } from "../entity/Share";
 
 export class DataService {
 
@@ -51,7 +49,10 @@ export class DataService {
             newData.value = value
             newData.user_id = user_id
 
-            return this.dataRepository.save(newData)
+            const savedData = await this.dataRepository.save(newData);
+    
+            return savedData
+            // return this.dataRepository.save(newData)
         }
         catch (error) {
             throw new Error(error)

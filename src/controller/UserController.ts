@@ -215,11 +215,6 @@ export class UserController {
                 relation_type = "contact";
                 relation_id = testContact.id
             };
-            const testContact2 = await this.contactService.oneByUsers(otherUserId, currentUserId); //En attente d'ajustement service
-            if(testContact2){
-                relation_type = "contact";
-                relation_id = testContact2.id
-            };
 
             //Vérifier si les users ont une validation
             const testValidation = await this.validationService.oneByUsers(currentUserId, otherUserId);
@@ -227,14 +222,9 @@ export class UserController {
                 relation_type = "validation";
                 relation_id = testValidation.id;
             }
-            const testValidation2 = await this.validationService.oneByUsers(currentUserId, otherUserId); //En attente d'ajustement service
-            if(testValidation2){
-                relation_type = "validation";
-                relation_id = testValidation2.id;
-            }
 
             //dans le cas où il n'y aie rien
-            if(!testContact && !testValidation && !testContact2 && !testValidation2){
+            if(!testContact && !testValidation ){
                 throw new Error("No relations found")
             }
 
