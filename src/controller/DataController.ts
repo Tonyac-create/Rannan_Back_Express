@@ -6,6 +6,8 @@ import { ShareService } from "../service/ShareService"
 import { UserService } from "../service/UserService"
 import { GroupService } from "../service/GroupService"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
+import { NatsConnection } from "nats"
+import { publishMessage } from "../../nats-config"
 
 export class DataController {
 
@@ -110,11 +112,13 @@ export class DataController {
         }
     }
 
+    // , natsConnection: NatsConnection
     // Création d'une data par userid
-    async save(request: RequestWithUser, response: Response, next: NextFunction) {
+    async save(request: RequestWithUser, response: Response, next: NextFunction, natsConnection: NatsConnection) {
+        
         const { type, name, value } = request.body
         try {
-
+        
             // Récupération du token
             const user_id = request.user
 
@@ -122,7 +126,11 @@ export class DataController {
                 throw new Error("user inexistant")
             }
 
+            await publishMessage('createData', { type, name, value, user_id })
+            
             const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id) //, user_id
+
+            
             return this.responseMaker.responseSuccess(201, "data created", data)
         }
         catch (error) {

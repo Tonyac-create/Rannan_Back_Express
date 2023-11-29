@@ -19,6 +19,7 @@
       "express": "^4.17.2",
       "jsonwebtoken": "^9.0.2",
       "mysql": "^2.18.1",
+      "nats": "^2.18.0",
       "reflect-metadata": "^0.1.13",
       "typeorm": "0.3.17"
    },
