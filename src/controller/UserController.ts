@@ -4,6 +4,8 @@ import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ContactService } from "../service/ContactService"
 import { ValidationService } from "../service/ValidationService"
+import { publishMessage, requestMessage } from "../utils/nats-config"
+import jwt from "jsonwebtoken"
 const bcrypt = require('bcrypt')
 
 export class UserController {
@@ -59,17 +61,32 @@ export class UserController {
             if (!request.body.email) {
                 throw new Error("Received informations not complet")
             };
+            const email = request.body.email
         // Vérification de l'email
-            const emailExist = await this.userService.findOne("email", request.body.email, false);
+            const emailExist = await this.userService.findOne("email", email, false);
             if (!emailExist) {
                 throw new Error("Email not found")
             };
+        // Récupération et préparation des informations pour le MS mailing
+        // Récupération du nickname du user
+            const nickname = emailExist.nickname
+        // Création d'un token unique pour l'url
+            let date = new Date()
+            const token = jwt.sign( 
+                {email, date},
+                process.env.SECRET_KEY_MAIL,
+                {
+                    expiresIn: "48h",
+                    algorithm: "HS256",
+                    encoding: "base64url"
+                }
+            );
 
-        //! A AJOUTER => MS mailing
-
+        // envoi des datas au MS mailing
+            await publishMessage("sendMail", {email: email, nickname: nickname, token: token})
 
         // Réponse
-            return this.responseMaker.responseSuccess(200, "Validation mail send", request.body.email);
+            return this.responseMaker.responseSuccess(200, "Validation mail send", email);
         } catch (error) {
             return this.responseMaker.responseError(500, error.message);
         }
