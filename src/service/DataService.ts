@@ -1,3 +1,5 @@
+import { request } from "http";
+import { publishMessage, requestMessage } from "../../nats-config";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 
@@ -19,9 +21,12 @@ export class DataService {
     }
 
     // Récupération d'une data par son id
-    async getOneById(id: number) {
+    async getOneById(id: string) {
         try {
-            return this.dataRepository.findOne({ where: { id } })
+            await requestMessage('getOneData', id)
+
+            const res = await this.dataRepository.find({ where: { id } })
+            return res
         }
         catch (error) {
             throw new Error(error)
@@ -32,6 +37,7 @@ export class DataService {
     async getDatasInUser(user_id: number) {
         try {
             const datas = await this.dataRepository.find({ where: { user_id } })
+            console.log("🚀 ~ file: DataService.ts:43 ~ DataService ~ getDatasInUser ~ datas:", datas)
             return datas
         }
         catch (error) {
@@ -40,8 +46,9 @@ export class DataService {
     }
 
     // Création d'une data pour un utilisateur
-    async createDataOneUser( type: any, name: string, value: string, user_id: number ) {
+    async createDataOneUser(type: any, name: string, value: string, user_id: number) {
         try {
+            console.log("hello");
             
             const newData = new Data()
             newData.type = type
@@ -50,9 +57,8 @@ export class DataService {
             newData.user_id = user_id
 
             const savedData = await this.dataRepository.save(newData);
-    
+
             return savedData
-            // return this.dataRepository.save(newData)
         }
         catch (error) {
             throw new Error(error)
@@ -60,9 +66,9 @@ export class DataService {
     }
 
     // Suppression d'une data
-    async remove(id: number) {
+    async remove(id: string) {
         try {
-            await this.dataRepository.delete(id)
+            return await this.dataRepository.delete(id)
         }
         catch (error) {
             throw new Error(error)
@@ -70,7 +76,7 @@ export class DataService {
     }
 
     // Mise à jour d'une data
-    async update(id: number, body: any) {
+    async update(id: string, body: any) {
         try {
             const updateData = await this.dataRepository.findOne(
                 {

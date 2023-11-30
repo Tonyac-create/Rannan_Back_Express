@@ -13,7 +13,7 @@ export enum DataFormat {
 @Entity()
 export class Data {
     @PrimaryGeneratedColumn()
-    id: number
+    id: string
 
     @Column({
         type: "enum",

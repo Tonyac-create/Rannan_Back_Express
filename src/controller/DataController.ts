@@ -7,7 +7,7 @@ import { UserService } from "../service/UserService"
 import { GroupService } from "../service/GroupService"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { NatsConnection } from "nats"
-import { publishMessage } from "../../nats-config"
+import { publishMessage, requestMessage } from "../../nats-config"
 
 export class DataController {
 
@@ -86,11 +86,13 @@ export class DataController {
 
             const id = +request.user.user_id
 
-            const datas = await this.dataService.getDatasInUser(id)
-            if (!datas) {
-                throw new Error("No datas")
-            }
-            return this.responseMaker.responseSuccess(200, "datas found", datas)
+            await requestMessage('getAllDatasOneUser', id)
+
+            // const datas = await this.dataService.getDatasInUser(id)
+            // if (!datas) {
+            //     throw new Error("No datas")
+            // }
+            // return this.responseMaker.responseSuccess(200, "datas found", datas)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -101,12 +103,17 @@ export class DataController {
     async getOne(request: Request, response: Response, next: NextFunction) {
         // Récupération via l'id de la data
         try {
-            const id = +request.params.id
-            const data = await this.dataService.getOneById(id)
-            if (!data) {
-                throw new Error("data not fund")
-            }
-            return this.responseMaker.responseSuccess(200, "data found", data)
+
+            const id = request.params.id
+
+            await requestMessage('getOneData', id)
+
+            // const data = await this.dataService.getOneById(id)
+            // console.log("🚀 ~ file: DataController.ts:107 ~ DataController ~ getOne ~ data:", data)
+            // if (!data || data.length === 0) {
+            //     throw new Error("data not fund")
+            // }
+            // return this.responseMaker.responseSuccess(200, "data found", data)
         } catch (error) {
             return this.responseMaker.responseError(404, error.message)
         }
@@ -127,11 +134,9 @@ export class DataController {
             }
 
             await publishMessage('createData', { type, name, value, user_id })
+            // const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id)
             
-            const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id) //, user_id
-
-            
-            return this.responseMaker.responseSuccess(201, "data created", data)
+            // return this.responseMaker.responseSuccess(201, "data created", data)
         }
         catch (error) {
             return this.responseMaker.responseError(401, error.message)
@@ -141,13 +146,13 @@ export class DataController {
     // Modification d'une data avec son id
     async update(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = +request.params.id
+            const id = request.params.id
             const data = await this.dataService.getOneById(id)
             if (!data) {
                 throw new Error("data not found")
             }
-            const dataUpdated = await this.dataService.update(data.id, request.body)
-            return this.responseMaker.responseSuccess(201, "data update", dataUpdated)
+            // const dataUpdated = await this.dataService.update(data.id, request.body)
+            // return this.responseMaker.responseSuccess(201, "data update", dataUpdated)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -158,15 +163,15 @@ export class DataController {
     // Suppression d'une data
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = +request.params.id
-            let dataToRemove = await this.dataService.getOneById(id)
+            const id = request.params.id
 
-            if (!dataToRemove) {
-                throw new Error("data not exist")
-            }
+            await requestMessage('removeData', id)
 
-            const dataDelete = await this.dataService.remove(id)
-            return this.responseMaker.responseSuccess(200, "data delete", dataDelete)
+            // const dataDelete = await this.dataService.remove(id)
+            // if (dataDelete === undefined) {
+            //     throw new Error("data is undefined")
+            // }
+            // return this.responseMaker.responseSuccess(200, "data delete", dataDelete)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
