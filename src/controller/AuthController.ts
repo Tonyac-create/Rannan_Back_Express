@@ -22,10 +22,11 @@ export class AuthController {
       const user = await this.userService.saveUser(request.body)
 
       // Créer les Token & refreshToken et les enregistrements
+      response.status(201)
       return await this.authService.tokenFunctions(user.id, user.email)
 
     } catch (error) {
-      response.status(500).json({error :error.message, date : new Date()})
+      response.status(500).json({ error: error.message, date: new Date() })
     }
   }
 
@@ -34,7 +35,7 @@ export class AuthController {
       // Vérifie si l'email enregistré correspond a un email enregistré
       const user = await this.userService.findOne("email", request.body.email, false)
       if (!user) {
-        throw new Error("User not find")
+        throw new Error("User not found")
       }
       //Vérifie si le mot de passe renseigné correspond a celui enregistré
       const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
@@ -46,7 +47,7 @@ export class AuthController {
       return await this.authService.tokenFunctions(user.id, user.email)
 
     } catch (error) {
-      response.status(500).json({error :error.message, date : new Date()})
+      response.status(500).json({ error: error.message, date: new Date() })
     }
   }
 
@@ -58,10 +59,11 @@ export class AuthController {
       }
       user.refreshToken = null
 
+      //TODO: mettre à jour l'object user après modification
       return "User Disconnect"
 
     } catch (error) {
-      response.status(500).json({error :error.message, date : new Date()})
+      response.status(500).json({ error: error.message, date: new Date() })
     }
   }
 
@@ -71,17 +73,17 @@ export class AuthController {
       const user = await this.userService.findOne("email", request.user.email, false)
       if (!user) {
         throw new Error("user not found")
-      } else 
-      // Vérifie si le refreshToken du user est le meme que celui en db
-      if (user.refreshToken !== request.refreshToken) {
-        throw new Error("refresh token not admit")
-      }
+      } else
+        // Vérifie si le refreshToken du user est le meme que celui en db
+        if (user.refreshToken !== request.refreshToken) {
+          throw new Error("refresh token not admit")
+        }
 
       // Recréer les Token & refreshToken
       return await this.authService.tokenFunctions(user.id, user.email)
 
     } catch (error) {
-      response.status(500).json({error :error.message, date : new Date()})
+      response.status(500).json({ error: error.message, date: new Date() })
     }
   }
 
