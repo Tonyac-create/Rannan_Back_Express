@@ -1,4 +1,4 @@
-import { connect , NatsConnection, Payload } from 'nats';
+import { connect , JSONCodec, NatsConnection } from 'nats';
 
 let natsConnection: NatsConnection | null = null;
 
@@ -40,6 +40,30 @@ export async function publishMessage(subject: string, data: any): Promise<void> 
         console.error('Erreur lors de la publication du message NATS :', error);
         return this.responseMaker.responseError(500, error.message);
     } 
+}
+
+export async function requestMessage(subject: string, data: any): Promise<any> {
+    try {
+        const nats = await createNatsConnection(); // Assurez-vous que createNatsConnection renvoie la connexion correcte
+    // create a codec
+        const jc = JSONCodec();
+        let result : any
+    // Publiez le message sur le sujet spécifié
+        let response = await nats
+        .request(subject,jc.encode({id:"123465", data}), { timeout: 5000 })
+        .then((m) => {
+            result = jc.decode(m.data);
+            return result;
+        })
+        .catch((err) => {
+            console.log("err", err)
+        });
+    // return response
+        return response.response
+    } catch (error) {
+        console.error('Erreur lors de la publication du message NATS :', error);
+        return this.responseMaker.responseError(500, error.message);
+    }
 }
 
     // Réception du message(en attente de Baptiste)
