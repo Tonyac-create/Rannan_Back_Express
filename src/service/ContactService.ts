@@ -50,33 +50,18 @@ export class ContactService{
     
     //Formater l'objet user dans contact
      returnContactList(list: any, currentUserId: string, otherUserId: string, otherUserRole: string){   //currentUserId && otherUserId = "user1_id" ou "user2_id" 
-        let returnList=[];
-         list.map(async(element) => {
+        const returnList = Promise.all(list.map(async(element) => {
             const targetUser = await this.userService.findOne("id", element[otherUserId], false);
             const otherUser = {[otherUserId]: targetUser.id, nickname: targetUser.nickname}
             const contact = {
                 id: element.id,
-                [currentUserId]: element[currentUserId],
+                // [currentUserId]: element[currentUserId], //à voir
                 [otherUserRole] : otherUser
             }    
-            returnList.push(contact);
-            console.log("🚀 ~ file: ContactService.ts:63 ~ ContactService ~ returnContactList ~ returnList:", returnList)
-
-        })
-        console.log("🚀 ~ file: ContactService.ts:66 ~ ContactService ~ returnContactList ~ returnList:", returnList);
+            // returnList.push(contact);
+            return contact      
+        }))
         return returnList;
-    }
-
-    user1Formated(user: any){
-        const targetUser1 = user;
-        const user1 = {user1_id: targetUser1.id, nickname: targetUser1.nickname};
-        return user1;
-    }
-
-    user2Formated(user: any){
-        const targetUser2 = user;
-        const user2 = {user2_id: targetUser2.id, nickname: targetUser2.nickname};
-        return user2;
     }
 
     //récupérer un contact par id contact
@@ -95,14 +80,14 @@ export class ContactService{
     async oneByUsers(user1Id: number, user2Id: number): Promise<Contact> { // à verifier que user1 ne peut pas être user2  
         try{
             return this.ContactRepository.findOne({
-                where:{
+                where:[{
                     user1_id :user1Id,
                     user2_id: user2Id
-                }
-                /* where: {
+                },
+                {
                     user1_id :user2Id,
                     user2_id: user1Id
-                } */
+                }]
             });
         }
         catch(error){

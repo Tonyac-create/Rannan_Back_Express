@@ -1,7 +1,7 @@
+
 import express from "express"
 import * as bodyParser from "body-parser"
-import { Request, Response } from "express"
-import { AppDataSource } from "./data-source"
+import { Request, Response, } from "express"
 import { Routes } from "./routes"
 import dotenv from "dotenv"
 dotenv.config()
@@ -9,8 +9,9 @@ import { jwtMiddleware } from "./middleware/jwtMiddleware"
 import { jwtRefreshMiddleware } from "./middleware/jwtRefreshMiddleware"
 import cors from "cors"
 
-AppDataSource.initialize().then(async () => {
-    // create express app
+
+export async function startServer() {
+
     const app = express()
     app.use(bodyParser.json())
 
@@ -21,8 +22,9 @@ AppDataSource.initialize().then(async () => {
     }))
 
     // Intercept for Token check
+    app.use("/api/auth/refreshToken", jwtRefreshMiddleware)
     app.use("/api", jwtMiddleware)
-    app.use("/auth/refreshToken", jwtRefreshMiddleware)
+
 
     // register express routes from defined application routes
     Routes.forEach(route => {
@@ -37,8 +39,8 @@ AppDataSource.initialize().then(async () => {
         })
     })
 
-    // start express server
-    app.listen(process.env.PORT)
-    console.log(`Express server has started on http://localhost:${process.env.PORT}.`)
+    return app;
 
-}).catch(error => console.log(error))
+}
+
+
