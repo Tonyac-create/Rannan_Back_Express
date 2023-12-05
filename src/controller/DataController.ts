@@ -7,7 +7,7 @@ import { UserService } from "../service/UserService"
 import { GroupService } from "../service/GroupService"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { NatsConnection } from "nats"
-import { publishMessage, requestMessage } from "../../nats-config"
+import { publishMessage, requestMessage } from "../utils/nats-config"
 
 export class DataController {
 

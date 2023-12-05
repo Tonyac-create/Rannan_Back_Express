@@ -1,5 +1,5 @@
 import { request } from "http";
-import { publishMessage, requestMessage } from "../../nats-config";
+import { publishMessage, requestMessage } from "../utils/nats-config";
 import { AppDataSource } from "../data-source"
 import { Data } from "../entity/Data"
 

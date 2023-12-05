@@ -35,7 +35,6 @@ export async function publishMessage(subject: string, data: any): Promise<void> 
         const nats = await createNatsConnection(); // Assurez-vous que createNatsConnection renvoie la connexion correcte
     // Publiez le message sur le sujet spécifié
         nats.publish(subject, JSON.stringify(data));
-        console.log(`Message publié sur le sujet ${subject} :`, data);
     } catch (error) {
         console.error('Erreur lors de la publication du message NATS :', error);
         return this.responseMaker.responseError(500, error.message);

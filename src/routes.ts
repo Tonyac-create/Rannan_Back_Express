@@ -17,6 +17,11 @@ export const Routes = [
         action: "register"
     },{
         method: "post",
+        route: "/user/return/validation",
+        controller: AuthController,
+        action: "returnValidation"
+    },{
+        method: "post",
         route: "/auth/login",
         controller: AuthController,
         action: "login"
@@ -48,6 +53,11 @@ export const Routes = [
         route: "/user/reset",
         controller: UserController,
         action: "resetPassword"
+    },{
+        method: "post",
+        route: "/user/return/reset",
+        controller: UserController,
+        action: "returnResetPassword"
     },{
         method: "put",
         route: "/api/user/account",

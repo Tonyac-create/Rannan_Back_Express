@@ -2,29 +2,51 @@ import { NextFunction, Request, Response } from "express"
 import { UserService } from "../service/UserService";
 import { AuthService } from "../service/AuthService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
+import { ResponseMaker } from "../utils/ResponseMaker"
+import { publishMessage } from "../utils/nats-config";
 const bcrypt = require('bcrypt')
 
 export class AuthController {
 
   private userService = new UserService()
   private authService = new AuthService()
+  private responseMaker = new ResponseMaker();
 
   async register(request: Request, response: Response, next: NextFunction): Promise<{}> {
     try {
-      // Vérifie si l'email envoyé correspond a un email enregistré
-      const userAlreadyExist = await this.userService.findOne("email", request.body.email, false)
+    // Vérifie si l'email envoyé correspond a un email enregistré
+      const userAlreadyExist = await this.userService.findOne("email", request.body.email, false);
       if (userAlreadyExist) {
         throw new Error("Email already used")
+      };
+    // Hash  le mot de passe
+      request.body.password = await bcrypt.hash(request.body.password, 10);
+    // Créer le user dans la db
+      const user = await this.userService.saveUser(request.body);
+    // Créer un token
+      const resToken = await this.authService.createToken(user.id, user.email)
+    // Création du token de validation
+      const validationToken = resToken.substr(0,10)
+    // Envoi du mail de validation
+      await publishMessage("validationMail", {email: user.email, nickname: user.nickname, token: validationToken})
+    // Réponse
+      return this.responseMaker.responseSuccess(201, 'Account created', validationToken);
+
+    } catch (error) {
+      response.status(500).json({ error: error.message, date: new Date() })
+    }
+  }
+
+  async returnValidation(request: Request, response: Response, next: NextFunction) {
+    try {
+      console.log("returnValidation body :", request.body)
+      const user = await this.userService.findOne("email", request.body.email, false)
+      if (!user ) {
+        throw new Error("User not found")
       }
-      // Hash  le mot de passe
-      request.body.password = await bcrypt.hash(request.body.password, 10)
-      // Créer le user dans la db
-      const user = await this.userService.saveUser(request.body)
-
-      // Créer les Token & refreshToken et les enregistrements
-      response.status(201)
-      return await this.authService.tokenFunctions(user.id, user.email)
-
+      user.validation = true
+      await this.userService.update(user.id, user)
+      return this.responseMaker.responseSuccess(201, 'Account validated');
     } catch (error) {
       response.status(500).json({ error: error.message, date: new Date() })
     }
