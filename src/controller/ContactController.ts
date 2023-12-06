@@ -15,7 +15,6 @@ export class ContactController{
     private responseMaker = new ResponseMaker();
 
 // Récupérer la liste de contacts d'un utilisateur 
-//! Si le USER est nouveau, il n'aura pas de contact. Toute la partie ou le code ne trouve pas de user ne doit pas bloquer le processus.
     async all(request: RequestWithUser, response: Response, next: NextFunction){ //: Promise<ResponseInterface>
         try{
             // Récupérer le userId grace au token
@@ -24,22 +23,22 @@ export class ContactController{
             const listUserOne = await this.contactService.allByUserRole("user1_id", userId);
             //Vérifier qu'elle n'est pas vide
             let allUserOneEmpty = false;
-            // if(listUserOne.length === 0 || !listUserOne || listUserOne === null){
-            //     allUserOneEmpty = true
-            // }
+            if(listUserOne.length === 0 || !listUserOne || listUserOne === null){
+                allUserOneEmpty = true
+            }
 
             //Récupérer sa liste de contacts quand il est user2
             const listUserTwo = await this.contactService.allByUserRole("user2_id", userId);
             //Vérifier qu'elle n'est pas vide
             let allUserTwoEmpty = false;
-            // if(listUserTwo.length === 0 || !listUserTwo || listUserTwo === null){
-            //     allUserTwoEmpty = true
-            // }
+            if(listUserTwo.length === 0 || !listUserTwo || listUserTwo === null){
+                allUserTwoEmpty = true
+            }
 
             //tester que l'on a  récupéré des contacts
-            // if(allUserTwoEmpty === true && allUserTwoEmpty === true){
-            //     throw new Error("Contacts not found");
-            // }
+            if(allUserTwoEmpty === true && allUserTwoEmpty === true){
+                throw new Error("Contacts not found");
+            }
 
             //Formater les contacts
             let allUserOne=[];
@@ -53,9 +52,9 @@ export class ContactController{
 
             //Renvoyer les contacts
             const contacts = {allUserOne, allUserTwo};
-            // if(!contacts || contacts === null || contacts.allUserOne.length === 0 && contacts.allUserTwo.length === 0){
-            //     throw new Error("Error while fetching contacts.")
-            // }
+            if(!contacts || contacts === null || contacts.allUserOne.length === 0 && contacts.allUserTwo.length === 0){
+                throw new Error("Error while fetching contacts.")
+            }
             return this.responseMaker.responseSuccess(200, "Contacts found for the user", contacts);
         }
         catch (error){
