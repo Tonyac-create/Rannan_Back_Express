@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import { ShareService } from "../service/ShareService";
-import { DataService } from "../service/DataService";
 import { GroupService } from "../service/GroupService";
 import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";

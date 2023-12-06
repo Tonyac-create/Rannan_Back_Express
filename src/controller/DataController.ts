@@ -85,8 +85,9 @@ export class DataController {
         try {
 
             const id = +request.user.user_id
+            throw new Error("MS NOT LINK")
 
-            await requestMessage('getAllDatasOneUser', id)
+            // await requestMessage('getAllDatasOneUser', id)
 
             // const datas = await this.dataService.getDatasInUser(id)
             // if (!datas) {

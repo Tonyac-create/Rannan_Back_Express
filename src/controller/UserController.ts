@@ -4,7 +4,7 @@ import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ContactService } from "../service/ContactService"
 import { ValidationService } from "../service/ValidationService"
-import { publishMessage, requestMessage } from "../utils/nats-config"
+import { publishMessage } from "../utils/nats-config"
 import jwt from "jsonwebtoken"
 const bcrypt = require('bcrypt')
 

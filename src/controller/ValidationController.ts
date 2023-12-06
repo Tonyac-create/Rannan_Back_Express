@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { ValidationService } from "../service/ValidationService";
 import { UserService } from "../service/UserService";
 import { ResponseMaker } from "../utils/ResponseMaker";
@@ -15,6 +15,7 @@ export class ValidationController{
     private responseMaker = new ResponseMaker();
 
 //Récupérer toutes les demandes de l'user reçues et envoyées
+//! Si le USER est nouveau, il n'aura pas de validations. Toute la partie ou le code ne trouve pas de user ne doit pas bloquer le processus.
     async all(request: RequestWithUser, response: Response, next: NextFunction): Promise<ResponseInterface>{
         try{
             // Récupérer le userId grace au token
@@ -23,22 +24,22 @@ export class ValidationController{
             const sentValidations = await this.validationService.allByUserRole("user_id", userId);
             //Vérifier qu'elle n'est pas vide
             let sentIsEmpty = false;
-            if(sentValidations.length === 0 || !sentValidations || sentValidations === null){
-                sentIsEmpty = true;
-            }
+            // if(sentValidations.length === 0 || !sentValidations || sentValidations === null){
+            //     sentIsEmpty = true;
+            // }
 
             //Récupérer la liste de validations reçues
             const recievedValidations = await this.validationService.allByUserRole("contact_id", userId)
             //Verifier qu'elle n'est pas vide
             let recievedIsEmpty = false;
-            if(recievedValidations.length === 0 || !recievedValidations || recievedValidations === null){
-                recievedIsEmpty = true;
-            }
+            // if(recievedValidations.length === 0 || !recievedValidations || recievedValidations === null){
+            //     recievedIsEmpty = true;
+            // }
 
             //Tester qu'on a récupéré des contacts
-            if(sentIsEmpty === true && recievedIsEmpty === true){
-                throw new Error("Validations not found");
-            }
+            // if(sentIsEmpty === true && recievedIsEmpty === true){
+            //     throw new Error("Validations not found");
+            // }
 
             //Formater les validations
             let allSent = [];
@@ -52,9 +53,9 @@ export class ValidationController{
 
             //Renvoyer les validations
             const validations = {allSent, allRecieved};
-            if(!validations || validations === null || validations.allSent.length === 0 && validations.allRecieved.length === 0){
-                throw new Error("Error while fetching validations.")
-            }
+            // if(!validations || validations === null || validations.allSent.length === 0 && validations.allRecieved.length === 0){
+            //     throw new Error("Error while fetching validations.")
+            // }
             return this.responseMaker.responseSuccess(200, "Validations found", validations);
         }
         catch(error){

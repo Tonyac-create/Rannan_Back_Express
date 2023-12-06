@@ -32,6 +32,6 @@ export async function jwtMiddleware(request: Request, response: Response, next: 
     next()
 
   } catch (error) {
-    response.status(500).json({ error: error.message, date: new Date() })
+    response.status(401).json({ error: error.message, date: new Date() })
   }
 }
