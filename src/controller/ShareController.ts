@@ -3,7 +3,7 @@ import { ShareService } from "../service/ShareService";
 import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
-import { publishMessage, requestMessage } from "../../nats-config";
+import { publishMessage, requestMessage } from "../utils/nats-config";
 
 export class ShareController {
 
