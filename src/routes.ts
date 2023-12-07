@@ -125,13 +125,18 @@ export const Routes = [
     },{
         method: "post", // Création d'un partage
         route: "/api/shares",
-        controller: DataController,
+        controller: ShareController,
         action: "createShare"
     },{
         method: "delete", // Supprimer un partage
         route: "/api/share/:id", // :id = share.id
-        controller: DataController,
+        controller: ShareController,
         action: "removeShare"
+    },{
+        method: "delete", // Supprimer un partage
+        route: "/api/datainshare/:id", // :id = share.id
+        controller: ShareController,
+        action: "removeDataInShare"
     },
     {
         method: "get", // Récupérer tous les partages

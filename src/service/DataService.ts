@@ -23,8 +23,6 @@ export class DataService {
     // Récupération d'une data par son id
     async getOneById(id: string) {
         try {
-            await requestMessage('getOneData', id)
-
             const res = await this.dataRepository.find({ where: { id } })
             return res
         }
@@ -34,68 +32,68 @@ export class DataService {
     }
 
     // Récupération de toute les datas d'un user_id
-    async getDatasInUser(user_id: number) {
-        try {
-            const datas = await this.dataRepository.find({ where: { user_id } })
-            console.log("🚀 ~ file: DataService.ts:43 ~ DataService ~ getDatasInUser ~ datas:", datas)
-            return datas
-        }
-        catch (error) {
-            throw new Error(error)
-        }
-    }
+    // async getDatasInUser(user_id: number) {
+    //     try {
+    //         const datas = await this.dataRepository.find({ where: { user_id } })
+    //         console.log("🚀 ~ file: DataService.ts:43 ~ DataService ~ getDatasInUser ~ datas:", datas)
+    //         return datas
+    //     }
+    //     catch (error) {
+    //         throw new Error(error)
+    //     }
+    // }
 
     // Création d'une data pour un utilisateur
-    async createDataOneUser(type: any, name: string, value: string, user_id: number) {
-        try {
-            console.log("hello");
+    // async createDataOneUser(type: any, name: string, value: string, user_id: number) {
+    //     try {
+    //         console.log("hello");
             
-            const newData = new Data()
-            newData.type = type
-            newData.name = name
-            newData.value = value
-            newData.user_id = user_id
+    //         const newData = new Data()
+    //         newData.type = type
+    //         newData.name = name
+    //         newData.value = value
+    //         newData.user_id = user_id
 
-            const savedData = await this.dataRepository.save(newData);
+    //         const savedData = await this.dataRepository.save(newData);
 
-            return savedData
-        }
-        catch (error) {
-            throw new Error(error)
-        }
-    }
+    //         return savedData
+    //     }
+    //     catch (error) {
+    //         throw new Error(error)
+    //     }
+    // }
 
     // Suppression d'une data
-    async remove(id: string) {
-        try {
-            return await this.dataRepository.delete(id)
-        }
-        catch (error) {
-            throw new Error(error)
-        }
-    }
+    // async remove(id: string) {
+    //     try {
+    //         return await this.dataRepository.delete(id)
+    //     }
+    //     catch (error) {
+    //         throw new Error(error)
+    //     }
+    // }
 
     // Mise à jour d'une data
-    async update(id: string, body: any) {
-        try {
-            const updateData = await this.dataRepository.findOne(
-                {
-                    where: {
-                        id: id,
-                    }
-                }
-            )
-            if (!updateData) { return 'data not found' }
+    // async update(id: string, body: any) {
+    //     try {
+    //         const updateData = await this.dataRepository.findOne(
+    //             {
+    //                 where: {
+    //                     id: id,
+    //                 }
+    //             }
+    //         )
+    //         if (!updateData) { return 'data not found' }
 
-            updateData.type = body.type
-            updateData.name = body.name
-            updateData.value = body.value
+    //         updateData.type = body.type
+    //         updateData.name = body.name
+    //         updateData.value = body.value
 
-            return this.dataRepository.save(updateData)
-        }
-        catch (error) {
-            throw new Error(error)
-        }
-    }
+    //         return this.dataRepository.save(updateData)
+    //     }
+    //     catch (error) {
+    //         throw new Error(error)
+    //     }
+    // }
 
 }

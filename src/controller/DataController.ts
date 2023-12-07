@@ -1,83 +1,13 @@
 import { NextFunction, Request, Response } from "express"
-import { DataService } from "../service/DataService"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ResponseMaker } from "../utils/ResponseMaker"
-import { ShareService } from "../service/ShareService"
-import { UserService } from "../service/UserService"
-import { GroupService } from "../service/GroupService"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
-import { NatsConnection } from "nats"
 import { publishMessage, requestMessage } from "../../nats-config"
 
 export class DataController {
 
     // Services
-    private dataService = new DataService()
-    private userService = new UserService()
-    private groupService = new GroupService()
     private responseMaker = new ResponseMaker()
-    private shareService = new ShareService()
-
-    //Supprimer une share
-    async removeShare(request: Request, response: Response, next: NextFunction) {
-        try {
-            const id = +request.params.id
-            let shareToRemove = await this.shareService.getShareById(id)
-
-            if (!shareToRemove) {
-                throw new Error("this share not exist")
-            }
-
-            const removeShare = await this.shareService.remove(id)
-            return this.responseMaker.responseSuccess(200, "share has been removed", removeShare)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
-        }
-    }
-
-    // Création d'une share
-    async createShare(request: RequestWithUser, response: Response, next: NextFunction) {
-        try {
-            const data_id = request.body.data_id
-            const target = request.body.target
-            const target_id = +request.body.target_id
-            const owner_id = request.user
-
-            // Récupération de la data
-            const data = await this.dataService.getOneById(data_id)
-
-            // Si data n'existe pas
-            if (!data) {
-                throw new Error("data not fund")
-            } else { // si data existe
-                // target = group
-                if (target === "group") {
-                    const targetGroup = await this.groupService.allGroupsBy("id", target_id)[0];
-                    if (!targetGroup) {
-                        throw new Error("Group don't exist")
-                    } else {
-                        const share = await this.shareService.create(target, target_id, +owner_id.user_id)
-
-                        return this.responseMaker.responseSuccess(201, "share ok", share)
-                    }
-
-                } else if (target === "user") {
-                    const targetUser = await this.userService.findOne("id", target_id, false);
-                    if (!targetUser) {
-                        throw new Error("User don't exist")
-                    } else {
-                        const share = await this.shareService.create(target, target_id, +owner_id.user_id)
-
-                        return this.responseMaker.responseSuccess(201, "share ok", share)
-                    }
-                }
-            }
-
-        } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
-        }
-    }
 
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
@@ -85,14 +15,7 @@ export class DataController {
         try {
 
             const id = +request.user.user_id
-
-            await requestMessage('getAllDatasOneUser', id)
-
-            // const datas = await this.dataService.getDatasInUser(id)
-            // if (!datas) {
-            //     throw new Error("No datas")
-            // }
-            // return this.responseMaker.responseSuccess(200, "datas found", datas)
+            return await requestMessage('getAllDatasOneUser', id)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -100,43 +23,32 @@ export class DataController {
     }
 
     // Récupération d'une data par son id
-    async getOne(request: Request, response: Response, next: NextFunction) {
+    async getOne(request: Request, response: Response, next: NextFunction)
+    : Promise<ResponseInterface> {
         // Récupération via l'id de la data
         try {
 
             const id = request.params.id
-
-            await requestMessage('getOneData', id)
-
-            // const data = await this.dataService.getOneById(id)
-            // console.log("🚀 ~ file: DataController.ts:107 ~ DataController ~ getOne ~ data:", data)
-            // if (!data || data.length === 0) {
-            //     throw new Error("data not fund")
-            // }
-            // return this.responseMaker.responseSuccess(200, "data found", data)
+            return await requestMessage('getOneData', id)
         } catch (error) {
             return this.responseMaker.responseError(404, error.message)
         }
     }
 
-    // , natsConnection: NatsConnection
     // Création d'une data par userid
-    async save(request: RequestWithUser, response: Response, next: NextFunction, natsConnection: NatsConnection) {
-        
-        const { type, name, value } = request.body
-        try {
-        
-            // Récupération du token
-            const user_id = request.user
+    async save(request: RequestWithUser, response: Response, next: NextFunction) {
 
+        const { type, name, value } = request.body
+        console.log("🚀 ~ file: DataController.ts:50 ~ DataController ~ save ~ request.body:", request.body)
+        try {
+
+            // Récupération du token
+            const user_id = request.user.user_id
             if (!user_id) {
                 throw new Error("user inexistant")
             }
 
-            await publishMessage('createData', { type, name, value, user_id })
-            // const data = await this.dataService.createDataOneUser(type, name, value, +user_id.user_id)
-            
-            // return this.responseMaker.responseSuccess(201, "data created", data)
+            return await publishMessage('createData', { type, name, value, user_id })
         }
         catch (error) {
             return this.responseMaker.responseError(401, error.message)
@@ -146,13 +58,11 @@ export class DataController {
     // Modification d'une data avec son id
     async update(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = request.params.id
-            const data = await this.dataService.getOneById(id)
-            if (!data) {
-                throw new Error("data not found")
-            }
-            // const dataUpdated = await this.dataService.update(data.id, request.body)
-            // return this.responseMaker.responseSuccess(201, "data update", dataUpdated)
+            const _id = request.params.id
+            console.log("🚀 ~ file: DataController.ts:70 ~ DataController ~ update ~ _id:", _id)
+            const { type, name, value } = request.body
+
+            return await publishMessage('updateData', { _id, type, name, value })
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -163,15 +73,9 @@ export class DataController {
     // Suppression d'une data
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
+
             const id = request.params.id
-
-            await requestMessage('removeData', id)
-
-            // const dataDelete = await this.dataService.remove(id)
-            // if (dataDelete === undefined) {
-            //     throw new Error("data is undefined")
-            // }
-            // return this.responseMaker.responseSuccess(200, "data delete", dataDelete)
+            return await publishMessage('removeData', id)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
