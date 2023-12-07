@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
-import { publishMessage, requestMessage } from "../../nats-config"
+import { publishMessage, requestMessage } from "../utils/nats-config"
 
 export class DataController {
 
@@ -15,7 +15,8 @@ export class DataController {
         try {
 
             const id = +request.user.user_id
-            return await requestMessage('getAllDatasOneUser', id)
+            throw new Error("MS NOT LINK")
+            return // await requestMessage('getAllDatasOneUser', id)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)

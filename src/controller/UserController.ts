@@ -4,7 +4,7 @@ import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ContactService } from "../service/ContactService"
 import { ValidationService } from "../service/ValidationService"
-import { publishMessage, requestMessage } from "../../nats-config"
+import { publishMessage } from "../utils/nats-config"
 import jwt from "jsonwebtoken"
 const bcrypt = require('bcrypt')
 
@@ -24,8 +24,13 @@ export class UserController {
             if (!user) {
                 throw new Error("User not found")
             };
+            const connectedUser = {
+                email: user.email,
+                id: user.id,
+                validation: user.validation
+            }
         // Réponse
-            return this.responseMaker.responseSuccess(200, "Connected user informations.", request.user);
+            return this.responseMaker.responseSuccess(200, "Connected user informations.", connectedUser);
         } catch (error) {
             return this.responseMaker.responseError(500, error.message);
         }
@@ -71,22 +76,33 @@ export class UserController {
         // Récupération du nickname du user
             const nickname = emailExist.nickname
         // Création d'un token unique pour l'url
-            let date = new Date()
-            const token = jwt.sign( 
-                {email, date},
-                process.env.SECRET_KEY_MAIL,
-                {
-                    expiresIn: "48h",
-                    algorithm: "HS256",
-                    encoding: "base64url"
-                }
+            const getToken = jwt.sign( 
+                emailExist.id,
+                process.env.SECRET_KEY_MAIL
             );
-
+            const token = getToken.substr(0,10)
         // envoi des datas au MS mailing
-            await publishMessage("sendMail", {email: email, nickname: nickname, token: token})
+            await publishMessage("resetMail", {email: email, nickname: nickname, token: token})
 
         // Réponse
-            return this.responseMaker.responseSuccess(200, "Validation mail send", email);
+            return this.responseMaker.responseSuccess(200, "Validation mail send", token);
+        } catch (error) {
+            return this.responseMaker.responseError(500, error.message);
+        }
+    }
+
+// Traiter le retour depuis un mail de demande de reset de mot de passe
+    async returnResetPassword(request: RequestWithUser, response: Response, next: NextFunction) {
+        try {
+        // Récupération du user
+            const userToUpdate = await this.userService.findOne("email", request.body.email, false);
+            if (!userToUpdate) {
+                throw new Error("User not found")
+            };
+        // update du user
+            await this.userService.updatePassword(userToUpdate.id, request.body.newPassword);
+        // Réponse
+            return this.responseMaker.responseSuccess(200, 'Password updated');
         } catch (error) {
             return this.responseMaker.responseError(500, error.message);
         }

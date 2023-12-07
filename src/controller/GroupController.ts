@@ -16,7 +16,6 @@ export class GroupController {
     private userService = new UserService();
     private contactService = new ContactService();
     private shareService = new ShareService();
-    private dataService = new DataService();
     private responseMaker = new ResponseMaker();
 
 

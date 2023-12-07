@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Response } from "express";
 import { ContactService } from "../service/ContactService";
 import { UserService } from "../service/UserService";
 import { ResponseInterface } from "../interface/ResponseInterface";
@@ -29,7 +29,6 @@ export class ContactController{
 
             //Récupérer sa liste de contacts quand il est user2
             const listUserTwo = await this.contactService.allByUserRole("user2_id", userId);
-            console.log("🚀 ~ file: ContactController.ts:69 ~ all ~ listUserTwo:", listUserTwo)
             //Vérifier qu'elle n'est pas vide
             let allUserTwoEmpty = false;
             if(listUserTwo.length === 0 || !listUserTwo || listUserTwo === null){
