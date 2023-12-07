@@ -15,8 +15,8 @@ export class DataController {
         try {
 
             const id = +request.user.user_id
-            throw new Error("MS NOT LINK")
-            return // await requestMessage('getAllDatasOneUser', id)
+            // throw new Error("MS NOT LINK")
+            return await requestMessage('getAllDatasOneUser', id)
         }
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -48,7 +48,6 @@ export class DataController {
             if (!user_id) {
                 throw new Error("user inexistant")
             }
-
             return await publishMessage('createData', { type, name, value, user_id })
         }
         catch (error) {
@@ -60,7 +59,6 @@ export class DataController {
     async update(request: Request, response: Response, next: NextFunction) {
         try {
             const _id = request.params.id
-            console.log("🚀 ~ file: DataController.ts:70 ~ DataController ~ update ~ _id:", _id)
             const { type, name, value } = request.body
 
             return await publishMessage('updateData', { _id, type, name, value })

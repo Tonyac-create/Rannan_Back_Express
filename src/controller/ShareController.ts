@@ -40,7 +40,7 @@ export class ShareController {
     async createShare(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
 
-            const owner_id = request.user
+            const owner_id = request.user.user_id
             const { data_id, target, target_id } = request.body
 
             // Récupération de la data
@@ -67,7 +67,7 @@ export class ShareController {
     async getShares(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
             const {target, target_id} = request.body
-            console.log("🚀 ~ file: ShareController.ts:46 ~ ShareController ~ getShares ~ request.body:", request.body)
+            
             return await requestMessage('getShares', {target, target_id})
         } catch (error) {
             return this.responseMaker.responseError(404, error.message)
@@ -77,9 +77,8 @@ export class ShareController {
     async getSharesBetweenUsers(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
             const userconnected = request.user
-            // console.log("🚀 ~ file: ShareController.ts:56 ~ ShareController ~ getSharesBetweenUsers ~ userconnected:", userconnected)
             const userId_profile = request.body
-            // console.log("🚀 ~ file: ShareController.ts:58 ~ ShareController ~ getSharesBetweenUsers ~ userId_profile:", userId_profile)
+            
             return await requestMessage('getSharesBetweenUsers', {user_id: userconnected.user_id, userId_profile})
         } catch (error) {
             return this.responseMaker.responseError(400, error.message)
@@ -92,8 +91,7 @@ export class ShareController {
         try {
             const id = request.params.id
 
-            await requestMessage('getOneShare', id)
-            next()
+            return await requestMessage('getOneShare', id)
         }
         catch (error) {
             return this.responseMaker.responseError(400, error.message)
