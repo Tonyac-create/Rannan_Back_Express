@@ -22,7 +22,7 @@ export async function startServer() {
     }))
 
     // Intercept for Token check
-    app.use("/api/auth/refreshToken", jwtRefreshMiddleware)
+    app.use("/auth/refreshToken", jwtRefreshMiddleware)
     app.use("/api", jwtMiddleware)
 
 

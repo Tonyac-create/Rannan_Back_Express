@@ -37,7 +37,7 @@ export class ContactController{
 
             //tester que l'on a  récupéré des contacts
             if(allUserTwoEmpty === true && allUserTwoEmpty === true){
-                throw new Error("Contacts not found");
+                throw {status: 400, message: "Contacts not found"}
             }
 
             //Formater les contacts
@@ -53,14 +53,16 @@ export class ContactController{
             //Renvoyer les contacts
             const contacts = {allUserOne, allUserTwo};
             if(!contacts || contacts === null || contacts.allUserOne.length === 0 && contacts.allUserTwo.length === 0){
-                throw new Error("Error while fetching contacts.")
+                throw {status: 400, message: "Error while fetching contacts."}
             }
             return this.responseMaker.responseSuccess(200, "Contacts found for the user", contacts);
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
-        catch (error){
-            console.log("🚀 ~ file: ContactController.ts:29 ~ ContactController ~ all ~ error:", error);
-            response.status(500).json({error :error.message, date : new Date()})
-        }  
     }
 
 //Mettre 2 users en contact (et suprimer la validation associée à ces 2 users)
@@ -72,26 +74,26 @@ export class ContactController{
 
             //Verification User1 n'est pas le même que User2
             if(userId === otherUserId){
-                throw new Error("User1 and User2 are the same user")
+                throw {status: 400, message: "User1 and User2 are the same user"}
             }
 
             //Verifier que ces users ne sont pas deja en contact
             const testContact = await this.contactService.oneByUsers(userId, otherUserId);
             if (testContact){
-                throw new Error("Users are already in contact")
+                throw {status: 400, message: "Users are already in contact"}
             }
 
             //Verifications que les user existent (1 et 2)
             const user1Ok = await this.userService.findOne("id", userId, false);
             const user2Ok = await this.userService.findOne("id", otherUserId, false);
             if(!user1Ok || !user2Ok){
-                throw new Error("One of the users, or the two don't exist")
+                throw {status: 400, message: "One of the users, or the two don't exist"}
             }
             
             //Execution de la fonction
             const contact = await this.contactService.create(userId, otherUserId);
             if (!contact){
-                throw new Error("Bad request")
+                throw {status: 400, message: "Bad request"}
             }
 
             //Suprimer la validation
@@ -101,13 +103,15 @@ export class ContactController{
                 return this.responseMaker.responseSuccess(201, "users are now contacts", contact)
             }
             else{
-                throw new Error("Error while deleting the validation")
+                throw {status: 400, message: "Error while deleting the validation"}
             }    
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
-        catch(error){
-            console.log("🚀 ~ file: ContactController.ts:76 ~ ContactController ~ save ~ error:", error);
-            response.status(500).json({error :error.message, date : new Date()})
-        }  
     }
 
 //Eliminer un user de ses contacts 
@@ -115,17 +119,20 @@ export class ContactController{
         try{
             const contact = await this.contactService.oneById(+request.params.id)
             if (!contact){
-                throw new Error("contact not found")
+                throw {status: 400, message: "contact not found"}
             }
             const userId = parseInt(request.user.user_id);
             if(contact.user1_id !== userId && contact.user2_id !== userId){
-                throw new Error("Unauthorized")
+                throw {status: 400, message: "Unauthorized"}
             }
             const removedcontact =  await this.contactService.remove(contact.id)
             return this.responseMaker.responseSuccess(200, `contact was deleted`, removedcontact)
-        }
-        catch (error){
-            response.status(500).json({ error: error.message })
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 }

@@ -17,9 +17,12 @@ export class DataController {
             const id = +request.user.user_id
             // throw new Error("MS NOT LINK")
             return await requestMessage('getAllDatasOneUser', id)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -32,7 +35,11 @@ export class DataController {
             const id = request.params.id
             return await requestMessage('getOneData', id)
         } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -40,18 +47,20 @@ export class DataController {
     async save(request: RequestWithUser, response: Response, next: NextFunction) {
 
         const { type, name, value } = request.body
-        console.log("🚀 ~ file: DataController.ts:50 ~ DataController ~ save ~ request.body:", request.body)
         try {
 
             // Récupération du token
             const user_id = request.user.user_id
             if (!user_id) {
-                throw new Error("user inexistant")
+                throw { status: 400, message: "user inexistant" }
             }
             return await publishMessage('createData', { type, name, value, user_id })
-        }
-        catch (error) {
-            return this.responseMaker.responseError(401, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -62,9 +71,12 @@ export class DataController {
             const { type, name, value } = request.body
 
             return await publishMessage('updateData', { _id, type, name, value })
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
 
     };
@@ -75,9 +87,12 @@ export class DataController {
 
             const id = request.params.id
             return await publishMessage('removeData', id)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 

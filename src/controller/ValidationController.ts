@@ -58,7 +58,6 @@ export class ValidationController{
             return this.responseMaker.responseSuccess(200, "Validations found", validations);
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationController.ts:31 ~ ValidationController ~ all ~ error:", error);
             response.status(500).json({error :error.message, date : new Date()});
         }
     }
@@ -101,7 +100,6 @@ export class ValidationController{
             return this.responseMaker.responseSuccess(201, "Contact request sent", validation) 
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationController.ts:69 ~ ValidationController ~ save ~ error:", error)
             response.status(500).json({error :error.message, date : new Date()})
         }
     }
@@ -116,7 +114,7 @@ export class ValidationController{
             }
             //verifier que le user qui suprime est bien le destinataire de la demande
             const userId = parseInt(request.user.user_id);
-            console.log("🚀 ~ file: ValidationController.ts:132 ~ ValidationController ~ remove ~ userId:", userId)
+            console.log("🚀 ~ file: ValidationController.ts:117 ~ ValidationController ~ remove ~ userId:", userId)
             if(validation.contact_id !== userId && validation.user_id !== userId){
                 throw new Error("Unauthorized")
             }
@@ -124,7 +122,6 @@ export class ValidationController{
             return this.responseMaker.responseSuccess(201, `validation was deleted`, removedvalidation)
         }
         catch (error){
-            console.log("🚀 ~ file: ValidationController.ts:91 ~ ValidationController ~ remove ~ error:", error)
             response.status(500).json({ error: error.message })
         }
     }

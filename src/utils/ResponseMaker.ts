@@ -8,8 +8,4 @@ export class ResponseMaker {
         }
         return {status : status, message: message}
     }
-
-    async responseError(status: number, message :string): Promise<ResponseInterface>{
-        return {status : status, message: message}
-    }
 }

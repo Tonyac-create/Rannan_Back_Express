@@ -17,15 +17,14 @@ export class AuthController {
     // Vérifie si l'email envoyé correspond a un email enregistré
       const userAlreadyExist = await this.userService.findOne("email", request.body.email, false);
       if (userAlreadyExist) {
-        throw new Error("Email already used")
+        throw { status: 409, message: "Email already used" }
       };
     // Hash  le mot de passe
       request.body.password = await bcrypt.hash(request.body.password, 10);
     // Créer le user dans la db
       const user = await this.userService.saveUser(request.body);
-    // Créer un token
+    // Créer un token et découpe pour créer le token de validation
       const resToken = await this.authService.createToken(user.id, user.email)
-    // Création du token de validation
       const validationToken = resToken.substr(0,10)
     // Envoi du mail de validation
       await publishMessage("validationMail", {email: user.email, nickname: user.nickname, token: validationToken})
@@ -33,22 +32,29 @@ export class AuthController {
       return this.responseMaker.responseSuccess(201, 'Account created', validationToken);
 
     } catch (error) {
-      response.status(500).json({ error: error.message, date: new Date() })
+      if (error.status && error.message) {
+        response.status(error.status).json({error :error.message, date : new Date()})
+      } else {
+        response.status(500).json({error :error.message, date : new Date()})
+      }
     }
   }
 
   async returnValidation(request: Request, response: Response, next: NextFunction) {
     try {
-      console.log("returnValidation body :", request.body)
       const user = await this.userService.findOne("email", request.body.email, false)
       if (!user ) {
-        throw new Error("User not found")
+        throw { status: 404, message: "User not found" }
       }
       user.validation = true
       await this.userService.update(user.id, user)
       return this.responseMaker.responseSuccess(201, 'Account validated');
     } catch (error) {
-      response.status(500).json({ error: error.message, date: new Date() })
+      if (error.status && error.message) {
+        response.status(error.status).json({error :error.message, date : new Date()})
+      } else {
+        response.status(500).json({error :error.message, date : new Date()})
+      }
     }
   }
 
@@ -57,19 +63,23 @@ export class AuthController {
       // Vérifie si l'email enregistré correspond a un email enregistré
       const user = await this.userService.findOne("email", request.body.email, false)
       if (!user) {
-        throw new Error("User not found")
+        throw { status: 404, message: "User not found" }
       }
       //Vérifie si le mot de passe renseigné correspond a celui enregistré
       const isPasswordMatched = await bcrypt.compare(request.body.password, user.password)
       if (!isPasswordMatched) {
-        throw new Error("Unauthotized (password not matched)")
+        throw { status: 401, message: "Password not matched)" }
       }
 
       // Créer les Token & refreshToken et les enregistrements
       return await this.authService.tokenFunctions(user.id, user.email)
 
     } catch (error) {
-      response.status(500).json({ error: error.message, date: new Date() })
+      if (error.status && error.message) {
+        response.status(error.status).json({error :error.message, date : new Date()})
+      } else {
+        response.status(500).json({error :error.message, date : new Date()})
+      }
     }
   }
 
@@ -77,35 +87,47 @@ export class AuthController {
     try {
       const user = await this.userService.findOne("id", request.user.user_id, false)
       if (!user) {
-        throw new Error("User not find")
+        throw { status: 404, message: "User not found" }
       }
-      user.refreshToken = null
-
-      //TODO: mettre à jour l'object user après modification
+      await this.userService.update(user.id, {refreshToken: null})
+      // Retour
       return "User Disconnect"
-
     } catch (error) {
-      response.status(500).json({ error: error.message, date: new Date() })
+      if (error.status && error.message) {
+        response.status(error.status).json({error :error.message, date : new Date()})
+      } else {
+        response.status(500).json({error :error.message, date : new Date()})
+      }
     }
   }
 
   async refreshToken(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       // Vérifie si l'email enregistré correspond a un email enregistré
-      const user = await this.userService.findOne("email", request.user.email, false)
+      const user = await this.userService.findOne("email", request.body.email, false)
       if (!user) {
-        throw new Error("user not found")
+        throw { status: 404, message: "User not found" }
       } else
-        // Vérifie si le refreshToken du user est le meme que celui en db
-        if (user.refreshToken !== request.refreshToken) {
-          throw new Error("refresh token not admit")
-        }
+      // Vérifie si le refreshToken du user est le meme que celui en db
+      if (user.refreshToken !== request.refreshToken) {
+        throw { status: 401, message: "refresh token not admit" }
+      }
 
-      // Recréer les Token & refreshToken
-      return await this.authService.tokenFunctions(user.id, user.email)
+      // Génére une nouvelle paire de token
+      const newToken = this.authService.createToken(user.id, user.email)
+      const newRefreshToken = this.authService.createRefreshToken(user.id, user.email)
 
+      // Save le Refresh Token dans le user en db
+      await this.userService.update(user.id, {refreshToken: newRefreshToken})
+
+      // Renvoi la nouvelle paire de Token
+      return this.responseMaker.responseSuccess(200, "JWT Refresh Success", {authToken: newToken, authRefreshToken: newRefreshToken});
     } catch (error) {
-      response.status(500).json({ error: error.message, date: new Date() })
+      if (error.status && error.message) {
+        response.status(error.status).json({error :error.message, date : new Date()})
+      } else {
+        response.status(500).json({error :error.message, date : new Date()})
+      }
     }
   }
 

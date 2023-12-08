@@ -19,7 +19,6 @@ export class ContactService{
 
         }
         catch (error){
-            console.log("🚀 ~ file: ContactService.ts:20 ~ ContactService ~ create ~ error:", error);
             throw new Error(error)
         }
     }
@@ -32,7 +31,6 @@ export class ContactService{
             return [...allUserOne, ...allUserTwo]
         }
         catch (error){
-            console.log("🚀 ~ file: ContactService.ts:33 ~ ContactService ~ allByUserId ~ error:", error);
             throw new Error(error)
         }
     }
@@ -71,7 +69,6 @@ export class ContactService{
             return contact;  
         }
         catch(error){
-            console.log("🚀 ~ file: ContactService.ts:53 ~ ContactService ~ one ~ error:", error);
             throw new Error(error)
         }  
     }
@@ -91,7 +88,6 @@ export class ContactService{
             });
         }
         catch(error){
-            console.log("🚀 ~ file: ContactService.ts:81 ~ ContactService ~ oneByUsers ~ error:", error)
             throw new Error(error)
         }
     }

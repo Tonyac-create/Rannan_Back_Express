@@ -16,7 +16,6 @@ export class ValidationService{
             return await this.ValidationRepostiory.save(newValidation);
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationService.ts:19 ~ ValidationService ~ create ~ error:", error);
             throw new Error(error)
         }
     }
@@ -36,7 +35,6 @@ export class ValidationService{
             });
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationService.ts:35 ~ ValidationService ~ oneByUsers ~ error:", error);
             throw new Error(error)
         }
     }
@@ -48,7 +46,6 @@ export class ValidationService{
             return validation;
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationService.ts:47 ~ ValidationService ~ oneById ~ error:", error);
             throw new Error(error)          
         }
     }
