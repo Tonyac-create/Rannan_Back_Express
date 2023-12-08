@@ -114,14 +114,18 @@ export class AuthController {
       }
 
       // Génére une nouvelle paire de token
-      const newToken = this.authService.createToken(user.id, user.email)
-      const newRefreshToken = this.authService.createRefreshToken(user.id, user.email)
+      const newToken = await this.authService.createToken(user.id, user.email)
+      const newRefreshToken = await this.authService.createRefreshToken(user.id, user.email)
 
       // Save le Refresh Token dans le user en db
       await this.userService.update(user.id, {refreshToken: newRefreshToken})
 
+      //* Test de différence entre l'ancien et le nouveau token OK
+      // console.log("AuthController- refreshToken - user :", user)
+      // console.log("AuthController- refreshToken - updatedUser :", await this.userService.findOne("id", user.id, false))
+
       // Renvoi la nouvelle paire de Token
-      return this.responseMaker.responseSuccess(200, "JWT Refresh Success", {authToken: newToken, authRefreshToken: newRefreshToken});
+      return this.responseMaker.responseSuccess(201, "JWT Refresh Success", {authToken: newToken, authRefreshToken: newRefreshToken});
     } catch (error) {
       if (error.status && error.message) {
         response.status(error.status).json({error :error.message, date : new Date()})

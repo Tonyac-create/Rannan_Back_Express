@@ -37,7 +37,7 @@ export class ContactController{
 
             //tester que l'on a  récupéré des contacts
             if(allUserTwoEmpty === true && allUserTwoEmpty === true){
-                throw {status: 400, message: "Contacts not found"}
+                return this.responseMaker.responseSuccess(400, "Contacts not found");
             }
 
             //Formater les contacts

@@ -130,24 +130,24 @@ export class GroupController {
                 throw { status: 400, message: "Received informations not complet" }
             };
         // 
-            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
+            const group = (await this.groupService.allGroupsBy("id", +request.params.id))[0];
             if (!group) {
                 throw { status: 404, message: "Group not found" }
             };
-            const getMemberList = await this.groupService.allGroupMember(group.id);
+            const getMemberList = await this.groupService.allGroupMember(+request.params.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             });
 
             let dataList = [];
-            const shares = await this.shareService.allByDatas("target_id", group.id);
+            const shares = await this.shareService.allByDatas("target_id", +request.params.id);
             if ( shares.length === 0 ){
                 dataList = null
                 return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
             };
-            const datas = shares.filter((share) => share.target === "group")[0].datas;
-            datas.map((data) => {
+            const datas = shares.filter((share: any) => share.target === "group")[0].datas;
+            datas.map((data: any) => {
                 dataList.push({id: data.id, name: data.name, value: data.value})
             });
 
@@ -172,9 +172,9 @@ export class GroupController {
         // 
             const foundGroup = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!foundGroup) {
-                throw { status: 404, message: "Group not found" }
+                return this.responseMaker.responseSuccess(404, "Group not found");
             } else if (foundGroup.creator_id !== +request.user.user_id) {
-                throw { status: 400, message: "You are not Creator" }
+                return this.responseMaker.responseSuccess(401, "You are not Creator");
             };
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {

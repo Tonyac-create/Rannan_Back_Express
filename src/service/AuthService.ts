@@ -11,7 +11,7 @@ export class AuthService {
       {user_id, email, date},
       process.env.SECRET_KEY, 
       {
-        expiresIn: "4m"
+        expiresIn: "1m"
       }
     )
   }

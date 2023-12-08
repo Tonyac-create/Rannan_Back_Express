@@ -20,7 +20,7 @@ export async function jwtRefreshMiddleware(request: Request, response: Response,
     }
 
     // Vérification du Token
-    const payload = jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH)
+    const payload = await jwt.verify(refreshToken, process.env.SECRET_KEY_REFRESH)
 
     // Ajout tu token dans la valeur 'user' de la request
     request['user'] = payload
