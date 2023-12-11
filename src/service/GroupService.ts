@@ -110,4 +110,9 @@ export class GroupService {
             });
     }
 
+    async getOneGroup(id: number): Promise<any> {
+        console.log("🚀 ~ file: GroupService.ts:114 ~ GroupService ~ getOneGroup ~ id:", id)
+        return await this.groupRepository.findOneBy({ id: id })
+    }
+
 }

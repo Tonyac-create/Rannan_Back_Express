@@ -246,6 +246,10 @@ export const Routes = [
         route: "/api/group/:id/remove", 
         controller: GroupController,
         action: "removeMember"
+    },{
+        method: "get",
+        route: "/api/onegroup/:id", 
+        controller: GroupController,
+        action: "getOneGroup"
     }
-
 ]
