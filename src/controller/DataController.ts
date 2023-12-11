@@ -3,6 +3,7 @@ import { ResponseInterface } from "../interface/ResponseInterface"
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { publishMessage, requestMessage } from "../utils/nats-config"
+import { Data } from "../entity/Data"
 
 export class DataController {
 
@@ -40,7 +41,6 @@ export class DataController {
     async save(request: RequestWithUser, response: Response, next: NextFunction) {
 
         const { type, name, value } = request.body
-        console.log("🚀 ~ file: DataController.ts:50 ~ DataController ~ save ~ request.body:", request.body)
         try {
 
             // Récupération du token
@@ -66,7 +66,6 @@ export class DataController {
         catch (error) {
             return this.responseMaker.responseError(404, error.message)
         }
-
     };
 
     // Suppression d'une data

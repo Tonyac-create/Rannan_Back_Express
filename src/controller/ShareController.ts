@@ -12,6 +12,15 @@ export class ShareController {
     private responseMaker = new ResponseMaker()
     private userService = new UserService()
 
+    async allShares(request: RequestWithUser, response: Response, next: NextFunction) {
+        try {
+            const id = request.user
+            return await requestMessage('getAllShares', id)
+        } catch (error) {
+            return this.responseMaker.responseError(404, error.message)
+        }
+    }
+
     // Supprime la share en entier(ex: utile quand on supprime un contact avec quelqu'un, ça supprime la share)
     async removeShare(request: Request, response: Response, next: NextFunction) {
         try {
