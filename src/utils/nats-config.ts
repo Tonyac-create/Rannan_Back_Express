@@ -12,7 +12,7 @@ export async function createNatsConnection(): Promise<NatsConnection> {
         }
         return natsConnection
     } catch (error) {
-        // console.error("Erreur lors de l'ouverture de la connexion NATS :" , error.message)//TODO A reactivé aprés l'implementation du refresh token
+        console.error("Erreur lors de l'ouverture de la connexion NATS :" , error.message)
     }
 }
 
@@ -24,7 +24,7 @@ export async function closeNatsConnection(): Promise<void> {
             natsConnection = null
         }
     } catch (error) {
-        // console.error("Erreur lors de la fermeture de la connexion NATS :" , error.message)//TODO A reactivé aprés l'implementation du refresh token
+        console.error("Erreur lors de la fermeture de la connexion NATS :" , error.message)
     }
 }
 
@@ -34,7 +34,7 @@ export async function publishMessage(subject: string, data: any): Promise<void> 
     // Publiez le message sur le sujet spécifié
         nats.publish(subject, JSON.stringify(data));
     } catch (error) {
-        // console.error('Erreur lors de la publication (publish) du message NATS :', error.message);//TODO A reactivé aprés l'implementation du refresh token
+        console.error('Erreur lors de la publication (publish) du message NATS :', error.message);
     } 
 }
 
@@ -57,7 +57,7 @@ export async function requestMessage(subject: string, data: any): Promise<any> {
     // return response
         return response.response
     } catch (error) {
-        // console.error('Erreur lors de la publication (request) du message NATS :', error.message);//TODO A reactivé aprés l'implementation du refresh token
+        console.error('Erreur lors de la publication (request) du message NATS :', error.message);
     }
 }
 

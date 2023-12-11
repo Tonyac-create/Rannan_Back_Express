@@ -11,12 +11,11 @@ export class DataController {
 
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
-        // : Promise<ResponseInterface> //TODO
+        : Promise<ResponseInterface> 
         {
         try {
             const id = +request.user.user_id
-            return this.responseMaker.responseError(418, `MS NOT LINK`) //TODO
-            // return await requestMessage('getAllDatasOneUser', id) //TODO
+            return await requestMessage('getAllDatasOneUser', id)
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})
