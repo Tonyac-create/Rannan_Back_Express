@@ -27,7 +27,7 @@ export const Routes = [
         action: "login"
     },{
         method: "get",
-        route: "/api/auth/refreshToken",
+        route: "/auth/refreshToken",
         controller: AuthController,
         action: "refreshToken"
     },{

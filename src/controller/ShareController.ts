@@ -27,21 +27,28 @@ export class ShareController {
             const id = request.params.id
             return await requestMessage('removeShare', id)
         } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
      //Supprimer une data dans share et une share dans data
-     async removeDataInShare(request: Request, response: Response, next: NextFunction) {
+    async removeDataInShare(request: Request, response: Response, next: NextFunction) {
         try {
             const id = request.params.id
 
             const { data_id } = request.body
 
             return await requestMessage('removeDataInShare', { id, data_id })
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -57,7 +64,11 @@ export class ShareController {
 
             return await publishMessage('createShare', { target, target_id, owner_id, data_id })
         } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -68,7 +79,11 @@ export class ShareController {
             const target = request.body.target
             return await requestMessage('getListUsers', {user, target})
         } catch (error) {
-            return this.responseMaker.responseError(400, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -79,7 +94,11 @@ export class ShareController {
             
             return await requestMessage('getShares', {target, target_id})
         } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -90,7 +109,11 @@ export class ShareController {
             
             return await requestMessage('getSharesBetweenUsers', {user_id: userconnected.user_id, userId_profile})
         } catch (error) {
-            return this.responseMaker.responseError(400, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -101,9 +124,12 @@ export class ShareController {
             const id = request.params.id
 
             return await requestMessage('getOneShare', id)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(400, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -117,31 +143,33 @@ export class ShareController {
 
             //Vérifier que currentUserId dfférent de otherUserId
             if(currentUserId === otherUserId){
-                throw new Error("User1 and User2 are the same user")
+                throw {status: 400, message: "User1 and User2 are the same user"}
             }
 
             //Verifier que les users existent
             const testCurrent = await this.userService.findOne("id", currentUserId, false);
             const testOther = await this.userService.findOne("id", otherUserId, false);
             if(!testCurrent || !testOther || !testCurrent && !testOther){
-                throw new Error("One of the users, or the two don't exist")
+                throw {status: 400, message: "One of the users, or the two don't exist"}
             }
 
             //Récupérer le share entre les users
             const share = await this.shareService.oneByUsersId(currentUserId, otherUserId);
-            console.log("🚀 ~ file: ShareController.ts:209 ~ ShareController ~ deleteShareByUsers ~ share:", share)
-            console.log("sahre_id, l 210", share.id)
+            console.log("🚀 ~ file: ShareController.ts:123 ~ ShareController ~ deleteShareByUsers ~ share:", share)
+            console.log("sahre_id, l 124", share.id)
             if(!share){
-                throw new Error("Share not found.")
+                throw {status: 400, message: "Share not found."}
             }
 
             //Supprimer le share
             const removedShare = await this.shareService.remove(share.id);
             return this.responseMaker.responseSuccess(200, `share was deleted`, removedShare)
-        }
-        catch(error){
-            console.log("🚀 ~ file: ShareController.ts:192 ~ ShareController ~ deleteShareByUsers ~ error:", error)
-            response.status(500).json({error :error.message, date : new Date()})
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 

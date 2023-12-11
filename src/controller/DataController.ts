@@ -12,15 +12,18 @@ export class DataController {
 
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
-        : Promise<ResponseInterface> {
+        // : Promise<ResponseInterface> //TODO
+        {
         try {
-
             const id = +request.user.user_id
-            // throw new Error("MS NOT LINK")
-            return await requestMessage('getAllDatasOneUser', id)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            return this.responseMaker.responseError(418, `MS NOT LINK`) //TODO
+            // return await requestMessage('getAllDatasOneUser', id) //TODO
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -29,29 +32,33 @@ export class DataController {
     : Promise<ResponseInterface> {
         // Récupération via l'id de la data
         try {
-
             const id = request.params.id
             return await requestMessage('getOneData', id)
         } catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
     // Création d'une data par userid
     async save(request: RequestWithUser, response: Response, next: NextFunction) {
-
         const { type, name, value } = request.body
         try {
-
             // Récupération du token
             const user_id = request.user.user_id
             if (!user_id) {
-                throw new Error("user inexistant")
+                throw { status: 400, message: "user inexistant" }
             }
             return await publishMessage('createData', { type, name, value, user_id })
-        }
-        catch (error) {
-            return this.responseMaker.responseError(401, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -60,25 +67,28 @@ export class DataController {
         try {
             const _id = request.params.id
             const { type, name, value } = request.body
-
             return await publishMessage('updateData', { _id, type, name, value })
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     };
 
     // Suppression d'une data
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
-
             const id = request.params.id
             return await publishMessage('removeData', id)
-        }
-        catch (error) {
-            return this.responseMaker.responseError(404, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
-
 }
 

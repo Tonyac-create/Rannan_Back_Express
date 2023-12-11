@@ -22,7 +22,7 @@ export class UserController {
         // Récupération du user
             const user = await this.userService.findOne("id", request.user.user_id, false);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
             const connectedUser = {
                 email: user.email,
@@ -32,7 +32,11 @@ export class UserController {
         // Réponse
             return this.responseMaker.responseSuccess(200, "Connected user informations.", connectedUser);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -41,21 +45,25 @@ export class UserController {
         // Vérification de la présence des champs requis
             const password = request.body.password;
             if (password === undefined) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Récupération du user
             const user = await this.userService.findOne("id", request.user.user_id, false);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Vérification du mot de passe
             const isPasswordMatched = await bcrypt.compare(password, user.password);
             if (!isPasswordMatched) {
-                throw new Error("Password not matched)")
+                throw { status: 400, message: "Password not matched" }
             };
             return this.responseMaker.responseSuccess(200, "Password Match");
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -64,13 +72,13 @@ export class UserController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body.email) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
             const email = request.body.email
         // Vérification de l'email
             const emailExist = await this.userService.findOne("email", email, false);
             if (!emailExist) {
-                throw new Error("Email not found")
+                throw { status: 404, message: "Email not found" }
             };
         // Récupération et préparation des informations pour le MS mailing
         // Récupération du nickname du user
@@ -87,7 +95,11 @@ export class UserController {
         // Réponse
             return this.responseMaker.responseSuccess(200, "Validation mail send", token);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -97,14 +109,18 @@ export class UserController {
         // Récupération du user
             const userToUpdate = await this.userService.findOne("email", request.body.email, false);
             if (!userToUpdate) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // update du user
             await this.userService.updatePassword(userToUpdate.id, request.body.newPassword);
         // Réponse
             return this.responseMaker.responseSuccess(200, 'Password updated');
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -113,24 +129,28 @@ export class UserController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body || !request.body.password || !request.body.update || request.body.update.password) {
-                throw new Error("Received informations not complet or correct")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Récupération du user
             const userToUpdate = await this.userService.findOne("id", request.user.user_id, false);
             if (!userToUpdate) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Vérification du mot de passe
             const isPasswordMatched = await bcrypt.compare(request.body.password, userToUpdate.password);
             if (!isPasswordMatched) {
-                throw new Error("Password not matched)")
+                throw { status: 400, message: "Password not matched" }
             };
         // update du user
             await this.userService.update(userToUpdate.id, request.body.update);
         // Réponse
             return this.responseMaker.responseSuccess(200, 'User updated');
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -139,24 +159,28 @@ export class UserController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body || !request.body.password || !request.body.update.newpassword) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Récupération du user
             const user = await this.userService.findOne("id", request.user.user_id, false);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Vérification du mot de passe
             const isPasswordMatched = await bcrypt.compare(request.body.password, user.password);
             if (!isPasswordMatched) {
-                throw new Error("Unauthotized (password not matched)")
+                throw { status: 400, message: "Password not matched" }
             };
         // update du user
             await this.userService.updatePassword(user.id, request.body.update.newpassword);
         // Réponse
             return this.responseMaker.responseSuccess(200, 'User password updated');
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -166,12 +190,16 @@ export class UserController {
         // Vérification de l'existance du user
             const user = await this.userService.findOne("id", +request.params.id, false);
             if (!user) {
-                throw new Error ("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Réponse
             return this.responseMaker.responseSuccess(200, 'User profile found', {avatar_id: user.avatar_id, nickname: user.nickname});
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -180,7 +208,7 @@ export class UserController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body || !request.body.search) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Recherche d'un user au nickname similaire a la recherche
             const search = request.body.search;
@@ -191,7 +219,11 @@ export class UserController {
         // Réponse
             return this.responseMaker.responseSuccess(200, 'Users found', users);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -205,7 +237,11 @@ export class UserController {
         // Réponse
             return this.responseMaker.responseSuccess(200, `User has been deleted`);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -222,7 +258,7 @@ export class UserController {
 
             //Vérifier que currentUserId dfférent de otherUserId
             if(currentUserId === otherUserId){
-                throw new Error("User1 and User2 are the same user")
+                throw { status: 400, message: "User1 and User2 are the same user" }
             };
 
             //Vérifier si les users sont en contact
@@ -241,17 +277,19 @@ export class UserController {
 
             //dans le cas où il n'y aie rien
             if(!testContact && !testValidation ){
-                throw new Error("No relations found")
+                throw { status: 400, message: "No relations found" }
             }
 
             //Réponse
             const relation = {relation_type, relation_id}
             return this.responseMaker.responseSuccess(200, "Relation found", relation)
 
-        }
-        catch(error){
-            console.log("🚀 ~ file: UserController.ts:185 ~ UserController ~ getUserRelation ~ error:", error);
-            return this.responseMaker.responseError(500, error.message)
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 }

@@ -6,7 +6,6 @@ import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ContactService } from "../service/ContactService"
 import { Contact } from "../entity/Contact"
-import { DataService } from "../service/DataService"
 import { ShareService } from "../service/ShareService"
 
 export class GroupController {
@@ -24,7 +23,7 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Modification format de Date
             const dateValue = request.body.limited_at;
@@ -35,7 +34,11 @@ export class GroupController {
         // Réponse
             return this.responseMaker.responseSuccess(201, `The group was saved`, savedGroup);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -43,12 +46,12 @@ export class GroupController {
     async memberGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
             if (!request.user) {
-                throw new Error("User undefined in request")
+                throw { status: 400, message: "User undefined in request" }
             };
         // Récupération de la liste des groupes via populate "true"
             const user = await this.userService.findOne("id", request.user.user_id, true);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Filtre les groupes pour que les groupes ou le user est creator n'apparaissent pas
             const filteredList = user.groups.filter((el: any) => el.creator_id !== user.id );
@@ -78,7 +81,11 @@ export class GroupController {
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is a member`, userGroups);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -86,11 +93,11 @@ export class GroupController {
     async creatorGroupList(request: RequestWithUser, response: Response, next: NextFunction): Promise< ResponseInterface > {
         try {
             if (!request.user) {
-                throw new Error("User undefined in request")
+                throw { status: 400, message: "User undefined in request" }
             };
             const user = await this.userService.findOne("id", request.user.user_id, true);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
         // Récupération de la liste des groupes dont le user est creator
             const groupList = await this.groupService.allGroupsBy("creator_id", user.id);
@@ -107,7 +114,11 @@ export class GroupController {
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group how user is the creator`, creatorGroups);
         } catch (error) {
-            return this.responseMaker.responseError(500, error.message);
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -116,34 +127,38 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // 
-            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
+            const group = (await this.groupService.allGroupsBy("id", +request.params.id))[0];
             if (!group) {
-                throw new Error("Group not found")
+                throw { status: 404, message: "Group not found" }
             };
-            const getMemberList = await this.groupService.allGroupMember(group.id);
+            const getMemberList = await this.groupService.allGroupMember(+request.params.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
                 const { id, nickname } = member
                 return { id, nickname }
             });
 
             let dataList = [];
-            const shares = await this.shareService.allByDatas("target_id", group.id);
+            const shares = await this.shareService.allByDatas("target_id", +request.params.id);
             if ( shares.length === 0 ){
                 dataList = null
                 return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList })
             };
-            const datas = shares.filter((share) => share.target === "group")[0].datas;
-            datas.map((data) => {
+            const datas = shares.filter((share: any) => share.target === "group")[0].datas;
+            datas.map((data: any) => {
                 dataList.push({id: data.id, name: data.name, value: data.value})
             });
 
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group Details`, { memberList, dataList });
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -152,14 +167,14 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // 
             const foundGroup = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!foundGroup) {
-                throw new Error("Group not found")
+                return this.responseMaker.responseSuccess(404, "Group not found");
             } else if (foundGroup.creator_id !== +request.user.user_id) {
-                throw new Error("You are not Creator")
+                return this.responseMaker.responseSuccess(401, "You are not Creator");
             };
             const getMemberList = await this.groupService.allGroupMember(foundGroup.id);
             const memberList = getMemberList.users.map((member: { id: number, nickname: string }) => {
@@ -191,7 +206,11 @@ export class GroupController {
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group Details for Settings`, { memberList: memberList, contactList: filteredContactList });
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -200,18 +219,22 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.params.id) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // 
             const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
-                throw new Error("Group not found")
+                throw { status: 404, message: "Group not found" }
             };
             const removedGroup =  await this.groupService.removeGroup(group.id);
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group ${group.name} was deleted`, removedGroup);
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -220,19 +243,23 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.params.id || !request.body) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // Vérification de l'existence du groupe
             const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
-                throw new Error("Group not found")
+                throw { status: 404, message: "Group not found" }
             };
         // Update des informations du groupe
             const updatedGroup = await this.groupService.updateGroup(group, request.body);
         // Réponse
             return this.responseMaker.responseSuccess(201, `Group was saved`, updatedGroup);
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -241,22 +268,26 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // 
             const user = await this.userService.findOne("id", +request.body.user_id, true);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
             const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
-                throw new Error("Group not found")
+                throw { status: 404, message: "Group not found" }
             };
             const addedUser = await this.groupService.addUserToGroup(user, group);
         // Réponse
             return this.responseMaker.responseSuccess(201, `User ${user.nickname} as been add to the group ${group.name}`, addedUser);
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 
@@ -265,22 +296,26 @@ export class GroupController {
         try {
         // Vérification de la présence des champs requis
             if (!request.body) {
-                throw new Error("Received informations not complet")
+                throw { status: 400, message: "Received informations not complet" }
             };
         // 
             const user = await this.userService.findOne("id", +request.body.user_id, true);
             if (!user) {
-                throw new Error("User not found")
+                throw { status: 404, message: "User not found" }
             };
             const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
             if (!group) {
-                throw new Error("Group not found")
+                throw { status: 404, message: "Group not found" }
             };
             const deletedUser = await this.groupService.deleteUserToGroup(user, group.id);
         // Réponse
             return this.responseMaker.responseSuccess(201, `User has been removed from group`, deletedUser);
         } catch (error) {
-            response.status(500).json({ error: error.message });
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
         }
     }
 }

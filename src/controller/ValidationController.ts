@@ -37,7 +37,7 @@ export class ValidationController{
 
             //Tester qu'on a récupéré des contacts
             if(sentIsEmpty === true && recievedIsEmpty === true){
-                throw new Error("Validations not found");
+                return this.responseMaker.responseSuccess(400, "Validations not found");
             }
 
             //Formater les validations
@@ -53,12 +53,11 @@ export class ValidationController{
             //Renvoyer les validations
             const validations = {allSent, allRecieved};
             if(!validations || validations === null || validations.allSent.length === 0 && validations.allRecieved.length === 0){
-                throw new Error("Error while fetching validations.")
+                return this.responseMaker.responseSuccess(400, "Error while fetching validations.");
             }
             return this.responseMaker.responseSuccess(200, "Validations found", validations);
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationController.ts:31 ~ ValidationController ~ all ~ error:", error);
             response.status(500).json({error :error.message, date : new Date()});
         }
     }
@@ -101,7 +100,6 @@ export class ValidationController{
             return this.responseMaker.responseSuccess(201, "Contact request sent", validation) 
         }
         catch(error){
-            console.log("🚀 ~ file: ValidationController.ts:69 ~ ValidationController ~ save ~ error:", error)
             response.status(500).json({error :error.message, date : new Date()})
         }
     }
@@ -116,7 +114,7 @@ export class ValidationController{
             }
             //verifier que le user qui suprime est bien le destinataire de la demande
             const userId = parseInt(request.user.user_id);
-            console.log("🚀 ~ file: ValidationController.ts:132 ~ ValidationController ~ remove ~ userId:", userId)
+            console.log("🚀 ~ file: ValidationController.ts:117 ~ ValidationController ~ remove ~ userId:", userId)
             if(validation.contact_id !== userId && validation.user_id !== userId){
                 throw new Error("Unauthorized")
             }
@@ -124,7 +122,6 @@ export class ValidationController{
             return this.responseMaker.responseSuccess(201, `validation was deleted`, removedvalidation)
         }
         catch (error){
-            console.log("🚀 ~ file: ValidationController.ts:91 ~ ValidationController ~ remove ~ error:", error)
             response.status(500).json({ error: error.message })
         }
     }

@@ -96,7 +96,6 @@ export class ShareService {
             })
         }
         catch(error){
-            console.log("🚀 ~ file: ShareService.ts:92 ~ ShareService ~ getShareByUsersId ~ error:", error)
             throw new Error(error)
         }
     }

@@ -12,8 +12,7 @@ export async function createNatsConnection(): Promise<NatsConnection> {
         }
         return natsConnection
     } catch (error) {
-        console.error("Erreur lors de la connexion :" , error)
-        return this.responseMaker.responseError(500, error.message);
+        // console.error("Erreur lors de l'ouverture de la connexion NATS :" , error.message)//TODO A reactivé aprés l'implementation du refresh token
     }
 }
 
@@ -25,8 +24,7 @@ export async function closeNatsConnection(): Promise<void> {
             natsConnection = null
         }
     } catch (error) {
-        console.error("Erreur lors de la fermeture de la connexion NATS :" , error)
-        return this.responseMaker.responseError(500, error.message);
+        // console.error("Erreur lors de la fermeture de la connexion NATS :" , error.message)//TODO A reactivé aprés l'implementation du refresh token
     }
 }
 
@@ -36,8 +34,7 @@ export async function publishMessage(subject: string, data: any): Promise<void> 
     // Publiez le message sur le sujet spécifié
         nats.publish(subject, JSON.stringify(data));
     } catch (error) {
-        console.error('Erreur lors de la publication du message NATS :', error);
-        return this.responseMaker.responseError(500, error.message);
+        // console.error('Erreur lors de la publication (publish) du message NATS :', error.message);//TODO A reactivé aprés l'implementation du refresh token
     } 
 }
 
@@ -49,7 +46,7 @@ export async function requestMessage(subject: string, data: any): Promise<any> {
         let result : any
     // Publiez le message sur le sujet spécifié
         let response = await nats
-        .request(subject,jc.encode({id:"123465", data}), { timeout: 5000 })
+        .request(subject,jc.encode({id:"123465", data}), { timeout: 3000 })
         .then((m) => {
             result = jc.decode(m.data);
             return result;
@@ -60,8 +57,7 @@ export async function requestMessage(subject: string, data: any): Promise<any> {
     
         return response.response
     } catch (error) {
-        console.error('Erreur lors de la publication du message NATS :', error);
-        return this.responseMaker.responseError(500, error.message);
+        // console.error('Erreur lors de la publication (request) du message NATS :', error.message);//TODO A reactivé aprés l'implementation du refresh token
     }
 }
 
