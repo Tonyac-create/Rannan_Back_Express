@@ -7,6 +7,7 @@ import { ResponseInterface } from "../interface/ResponseInterface"
 import { ContactService } from "../service/ContactService"
 import { Contact } from "../entity/Contact"
 import { ShareService } from "../service/ShareService"
+import { requestMessage } from "../utils/nats-config"
 
 export class GroupController {
 
@@ -318,4 +319,22 @@ export class GroupController {
             }
         }
     }
+
+    async getOneGroup(request: Request, response: Response, next: NextFunction)
+    : Promise<ResponseInterface> {
+        // Récupération via l'id de la data
+        try {
+            const id = +request.params.id
+            console.log("🚀 ~ file: GroupController.ts:328 ~ GroupController ~ id:", id)
+            const group = await this.groupService.getOneGroup(id)
+            return group
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
+        }
+    }
+
 }
