@@ -4,6 +4,7 @@ import { AuthService } from "../service/AuthService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { publishMessage } from "../utils/nats-config";
+import { User } from "../entity/User";
 const bcrypt = require('bcrypt')
 
 export class AuthController {
@@ -104,25 +105,21 @@ export class AuthController {
   async refreshToken(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       // Vérifie si l'email enregistré correspond a un email enregistré
-      const user = await this.userService.findOne("email", request.body.email, false)
+      const user: User = await this.userService.findOne("email", request.body.email, false)
       if (!user) {
         throw { status: 404, message: "User not found" }
       } else
       // Vérifie si le refreshToken du user est le meme que celui en db
       if (user.refreshToken !== request.refreshToken) {
-        throw { status: 401, message: "refresh token not admit" }
+        throw { status: 400, message: "refresh token not admit" }
       }
 
       // Génére une nouvelle paire de token
-      const newToken = await this.authService.createToken(user.id, user.email)
-      const newRefreshToken = await this.authService.createRefreshToken(user.id, user.email)
+      const newToken: string = await this.authService.createToken(user.id, user.email)
+      const newRefreshToken: string = await this.authService.createRefreshToken(user.id, user.email)
 
       // Save le Refresh Token dans le user en db
       await this.userService.update(user.id, {refreshToken: newRefreshToken})
-
-      //* Test de différence entre l'ancien et le nouveau token OK
-      // console.log("AuthController- refreshToken - user :", user)
-      // console.log("AuthController- refreshToken - updatedUser :", await this.userService.findOne("id", user.id, false))
 
       // Renvoi la nouvelle paire de Token
       return this.responseMaker.responseSuccess(201, "JWT Refresh Success", {authToken: newToken, authRefreshToken: newRefreshToken});
@@ -130,7 +127,7 @@ export class AuthController {
       if (error.status && error.message) {
         response.status(error.status).json({error :error.message, date : new Date()})
       } else {
-        response.status(500).json({error :error.message, date : new Date()})
+        response.status(500).json({error :error.message, data : new Date()})
       }
     }
   }

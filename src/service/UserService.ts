@@ -34,10 +34,11 @@ export class UserService {
 
 // Update un user
     async update(id: number, body: any) {
+        await this.userRepository.update(id, body)
         const user = await this.userRepository.findOne({
             where: { id: id }
         })
-        await this.userRepository.update(user, body)
+        await this.userRepository.save(user)
     }
 
 // Update le mot de passe d'un user
