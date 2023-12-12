@@ -325,7 +325,6 @@ export class GroupController {
         // Récupération via l'id de la data
         try {
             const id = +request.params.id
-            console.log("🚀 ~ file: GroupController.ts:328 ~ GroupController ~ id:", id)
             const group = await this.groupService.getOneGroup(id)
             return group
         } catch (error) {
