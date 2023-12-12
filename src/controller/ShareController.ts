@@ -90,9 +90,10 @@ export class ShareController {
     // Récupérer une liste des datas partagé avec l’utilisateur ou le groupe lié
     async getShares(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
+            const owner_id = request.user.user_id
             const {target, target_id} = request.body
             
-            return await requestMessage('getShares', {target, target_id})
+            return await requestMessage('getShares', {owner_id, target, target_id})
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})
