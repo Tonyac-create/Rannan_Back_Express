@@ -12,32 +12,31 @@ export class DataController {
 
     // Récupération de toute les datas d'un user_id
     async getDatasInUser(request: RequestWithUser, response: Response, next: NextFunction)
-        : Promise<ResponseInterface> 
-        {
+        : Promise<ResponseInterface> {
         try {
             const id = +request.user.user_id
             return await requestMessage('getAllDatasOneUser', id)
         } catch (error) {
             if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
+                response.status(error.status).json({ error: error.message, date: new Date() })
             } else {
-                response.status(500).json({error :error.message, date : new Date()})
+                response.status(500).json({ error: error.message, date: new Date() })
             }
         }
     }
 
     // Récupération d'une data par son id
     async getOne(request: Request, response: Response, next: NextFunction)
-    : Promise<ResponseInterface> {
+        : Promise<ResponseInterface> {
         // Récupération via l'id de la data
         try {
             const id = request.params.id
             return await requestMessage('getOneData', id)
         } catch (error) {
             if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
+                response.status(error.status).json({ error: error.message, date: new Date() })
             } else {
-                response.status(500).json({error :error.message, date : new Date()})
+                response.status(500).json({ error: error.message, date: new Date() })
             }
         }
     }
@@ -51,12 +50,14 @@ export class DataController {
             if (!user_id) {
                 throw { status: 400, message: "user inexistant" }
             }
-            return await publishMessage('createData', { type, name, value, user_id })
+            
+            const result = await publishMessage('createData', { type, name, value, user_id });
+            response.status(200).json(result)
         } catch (error) {
             if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
+                response.status(error.status).json({ error: error.message, date: new Date() })
             } else {
-                response.status(500).json({error :error.message, date : new Date()})
+                response.status(500).json({ error: error.message, date: new Date() })
             }
         }
     }
@@ -66,12 +67,13 @@ export class DataController {
         try {
             const _id = request.params.id
             const { type, name, value } = request.body
-            return await publishMessage('updateData', { _id, type, name, value })
+            const result = await publishMessage('updateData', { _id, type, name, value })
+            response.status(200).json(result)
         } catch (error) {
             if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
+                response.status(error.status).json({ error: error.message, date: new Date() })
             } else {
-                response.status(500).json({error :error.message, date : new Date()})
+                response.status(500).json({ error: error.message, date: new Date() })
             }
         }
     };
@@ -80,12 +82,13 @@ export class DataController {
     async remove(request: Request, response: Response, next: NextFunction) {
         try {
             const id = request.params.id
-            return await publishMessage('removeData', id)
+            const result =  await publishMessage('removeData', id)
+            response.status(200).json(result)
         } catch (error) {
             if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
+                response.status(error.status).json({ error: error.message, date: new Date() })
             } else {
-                response.status(500).json({error :error.message, date : new Date()})
+                response.status(500).json({ error: error.message, date: new Date() })
             }
         }
     }
