@@ -105,7 +105,7 @@ export class AuthController {
   async refreshToken(request: RequestWithUser, response: Response, next: NextFunction) {
     try {
       // Vérifie si l'email enregistré correspond a un email enregistré
-      const user: User = await this.userService.findOne("email", request.body.email, false)
+      const user: User = await this.userService.findOne("email", request.user.email, false)
       if (!user) {
         throw { status: 404, message: "User not found" }
       } else
