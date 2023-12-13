@@ -62,7 +62,8 @@ export class ShareController {
             // Récupération de la data
             await requestMessage('getOneData', data_id)
 
-            return await publishMessage('createShare', { target, target_id, owner_id, data_id })
+            const result =  await publishMessage('createShare', { target, target_id, owner_id, data_id })
+            response.status(200).json(result)
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})
