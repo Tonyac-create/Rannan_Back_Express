@@ -36,7 +36,7 @@ export class ContactController{
             }
 
             //tester que l'on a  récupéré des contacts
-            if(allUserTwoEmpty === true && allUserTwoEmpty === true){
+            if(allUserOneEmpty === true && allUserTwoEmpty === true){
                 return this.responseMaker.responseSuccess(400, "Contacts not found");
             }
 
