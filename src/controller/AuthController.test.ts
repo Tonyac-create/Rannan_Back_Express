@@ -30,9 +30,10 @@ describe("AuthController full test suite", () => {
                 password: "Lksdf4545sdf32ds:!;"
             };
             const response = await request(app).post('/auth/register').send(payload)
-            expect(response.status).toBe(201);
-            expect(response.body.user.nickname).toStrictEqual(payload.nickname)
-            expect(response.body.user.email).toStrictEqual(payload.email)
+            expect(response.body.status).toBe(201);
+            
+            expect(response.body.data.user.nickname).toStrictEqual(payload.nickname)
+            expect(response.body.data.user.email).toStrictEqual(payload.email)
         })
 
         it('ERROR create user', async () => {

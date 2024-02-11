@@ -4,6 +4,7 @@ import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { publishMessage, requestMessage } from "../utils/nats-config";
+import { log } from "console";
 
 export class ShareController {
 
@@ -35,14 +36,13 @@ export class ShareController {
         }
     }
 
-     //Supprimer une data dans share et une share dans data
+     //Supprimer une data dans share
     async removeDataInShare(request: Request, response: Response, next: NextFunction) {
-        try {
-            const id = request.params.id
-
-            const { data_id } = request.body
-
-            return await requestMessage('removeDataInShare', { id, data_id })
+        try {            
+            const share_id = request.params.id
+            const data_id = request.params.data_id
+            
+            return await requestMessage('removeDataInShare', { share_id, data_id })
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})
@@ -123,9 +123,12 @@ export class ShareController {
     // Récupération d'un partage par son id
     async getShareById(request: Request, response: Response, next: NextFunction) {
         try {
-            const id = request.params.id
+            // const id = request.params.id
+            // console.log("🚀 ~ ShareController ~ getShareById ~ id:", id)
+            const { ownerId, targetId } = request.body
+            console.log("🚀 ~ ShareController ~ getShareById ~ request.body:", request.body)
 
-            return await requestMessage('getOneShare', id)
+            return await requestMessage('getOneShare', {owner_id: ownerId, target_id: targetId})
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})

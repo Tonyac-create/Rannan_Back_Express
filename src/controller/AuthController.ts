@@ -5,7 +5,7 @@ import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { publishMessage } from "../utils/nats-config";
 import { User } from "../entity/User";
-const bcrypt = require('bcrypt')
+import bcrypt from 'bcrypt';
 
 export class AuthController {
 

@@ -144,7 +144,7 @@ export const Routes = [
         action: "removeShare"
     },{
         method: "delete", // Supprimer un partage
-        route: "/api/datainshare/:id", // :id = share.id
+        route: "/api/datainshare/:id/:data_id", // :id = share.id
         controller: ShareController,
         action: "removeDataInShare"
     },

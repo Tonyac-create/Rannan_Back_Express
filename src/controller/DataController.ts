@@ -3,7 +3,6 @@ import { ResponseInterface } from "../interface/ResponseInterface"
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { publishMessage, requestMessage } from "../utils/nats-config"
-import { Data } from "../entity/Data"
 
 export class DataController {
 
