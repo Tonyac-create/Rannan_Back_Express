@@ -11,8 +11,7 @@ export class GroupService {
 
     async allGroupsBy(field: string, value: number): Promise<Object[]> {
         // Trouve les groupes suivant les valeurs de champs (value of field) renseigné
-        const groups = await this.groupRepository.find({ where: { [field]: value } });
-        console.log("🚀 ~ GroupService ~ allGroupsBy ~ groups:", groups)
+        const groups = await this.groupRepository.find({ where: { [field]: value } })
 
         if (!groups || groups.length === 0) {
             throw new Error("No groups found with specified creator")

@@ -202,7 +202,6 @@ export class GroupController {
             // Récupération de la liste de contact du user
             const contactList = [];
             const getContactList = await this.contactService.allByUserId(+request.user.user_id);
-            console.log("🚀 ~ GroupController ~ getGroupDetailForSetting ~ getContactList:", getContactList)
             await Promise.all(
                 getContactList.map(async (contact: Contact) => {
                     if (contact.user1_id === +request.user.user_id) {
@@ -212,7 +211,6 @@ export class GroupController {
                     };
                     if (contact.user2_id === +request.user.user_id) {
                         const findContact = await this.userService.findOne("id", contact.user1_id, false)
-                        console.log("🚀 ~ GroupController ~ getContactList.map ~ findContact:", findContact)
                         const nickname = findContact.nickname
                         contactList.push({ id: findContact.id, nickname: nickname })
                     };
@@ -295,7 +293,7 @@ export class GroupController {
             if (!user) {
                 throw { status: 404, message: "User not found" }
             };
-            const group = await this.groupService.allGroupsBy("id", +request.params.id)[0];
+            const group = await this.groupService.getOneGroup(+request.params.id)
             if (!group) {
                 throw { status: 404, message: "Group not found" }
             };
