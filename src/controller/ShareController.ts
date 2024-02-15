@@ -4,7 +4,6 @@ import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { publishMessage, requestMessage } from "../utils/nats-config";
-import { log } from "console";
 
 export class ShareController {
 
