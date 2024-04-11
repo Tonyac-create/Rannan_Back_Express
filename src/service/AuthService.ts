@@ -11,7 +11,7 @@ export class AuthService {
       {user_id, email, date},
       process.env.SECRET_KEY, 
       {
-        expiresIn: "1h"
+        expiresIn: "1w"
       }
     )
   }
@@ -22,7 +22,7 @@ export class AuthService {
       {user_id, email, date},
       process.env.SECRET_KEY_REFRESH, 
       {
-        expiresIn: "8h"
+        expiresIn: "3w"
       }
     )
   }

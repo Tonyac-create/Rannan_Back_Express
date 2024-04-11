@@ -1,6 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { ShareService } from "../service/ShareService";
-import { UserService } from "../service/UserService";
 import { RequestWithUser } from "../interface/RequestWithUser.interface";
 import { ResponseMaker } from "../utils/ResponseMaker"
 import { publishMessage, requestMessage } from "../utils/nats-config";
@@ -8,9 +6,7 @@ import { publishMessage, requestMessage } from "../utils/nats-config";
 export class ShareController {
 
     // Services
-    private shareService = new ShareService()
     private responseMaker = new ResponseMaker()
-    private userService = new UserService()
 
     async allShares(request: RequestWithUser, response: Response, next: NextFunction) {
         try {
@@ -122,12 +118,23 @@ export class ShareController {
     // Récupération d'un partage par son id
     async getShareById(request: Request, response: Response, next: NextFunction) {
         try {
-            // const id = request.params.id
-            // console.log("🚀 ~ ShareController ~ getShareById ~ id:", id)
             const { ownerId, targetId } = request.body
-            console.log("🚀 ~ ShareController ~ getShareById ~ request.body:", request.body)
-
             return await requestMessage('getOneShare', {owner_id: ownerId, target_id: targetId})
+        } catch (error) {
+            if (error.status && error.message) {
+                response.status(error.status).json({error :error.message, date : new Date()})
+            } else {
+                response.status(500).json({error :error.message, date : new Date()})
+            }
+        }
+    }
+
+    // Ajout d'une information partagée dans une share par un utilisateur membre d'un groupe
+    async updateDataInShare(request: Request, response: Response) {
+        try {
+            const id_share = request.params
+            const data_id = request.body
+            return await requestMessage("updateShare", {id_share, data_id})
         } catch (error) {
             if (error.status && error.message) {
                 response.status(error.status).json({error :error.message, date : new Date()})
@@ -139,42 +146,42 @@ export class ShareController {
 
             // Fonction faites par Caye. A voir si besoin
     //Récupérer un share entre 2 users et le supprimer
-    async deleteShareByUsers(request: RequestWithUser, response: Response, next: NextFunction){
-        try{
-            ///Récupération des users
-            const currentUserId = parseInt(request.user.user_id);
-            const otherUserId = parseInt(request.params.id);
+    // async deleteShareByUsers(request: RequestWithUser, response: Response, next: NextFunction){
+    //     try{
+    //         ///Récupération des users
+    //         const currentUserId = parseInt(request.user.user_id);
+    //         const otherUserId = parseInt(request.params.id);
 
-            //Vérifier que currentUserId dfférent de otherUserId
-            if(currentUserId === otherUserId){
-                throw {status: 400, message: "User1 and User2 are the same user"}
-            }
+    //         //Vérifier que currentUserId dfférent de otherUserId
+    //         if(currentUserId === otherUserId){
+    //             throw {status: 400, message: "User1 and User2 are the same user"}
+    //         }
 
-            //Verifier que les users existent
-            const testCurrent = await this.userService.findOne("id", currentUserId, false);
-            const testOther = await this.userService.findOne("id", otherUserId, false);
-            if(!testCurrent || !testOther || !testCurrent && !testOther){
-                throw {status: 400, message: "One of the users, or the two don't exist"}
-            }
+    //         //Verifier que les users existent
+    //         const testCurrent = await this.userService.findOne("id", currentUserId, false);
+    //         const testOther = await this.userService.findOne("id", otherUserId, false);
+    //         if(!testCurrent || !testOther || !testCurrent && !testOther){
+    //             throw {status: 400, message: "One of the users, or the two don't exist"}
+    //         }
 
-            //Récupérer le share entre les users
-            const share = await this.shareService.oneByUsersId(currentUserId, otherUserId);
-            console.log("🚀 ~ file: ShareController.ts:123 ~ ShareController ~ deleteShareByUsers ~ share:", share)
-            console.log("sahre_id, l 124", share.id)
-            if(!share){
-                throw {status: 400, message: "Share not found."}
-            }
+    //         //Récupérer le share entre les users
+    //         const share = await this.shareService.oneByUsersId(currentUserId, otherUserId);
+    //         console.log("🚀 ~ file: ShareController.ts:123 ~ ShareController ~ deleteShareByUsers ~ share:", share)
+    //         console.log("sahre_id, l 124", share.id)
+    //         if(!share){
+    //             throw {status: 400, message: "Share not found."}
+    //         }
 
-            //Supprimer le share
-            const removedShare = await this.shareService.remove(share.id);
-            return this.responseMaker.responseSuccess(200, `share was deleted`, removedShare)
-        } catch (error) {
-            if (error.status && error.message) {
-                response.status(error.status).json({error :error.message, date : new Date()})
-            } else {
-                response.status(500).json({error :error.message, date : new Date()})
-            }
-        }
-    }
+    //         //Supprimer le share
+    //         const removedShare = await this.shareService.remove(share.id);
+    //         return this.responseMaker.responseSuccess(200, `share was deleted`, removedShare)
+    //     } catch (error) {
+    //         if (error.status && error.message) {
+    //             response.status(error.status).json({error :error.message, date : new Date()})
+    //         } else {
+    //             response.status(500).json({error :error.message, date : new Date()})
+    //         }
+    //     }
+    // }
 
 }

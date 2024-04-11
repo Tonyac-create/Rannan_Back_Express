@@ -165,6 +165,11 @@ export const Routes = [
         route: "/api/share/user/:id", 
         controller: ShareController,
         action: "deleteShareByUsers"
+    },{
+        method: "put", // Update d'une share
+        route: "/api/share/:id", // :id = share.id
+        controller: ShareController,
+        action: "update"
     },
 
 // ROUTES FOR CONTACT & VALIDATIONS------------------------------

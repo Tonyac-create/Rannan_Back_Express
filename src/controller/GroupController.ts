@@ -6,7 +6,6 @@ import { RequestWithUser } from "../interface/RequestWithUser.interface"
 import { ResponseInterface } from "../interface/ResponseInterface"
 import { ContactService } from "../service/ContactService"
 import { Contact } from "../entity/Contact"
-import { ShareService } from "../service/ShareService"
 import { requestMessage } from "../utils/nats-config"
 
 export class GroupController {
@@ -15,7 +14,6 @@ export class GroupController {
     private groupService = new GroupService();
     private userService = new UserService();
     private contactService = new ContactService();
-    private shareService = new ShareService();
     private responseMaker = new ResponseMaker();
 
 
@@ -147,6 +145,7 @@ export class GroupController {
 
             const owner_id = request.user.user_id
             if (group.creator_id === owner_id) {
+                
                 const shares = await requestMessage('getShares', { owner_id, target: "group", target_id: id_group })
                 if (shares.length === 0) {
                     dataList = null
